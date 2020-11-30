@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>KnD Time | Code Verification</title>
+        <meta name="description" content="Login">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
+        <!-- Call App Mode on ios devices -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <!-- Remove Tap Highlight on Windows Phone IE -->
+        <meta name="msapplication-tap-highlight" content="no">
+        <!-- base css -->
+        <link rel="stylesheet" media="screen, print" href="/css/vendors.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="/css/icons.css">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+        <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+
+    </head>
+
+    <body class="account-body">
+        <div class="page-wrapper">
+            <div class="page-inner bg-brand-gradient">
+                <div class="page-content-wrapper bg-transparent m-0">
+                    <div class="height-10 w-100 shadow-lg px-4 bg-brand-gradient">
+                        <div class="d-flex align-items-center container p-0">
+                            <div class="page-logo width-mobile-auto m-0 align-items-center justify-content-center p-0 bg-transparent bg-img-none shadow-0 height-9">
+                                <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
+                                    <img src="/img/logo.png" alt="KnD Time Logo" aria-roledescription="logo">
+                                    <span class="page-logo-text mr-1">KnD Time WebApp</span>
+                                </a>
+                            </div>
+                            <span class="text-white opacity-50 ml-auto mr-2 hidden-sm-down">
+                                {# Already a member? #}
+                            </span>
+                            
+                            <a href="{{path('account_login')}}" class="btn-link text-white text-left ml-auto ml-sm-0">
+                                Secure Log In
+                            </a>
+                            
+                        </div>
+                    </div>
+                    <div class="flex-1" style="background: url(/img/svg/pattern-1.svg) no-repeat center bottom fixed; background-size: cover;">
+                        <div class="container py-4 py-lg-5 my-lg-5 px-4 px-sm-0">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <h2 class="fs-xxl fw-500 mt-4 text-white text-center">
+                                        "Code Verification"
+                                        <small class="h3 fw-300 mt-3 mb-5 text-white opacity-60 hidden-sm-down">
+                                            check your email inbox and enter the verification code. If you haven't received an email in your inbox, please check spam
+                                        </small>
+                                    </h2>
+                                </div>
+                            
+                                <div class="col-xl-6 ml-auto mr-auto">
+                                                       
+                                    <div class="card p-4 rounded-plus bg-faded">
+                                        <div class="alert alert-danger alert-dismissible fade show d-none mt-2" role="alert" id="alert">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                                            </button>
+                                            Sorry, <strong>the Verification Code is invalid</strong> Change a few things up and try submitting again.
+                                        </div>
+                                        <form id="js-login" novalidate="" action="#">
+                                            <div class="form-group">
+                                                <label class="form-label" for="userCode">Your username or email</label>
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text" id="basic-addon1">KnD -</i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="userCode" placeholder="Code" required>
+                                                </div>
+                                                <div class="invalid-feedback">No, you missed this one.</div>
+                                                <div class="help-block">We will email you the instructions</div>
+                                            </div>
+                                            
+                                            <div class="row no-gutters">
+                                                <div class="col-md-4 ml-auto text-right">
+                                                    <button type="submit" class="btn btn-primary  waves-effect waves-light" type="button" id="validBtn">
+                                                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                                                        <i class="mdi mdi-check mr-2 font-16"></i> Validate
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-block text-center text-white">
+                            2020 © KnD Time by&nbsp;<a href='#' class='text-white opacity-40 fw-500' title='kndtech.com' target='_blank'>KnD Technologies</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- base vendor bundle: 
+			 DOC: if you remove pace.js from core please note on Internet Explorer some CSS animations may execute before a page is fully loaded, resulting 'jump' animations 
+						+ pace.js (recommended)
+						+ jquery.js (core)
+						+ jquery-ui-cust.js (core)
+						+ popper.js (core)
+						+ bootstrap.js (core)
+						+ slimscroll.js (extension)
+						+ app.navigation.js (core)
+						+ ba-throttle-debounce.js (core)
+						+ waves.js (extension)
+						+ smartpanels.js (extension)
+						+ src/../jquery-snippets.js (core) -->
+        <script src="/js/vendors.bundle.js"></script>
+        <script src="/js/app.bundle.js"></script>
+        
+        <script>
+            var _url = "{{path('account_userverification')}}"; 
+            var userCode = $("#userCode");
+            var valid = false;
+            var form = $("#js-login");
+
+            userCode.on('input', function() { 
+                //console.log($(this).val()); // get the current value of the input field.
+                if( $(this).val().indexOf("KnD -") >= 0  ){
+                    userCode.addClass("is-invalid");
+                    //form.addClass("form-control");
+                    //form.addClass("is-invalid");
+                    $('#validBtn').prop('disabled', true);
+                    valid = false;
+                                        
+                }
+                else{
+                    userCode.removeClass("is-invalid");
+                    //form.removeClass("is-invalid");
+                    $('#validBtn').prop('disabled', false);
+                    valid = true;
+                }
+                
+            });
+
+            $('#validBtn').click(function(){
+                //block of code that runs when the click event triggers
+                // Fetch form to apply custom Bootstrap validation
+
+                if (form[0].checkValidity() === false)
+                {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.addClass('was-validated');
+                // Perform ajax submit here...
+
+                if (form[0].checkValidity() === true && valid === true)
+                {
+                    $(this).children('i').addClass('d-none');
+                    $(this).children('span').removeClass('d-none');
+                    var $code = userCode.val();
+                    
+                    console.log("userVerification url : " + _url);
+                    var $data = JSON.stringify({
+                        "email": "null",
+                        "codeVerif": $code
+                    });
+
+                    $.ajax({
+                        type: "POST",//method type
+                        contentType: "application/json; charset=utf-8",
+                        url: _url,///Target function that will be return result
+                        data: $data,//parameter pass data is parameter name param is value 
+                        dataType: "json",
+                        //timeout: 120000,//64241
+                        success: function (data) {
+                            //alert("Success");
+                            console.log(data);
+                            if(data.code === 200){
+                                var urlPasswordReset = "{{path('account_passwordReset')}}" + "?key=2DBMRXXK3LQMFZWGYLMIBTW2YLJNQXGG33NUVTG64TDMXBLG5DXN5PWMYLDORXXEX3WMVZGSZTJMVSMFOTGN5ZGGZLEL53WKYLLL5YGC43TO5XXEZC7OJSXGZLUYI" + "&leng=WKYLLL5ZGSZTJMV43TO5X5QFCAKMXEZ" + "&d=" + data.message + "&csf=AOYGPYSRH5QFCAKMH5CEQIS6P74DVBFFMVWWC2LMXBQWY";
+                                console.log("Password Reset url : " + urlPasswordReset);       
+                                window.location.href = urlPasswordReset;
+                            }
+                            else{
+                                $('#alert').removeClass('d-none');
+                                $('#validBtn').children('i').removeClass('d-none');
+                                $('#validBtn').children('span').addClass('d-none');
+                                                    
+                            }
+                                        
+                        },
+                        error: function (result) {
+                            console.log("+++++++++++ Error +++++++++++");
+                            console.log(result);
+                            $('#alert').removeClass('d-none');
+                            $('#validBtn').children('i').removeClass('d-none');
+                            $('#validBtn').children('span').addClass('d-none');
+                        }
+                    });
+                }
+                else{
+
+                }
+            });
+        </script>
+
+    </body>
+
+
+
+</html>

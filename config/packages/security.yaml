@@ -1,7 +1,15 @@
 security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -9,7 +17,15 @@ security:
         main:
             anonymous: true
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
+
+            form_login:
+                login_path: account_login
+                check_path: account_login
+
+            logout:
+                path: account_logout
+                target: account_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -20,5 +36,23 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN, requires_channel: https }
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/account/recover/password, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/account/code-verification, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        # catch all other URLs
+        - { path: ^/, roles: ROLE_USER, requires_channel: https }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+
+    # La partie role_hierarchy contient la hiérarchie des rôles
+    # Un éditeur sera également utilisateur
+    # Un administrateur sera également éditeur et donc utilisateur
+    role_hierarchy:
+        ROLE_SELLER: ROLE_USER
+        ROLE_RH_ASSISTANT: ROLE_USER
+        ROLE_RH_MANAGER: ROLE_RH_ASSISTANT
+        ROLE_ADMIN: ROLE_RH_MANAGER
+        ROLE_HIDE_ADMIN: ROLE_ADMIN
+        ROLE_SUPER_ADMIN: ROLE_HIDE_ADMIN

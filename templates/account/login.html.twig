@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>KnD Time | Authentication</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Login">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
+        <!-- Call App Mode on ios devices -->
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <!-- Remove Tap Highlight on Windows Phone IE -->
+        <meta name="msapplication-tap-highlight" content="no">
+        <!-- base css -->
+        <link rel="stylesheet" media="screen, print" href="/css/vendors.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
+        <link rel="stylesheet" media="screen, print" href="/css/icons.css">
+        <!-- App favicon -->
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+        <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+        <!-- Optional: page related CSS-->
+        <link rel="stylesheet" media="screen, print" href="/css/page-login.css">
+
+    </head>
+
+    <body class="account-body">
+
+        {# <!-- Log In page px-4 -->
+        <div class="row vh-100">
+            <div class="col-lg-3  pr-0">
+                <div class="card mb-0 shadow-none">
+                    <div class="card-body">
+                        
+                        <div class="px-3">
+                            <div class="mb-2">
+                                <a href="#" class="">
+                                    <img src="/images/KnD.png" height="150" width="200" alt="logo" class="my-0 mx-auto d-block">
+                                </a> 
+                            </div> 
+                            <div class="text-center">                                                                                                                       
+                                <h6 class="text-muted mt-0 mb-3">Welcome to KnD Factures</h6>
+                
+                                <h5 class="mt-0 mb-1">Let's Get Started</h5>
+                                <!-- <p class="text-muted mb-0">Sign in to continue to MEC.</p>-->
+                            </div>  
+
+                            {% if hasError %}
+                              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                                    </button>
+                                    <strong>An error has occurred, the username or password is invalid</strong> Change a few things up and try submitting again.
+                              </div>
+                            {% endif %}  
+                            
+                            {% for label, messages in app.flashes %}
+                                <div class="alert icon-custom-alert alert-outline-{{label}} alert-{{label}}-shadow alert-dismissible fade show" role="alert">
+                                    {% if label == 'success' %}<i class="mdi mdi-check-all alert-icon"></i>{% endif %}
+                                    <div class="alert-text">
+                                        {% for message in messages %}
+                                            <strong>{{ message | raw }}</strong>.
+                                        {% endfor %}
+                                    </div>    
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                                    </button>                                        
+                                </div>
+                                
+                            {% endfor %}                   
+                            
+                            <form class="form-horizontal my-4" action="{{ path("account_login") }}" method="POST" >
+    
+                                <div class="form-group">
+                                    <label for="username">Username</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1"><i class="mdi mdi-account-outline font-16"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="_username" id="username" placeholder="Enter user email" value="{{username}}">
+                                    </div>                                    
+                                </div>
+    
+                                <div class="form-group">
+                                    <label for="userpassword">Password</label>
+                                    <div class="input-group mb-3 ">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon2">
+                                                <i class="mdi mdi-key font-16"></i>                    
+                                            </span>
+                                        </div>
+                                        <input type="password" class="form-control input-field" name="_password" id="password-field"  placeholder="Enter password">
+                                    </div>                                
+                                </div>
+    
+                                <div class="form-group row mt-4">
+                                    <div class="col-sm-6 mb-2">
+                                        <span toggle="#password-field" class="fa fa-fw fa-eye-slash toggle-password mr-2"></span><span id="showPwd">Show</span> password
+                                    </div>
+                                    <div class="col-sm-6 text-md-right">
+                                        <a href="{{path('account_recoverpw')}}" class="text-muted font-13"><i class="mdi mdi-lock"></i> Forgot your password?</a>                                    
+                                    </div>
+                                </div>
+    
+                                <div class="form-group mb-0 row">
+                                    <div class="col-12 mt-2" id="divBtn">
+                                        <button class="btn btn-primary btn-block waves-effect waves-light " id="LogInBtn" type="submit" >
+                                            <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                                            Log In <i class="fas fa-sign-in-alt ml-1"></i>
+                                            
+                                        </button>
+                                    </div>
+                                </div>                            
+                            </form>
+                        </div>
+                                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 p-0 d-flex justify-content-center">
+                <div class="accountbg d-flex align-items-center"> 
+                    <div class="account-title text-white text-center">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Log In page --> #}
+
+        <div class="blankpage-form-field">
+            <div class="page-logo m-0 w-100 align-items-center justify-content-center rounded border-bottom-left-radius-0 border-bottom-right-radius-0 px-4">
+                <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
+                    <img src="/img/logo.png" alt="SmartAdmin WebApp" aria-roledescription="logo">
+                    <span class="page-logo-text mr-1">KnD Time WebApp</span>
+                    <i class="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
+                </a>
+            </div>
+            <div class="card p-4 border-top-left-radius-0 border-top-right-radius-0">
+                {% if hasError %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                    </button>
+                    <strong>An error has occurred, the username or password is invalid</strong> Change a few things up and try submitting again.
+                </div>
+                {% endif %}  
+                {# {% if error %}
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}    #}
+
+                {% for label, messages in app.flashes %}
+                <div class="alert icon-custom-alert alert-outline-{{label}} alert-{{label}}-shadow alert-dismissible fade show" role="alert">
+                    {% if label == 'success' %}<i class="mdi mdi-check-all alert-icon"></i>{% endif %}
+                    <div class="alert-text">
+                        {% for message in messages %}
+                        <strong>{{ message | raw }}</strong>.
+                        {% endfor %}
+                    </div>    
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                    </button>                                        
+                </div>
+                {% endfor %}           
+                <form action="{{ path("account_login") }}" method="POST" id="js-login">
+    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1"><i class="mdi mdi-account-outline font-16"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="_username" id="username" placeholder="Enter user email" value="{{username}}" required>
+                        </div>                                    
+                    </div>
+                    
+                    {# <div class="form-group">
+                        <label class="form-label" for="username">Username</label>
+                        <input type="email" id="username" class="form-control" placeholder="your id or email" value="drlantern@gotbootstrap.com">
+                        <span class="help-block">
+                            Your unique username to app
+                        </span>
+                    </div> #}
+                    {# <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="password" value="password123">
+                        <span class="help-block">
+                            Your password
+                        </span>
+                    </div> #}
+                    <div class="form-group">
+                        <label for="userpassword">Password</label>
+                        <div class="input-group mb-3 ">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon2">
+                                    <i class="mdi mdi-key font-16"></i>                    
+                                </span>
+                            </div>
+                            <input type="password" class="form-control input-field" name="_password" id="password-field"  placeholder="Enter password" required>
+                        </div>                                
+                    </div>
+                    <div class="form-group text-left">
+                        <div class="col-sm-12 mb-2" >
+                            <a href="#" toggle="#password-field" class="toggle-password"><span class="fa fa-fw fa-eye-slash mr-2"></span><span id="showPwd">Show</span> password</a> 
+                        </div>
+                        {# <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="rememberme">
+                            <label class="custom-control-label" for="rememberme"> Remember me for the next 30 days</label>
+                        </div> #}
+                    </div>
+                    {# <button type="submit" class="btn btn-default float-right">Secure login</button> #}
+                    <div class="form-group mb-0 row">
+                        <div class="col-12 mt-2" id="divBtn">
+                            <button class="btn btn-primary btn-block waves-effect waves-light " id="LogInBtn" type="submit" >
+                                <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                                Log In <i class="fas fa-sign-in-alt ml-1"></i>
+                            </button>
+                        </div>
+                    </div>  
+                </form>
+            </div>
+            <div class="blankpage-footer text-center">
+                <a href="{{path('account_recoverpw')}}"><strong>Recover Password</strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+            </div>
+        </div>
+        <div class="login-footer p-2">
+            <div class="row">
+                {# <div class="col col-sm-12 text-center">
+                    <i><strong>System Message:</strong> You were logged out from 198.164.246.1 on Saturday, March, 2017 at 10.56AM</i>
+                </div> #}
+            </div>
+        </div>
+        <video poster="/img/backgrounds/clouds.png" id="bgvid" playsinline autoplay muted loop>
+            <source src="/media/video/cc.webm" type="video/webm">
+            <source src="/media/video/cc.mp4" type="video/mp4">
+        </video>
+        <!-- base vendor bundle: 
+			 DOC: if you remove pace.js from core please note on Internet Explorer some CSS animations may execute before a page is fully loaded, resulting 'jump' animations 
+						+ pace.js (recommended)
+						+ jquery.js (core)
+						+ jquery-ui-cust.js (core)
+						+ popper.js (core)
+						+ bootstrap.js (core)
+						+ slimscroll.js (extension)
+						+ app.navigation.js (core)
+						+ ba-throttle-debounce.js (core)
+						+ waves.js (extension)
+						+ smartpanels.js (extension)
+						+ src/../jquery-snippets.js (core) -->
+        <script src="/js/vendors.bundle.js"></script>
+        <script src="/js/app.bundle.js"></script>
+        <!-- Page related scripts -->
+
+        <script>
+            $(".toggle-password").click(function() {
+
+                $(this).toggleClass("fa-eye-slash fa-eye");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                    input.attr("type", "text");
+                    $('#showPwd').html('Hide');
+                } else {
+                    input.attr("type", "password");
+                    $('#showPwd').html('Show');
+                }
+            });
+
+            /*$('input[type="checkbox"]').click(function(){
+                var input = $($(".toggle-password").attr("toggle"));
+                if($(this).prop("checked") == true){
+                    console.log("Checkbox is checked.");
+                    //$(".toggle-password").toggleClass("fa-eye-slash fa-eye");
+                    
+                    if (input.attr("type") == "password") {
+                        input.attr("type", "text");
+                    } 
+                }
+                else if($(this).prop("checked") == false){
+                    console.log("Checkbox is unchecked.");
+                    if(input.attr("type") == "text") {
+                        input.attr("type", "password");
+                    }
+                }
+            });*/
+            $("#LogInBtn").click(function(event)
+            {
+
+                // Fetch form to apply custom Bootstrap validation
+                var form = $("#js-login")
+
+                if (form[0].checkValidity() === false)
+                {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    console.log('form[0] = ' + form[0])
+                }
+                else{
+                    $(this).children('i').addClass('d-none');
+                    $(this).children('span').removeClass('d-none');
+
+                }
+                
+                form.addClass('was-validated');
+            });
+
+        </script>
+
+    </body>
+</html>
