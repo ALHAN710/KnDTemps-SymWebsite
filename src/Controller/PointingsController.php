@@ -170,7 +170,7 @@ class PointingsController extends ApplicationController
             }
             return $this->json([
                 'code'    => 403,
-                'message' => 'Zone de pointage non autorisée !',
+                'message' => 'Zone de pointage non autorisée !', 'distance' => $distance . ' km',
             ], 200);
         }
 
