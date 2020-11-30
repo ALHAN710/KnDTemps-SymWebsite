@@ -128,8 +128,9 @@ class PointingsController extends ApplicationController
                 $date = new DateTime(date('Y-m-d H:i:s'));
                 if ($paramJSON['type'] === 'In') {
                     $pointing = new Pointing();
+                    $status = $this->getUser()->getRoles()[0] === 'ROLE_USER' ? 'on pending' : 'approved';
                     $pointing->setEmployee($this->getUser())
-                        ->setStatut('on pending')
+                        ->setStatut($status)
                         ->setTimeIn($date);
 
                     $manager->persist($pointing);
@@ -184,33 +185,44 @@ class PointingsController extends ApplicationController
      * 
      * @Route("/pointing/change/status", name="pointings_change_status")
      * 
-     * @Security( "is_granted('ROLE_USER')" )
+     * 
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return void
      */
     public function pointingsChangeStatus(Request $request, EntityManagerInterface $manager)
-    {
-        //$paramJSON = $this->getJSONRequest($request->getContent());
-        $paramJSON = $request->request->get("pointingsApprovedIds");
+    { //@Security( "is_granted('ROLE_USER')" )
+        $paramJSON = $this->getJSONRequest($request->getContent());
+        //$paramJSON = $request->request->get("pointingsApprovedIds");
+        dump($request->request);
+
         if (array_key_exists("pointingsApprovedIds", $paramJSON) && !empty($paramJSON['pointingsApprovedIds'])) {
             $flag = 0;
+
             foreach ($paramJSON['pointingsApprovedIds'] as $p) {
-                dump($p);
-                $pointing_ = json_decode($p, true);
-                dump($pointing_);
-                $pointing = $manager->getRepository('App:Pointing')->findOneBy(['id' => intval($pointing_['id'])]);
+                //dump($p);
+
+                //foreach ($p as $key => $json) {
+                //$pointing_ = json_decode($p, true);
+
+                //dump($pointing_['timeOut']);
+                $pointing = $manager->getRepository('App:Pointing')->findOneBy(['id' => intval($p['id'])]);
 
                 //Si le pointage existe et appartient à un employé de la même entreprise
-                if ($pointing && ($pointing->getUser()->getEnterprise() === $this->getUser()->getEnterprise())) {
-                    $pointing->setStatut('disapproved')
-                        ->setTimeOut($pointing_['timeOut'] ?? $pointing->getTimeOut())
-                        ->setTimeIn($pointing_['timeIn'] ?? $pointing->getTimeIn());
+                //if ($pointing && ($pointing->getUser()->getEnterprise() === $this->getUser()->getEnterprise())) {
+                $timeIn = new DateTime($p['timeIn']);
+                $timeOut = new DateTime($p['timeOut']);
 
-                    $manager->persist($pointing);
-                    $flag++;
-                }
+                $pointing->setStatut('approved')
+                    ->setTimeOut($timeOut ?? $pointing->getTimeOut())
+                    ->setTimeIn($timeIn ?? $pointing->getTimeIn());
+
+                $manager->persist($pointing);
+                $flag++;
+                //}
+
+                //}
             }
 
             if ($flag) {

@@ -133,7 +133,7 @@ class EmployeeController extends ApplicationController
 
             if ($emp) {
                 $employeePointings = $manager->createQuery("SELECT p.id, SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Status_,
-                                                    DATEDIFF( p.timeOut, p.timeIn ) AS Duration
+                                                    TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
                                                     FROM App\Entity\Pointing p
                                                     WHERE p.employee = :empId
                                                     AND p.timeIn LIKE :dat 

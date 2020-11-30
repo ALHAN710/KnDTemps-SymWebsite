@@ -24,8 +24,7 @@ class AccueilController extends AbstractController
         //dump($user->getRoles()[0]);
         if ($user !== NULL) {
             if ($user->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->redirectToRoute('admin_enterprises_index');
-            else if ($user->getRoles()[0] === 'ROLE_USER') return $this->redirectToRoute('pointings');
-            else return $this->redirectToRoute('employees_home');
+            else return $this->redirectToRoute('pointings');
         } else {
             return $this->render('account/login.html.twig', [
                 'hasError' => $error !== null,

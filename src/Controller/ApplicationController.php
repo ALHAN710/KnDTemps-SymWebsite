@@ -14,7 +14,7 @@ class ApplicationController extends AbstractController
     {
         //$content = $request->getContent();
         //$content = $this->getContentAsArray($request);
-        dump($content);
+        //dump($content);
         if (empty($content)) {
             throw new BadRequestHttpException("Content is empty");
             /*return $this->json([
