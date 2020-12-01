@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Modification d'un Poste {% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="fas fa-graduation-cap mr-2"></i>Poste</h4>  
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Modification</a></li>
+<li class="active"><a href="#">Poste</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fas fa-graduation-cap"></i>Modification d'un Poste
+        
+    </h1>
+    {# <a href="#" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a> #}
+</div>
+
+<div class="row ">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2 class="mt-2 mb-4 header-title">Modifier Poste</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {{ form_start(form) }}
+                    {#{{ form_widget(form) }}#}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.name, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.name, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.hourlySalary, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.hourlySalary, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.monthlySalary, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.monthlySalary, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+                                                            
+                    <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                        Save
+                    </button>
+
+                    {{ form_end(form) }}
+            
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+    $(document).ready(function()
+    {
+        $('#office_hourlySalary').attr('type','number').attr("step", "any");
+        $('#office_monthlySalary').attr('type','number').attr("step", "any");
+
+    });
+</script>
+
+{% endblock %}

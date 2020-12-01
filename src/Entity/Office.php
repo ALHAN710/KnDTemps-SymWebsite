@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\OfficeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\OfficeRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
 /**
  * @ORM\Entity(repositoryClass=OfficeRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Office
 {
@@ -21,18 +26,21 @@ class Office
 
     /**
      * @ORM\Column(type="string", length=50)
+     * @Assert\NotBlank(message="Veuillez Entrer le nom du Poste")
      */
     private $name;
 
     /**
      * Salaire horaire
      * @ORM\Column(type="float", nullable=true)
+     * @Assert\PositiveOrZero
      */
     private $hourlySalary;
 
     /**
      * Salaire Mensuel
      * @ORM\Column(type="float", nullable=true)
+     * @Assert\PositiveOrZero
      */
     private $monthlySalary;
 
@@ -46,6 +54,36 @@ class Office
      * @ORM\JoinColumn(nullable=false)
      */
     private $enterprise;
+
+    /**
+     * Permet d'initialiser le salaire horaire
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     * 
+     * @return void
+     */
+    public function initializeHourlySalary()
+    {
+        if (empty($this->hourlySalary)) {
+            $this->hourlySalary = 0;
+        }
+    }
+
+    /**
+     * Permet d'initialiser le salaire mensuel
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     * 
+     * @return void
+     */
+    public function initializeMonthlySalary()
+    {
+        if (empty($this->monthlySalary)) {
+            $this->monthlySalary = 0;
+        }
+    }
 
     public function __construct()
     {

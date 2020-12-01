@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil Zones de Pointage{% endblock %}
+{% block title %}Accueil Postes{% endblock %}
 
 {% block stylesheets %}
 <link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
@@ -10,16 +10,16 @@
 
 {% block breadcrumbItem %}
 <li class=""><a href="javascript:void(0);">Accueil</a></li>
-<li class="active"><a href="#">Zones de Pointage</a></li>
+<li class="active"><a href="#">Postes</a></li>
 {% endblock %}
 
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="subheader-icon fas fa-map-marker-alt"></i>Liste des Zones de Pointage de {{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{pointingLocations|length}}</sup>
+        <i class="subheader-icon fas fa-graduation-cap"></i>Liste des Postes de {{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{offices|length}}</sup>
         
     </h1>
-    <a href="{{ path('pointing_location_create')}} " data-toggle="tooltip" data-placement="top" title="Ajouter une nouvelle Zone de Pointage" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i><i class="fas fa-map-marker-alt"></i></a>
+    <a href="{{ path('office_create')}} " data-toggle="tooltip" data-placement="top" title="Ajouter un nouveau Poste" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i><i class="fas fa-graduation-cap"></i></a>
 </div>
 
 <div class="row">
@@ -27,7 +27,7 @@
         <div id="panel-1" class="panel">
             <div class="panel-hdr">
                 <h2>
-                    Tableau des <span class="fw-300 mr-1"><i>Zones de Pointage</i></span>
+                    Tableau des <span class="fw-300 mr-1"><i>Postes</i></span>
                 </h2>
                 
             </div>
@@ -51,28 +51,26 @@
                         </p>
                     </div> #}
                     <!-- datatable start -->
-                    <table id="dt-pointingLocations" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                    <table id="dt-offices" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
                         <thead class="bg-primary-600">
                             <tr class="text-center">
-                                <th>Nom</th>
-                                <th>Latitude</th>
-                                <th>Longitude</th>
-                                <th>Rayon (km)</th>
+                                <th>Poste</th>
+                                <th>Salaire Horaire (XAF)</th>
+                                <th>Salaire Mensuel (XAF)</th>
                                 <th>Nbre d'employés</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody class="text-center">
-                            {% for pointingLocation in pointingLocations %}
-                            <tr id="{{pointingLocation.id}}" data-row="{{loop.index0}}">
-                                <td>{{pointingLocation.name}}</td>
-                                <td>{{pointingLocation.latitude}}</td>
-                                <td>{{pointingLocation.longitude}}</td>
-                                <td>{{ pointingLocation.ray }}</td>
-                                <td>{{pointingLocation.users|length}}</td>
+                            {% for office in offices %}
+                            <tr id="{{office.id}}" data-row="{{loop.index0}}">
+                                <td>{{office.name}}</td>
+                                <td>{{office.hourlySalary}}</td>
+                                <td>{{office.monthlySalary}}</td>
+                                <td>{{office.employees|length}}</td>
                                 <td>
-                                    <a href="{{path('pointing_location_edit', {'id':pointingLocation.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
-                                    <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('pointing_location_delete', {'id':pointingLocation.id})}}" data-name="{{pointingLocation.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer la Zone de Pointage"><i class="fas fa-trash"></i> </a>
+                                    <a href="{{path('office_edit', {'id':office.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
+                                    <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('office_delete', {'id':office.id})}}" data-name="{{office.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer la Zone de Pointage"><i class="fas fa-trash"></i> </a>
                                                 
                                 </td>
                             </tr>
@@ -133,7 +131,7 @@
     $(document).ready(function()
     {
         // initialize datatable
-        var pointingLocationsTable = $('#dt-pointingLocations').dataTable(
+        var officesTable = $('#dt-offices').dataTable(
         {
             responsive: true,
             lengthChange: true,
@@ -165,57 +163,11 @@
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             buttons: [
-                /*{
-                    extend:    'colvis',
-                    text:      'Colonne Visible',
-                    titleAttr: 'Choisir les colonnes visibles',
-                    className: 'btn-outline-info btn-sm mr-sm-3'
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: 'PDF',
-                    titleAttr: 'Générer le fichier PDF',
-                    className: 'btn-outline-danger btn-sm mr-1',
-                    filename: FileName,
-                    exportOptions: {
-                        //columns: [ 0, 1, 4 ],
-                        columns: ':visible',
-                        search: 'applied',
-                        order: 'applied'
-                    },
-                    title: function( thead, data, start, end, display ) {
-                        return "{{app.user.enterprise.socialReason}}\r\nListe des Employés\r\n" + jsDate;
-                    },
-                    
-                },
-                {
-                    extend: 'excelHtml5',
-                    text: 'Excel',
-                    titleAttr: 'Générer le fichier Excel',
-                    className: 'btn-outline-success btn-sm mr-1'
-                },
-                {
-                    extend: 'csvHtml5',
-                    text: 'CSV',
-                    titleAttr: 'Generate CSV',
-                    className: 'btn-outline-primary btn-sm mr-1'
-                },
-                {
-                    extend: 'copyHtml5',
-                    text: 'Copy',
-                    titleAttr: 'Copy to clipboard',
-                    className: 'btn-outline-primary btn-sm mr-1'
-                },
-                {
-                    extend: 'print',
-                    text: 'Print',
-                    titleAttr: 'Print Table',
-                    className: 'btn-outline-primary btn-sm'
-                }*/
+                
             ] 
         });
 
-        {# pointingLocationsTable.buttons().container()
+        {# officesTable.buttons().container()
         .appendTo('#statistics_wrapper .col-md-6:eq(0)'); #}
 
         {# $('.buttons-html5').children('span').prepend('<i class="mdi mdi-download mr-2"></i>');
@@ -224,8 +176,9 @@
         
         $('.deleteBtn').click(function(){
             console.log('url = ' + $(this).data("url"));
+            //var newURL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname + window.location.search;
             var url = window.location.protocol + "//" + window.location.host + $(this).data("url");
-            
+            console.log('new url = ' + url);
             if($(this).data("url")){
                 var $data = JSON.stringify({
                     "blabla": "",
@@ -243,7 +196,7 @@
                         type: "warning",
                         title: 'Confirmation de Suppression',
                         confirmButtonText: 'Confirmez',
-                        text: 'Êtes-vous sûre de vouloir supprimer la Zone de Pointage suivante :\r\n ' + $(this).data("name") + ' ?',
+                        text: 'Êtes-vous sûre de vouloir supprimer le Poste suivante :\r\n ' + $(this).data("name") + ' ?',
                         showCancelButton: true,
                         showLoaderOnConfirm: true,
                         //confirmButtonClass: 'btn btn-primary',
