@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Création d'une Zone de Pointage {% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="fas fa-map-marker-alt mr-2"></i>Zone de Pointage</h4>  
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Création</a></li>
+<li class="active"><a href="#">Zone de Pointage</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fas fa-map-marker-alt"></i>Création d'une nouvelle Zone de Pointage
+        
+    </h1>
+    {# <a href="#" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a> #}
+</div>
+
+<div class="row ">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2 class="mt-2 mb-4 header-title">Créer Zone de Pointage</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {{ form_start(form) }}
+                    {#{{ form_widget(form) }}#}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.name, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.name, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.latitude, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.latitude, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.longitude, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.longitude, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.ray, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.ray, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+                                        
+                    <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                        Save
+                    </button>
+
+                    {{ form_end(form) }}
+            
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+    $(document).ready(function()
+    {
+        $('#pointing_location_latitude').attr('type','number').attr("step", "any");
+        $('#pointing_location_longitude').attr('type','number').attr("step", "any");
+        $('#pointing_location_ray').attr('type','number').attr("step", "any");
+
+    });
+</script>
+
+{% endblock %}
