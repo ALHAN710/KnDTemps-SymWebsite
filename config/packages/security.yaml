@@ -52,8 +52,8 @@ security:
     # Un administrateur sera également éditeur et donc utilisateur
     role_hierarchy:
         ROLE_SELLER: ROLE_USER
-        ROLE_RH_ASSISTANT: ROLE_USER
-        ROLE_RH_MANAGER: ROLE_RH_ASSISTANT
+        ROLE_LEADER: ROLE_USER
+        ROLE_RH_MANAGER: ROLE_LEADER
         ROLE_ADMIN: ROLE_RH_MANAGER
         ROLE_HIDE_ADMIN: ROLE_ADMIN
         ROLE_SUPER_ADMIN: ROLE_HIDE_ADMIN

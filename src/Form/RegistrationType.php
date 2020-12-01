@@ -90,7 +90,7 @@ class RegistrationType extends ApplicationType
                     'label'    => 'Titre'
                 ]
             )
-            ->add(
+            /*->add(
                 'attribut',
                 ChoiceType::class,
                 [
@@ -101,7 +101,7 @@ class RegistrationType extends ApplicationType
                     ],
                     'label'    => 'Rôle'
                 ]
-            )
+            )*/
             ->add(
                 'registrationNumber',
                 TextType::class,
@@ -255,12 +255,13 @@ class RegistrationType extends ApplicationType
                     ChoiceType::class,
                     [
                         'choices' => [
-                            'EMPLOYE'    => 'ROLE_USER',
-                            'RH MANAGER' => 'ROLE_RH_MANAGER',
+                            'SUBORDONNÉ'    => 'ROLE_USER',
+                            "CHEF D'ÉQUIPE" => 'ROLE_LEADER',
+                            "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
                             'ADMIN'      => 'ROLE_ADMIN',
 
                         ],
-                        'label'    => 'Rôle'
+                        'label'    => 'Attribut'
                     ]
                 );
         }

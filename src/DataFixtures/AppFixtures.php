@@ -63,9 +63,9 @@ class AppFixtures extends Fixture
         $timeOut = ['16:00:00', '16:15:00', '16:30:00', '17:00:00', '17:15:00', '17:30:00', '18:00:00', '18:30:00'];
 
         //Création des rôles
-        $userRole = new Role();
-        $userRole->setTitle('ROLE_USER');
-        $manager->persist($userRole);
+        $leaderRole = new Role();
+        $leaderRole->setTitle('ROLE_LEADER');
+        $manager->persist($leaderRole);
         $adminRole = new Role();
         $adminRole->setTitle('ROLE_ADMIN');
         $manager->persist($adminRole);
@@ -223,8 +223,7 @@ class AppFixtures extends Fixture
                     ->setGrade($value === 'Livreur' ? 'M.' : 'Mme')
                     ->setSex($value === 'Livreur' ? $genders[0] : $genders[1])
                     ->setAttribut($attribut[$isLeader])
-                    ->setPointingLocation($pointingLocation)
-                    ->addUserRole($userRole);
+                    ->setPointingLocation($pointingLocation);
 
                 $employees[] = $employee;
 
@@ -238,7 +237,8 @@ class AppFixtures extends Fixture
                     $teams[] = $team;
                     $manager->persist($team);
 
-                    $employee->setTeam($team);
+                    $employee->setTeam($team)
+                        ->addUserRole($leaderRole);
                     if ($value !== 'QHSE') $team_ = $team;
                     //$leaders[] = $employee;
                 }

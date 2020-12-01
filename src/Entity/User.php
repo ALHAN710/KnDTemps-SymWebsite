@@ -127,9 +127,9 @@ class User implements UserInterface
 
     /**
      * Attribut de l'employé (Leader <=> chef d'équipe ou Subordinate <=> subordonné)
-     * @ORM\Column(type="string", length=20, nullable=true)
+     * 
      */
-    private $attribut;
+    private $attribut; //@ORM\Column(type="string", length=20, nullable=true)
 
     /**
      * Temps de travail par jour
