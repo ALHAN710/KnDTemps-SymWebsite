@@ -1,0 +1,51 @@
+
+{% block _team_users_widget %}
+
+<div class="card">
+    <div class="card-body mx-5">        
+        <h4 class="mt-2 mb-4 header-title">Spécifiez les Membres de l'équipe</h4>
+    
+        {{form_widget(form)}}
+
+        <input type="hidden" id="users-widgets-count">
+        
+        <div class="form-group mt-4 text-right">
+            <button type="button" id="add-users" class="btn btn-primary mr-2 waves-effect" data-toggle="tooltip" data-placement="top" title="Ajouter un nouvel employé à l'équipe">
+                <i class="fa fa-plus-circle mr-2"></i><i class="fa fa-user"></i>
+            </button>
+            
+        </div>
+    </div>
+</div>
+                        
+{% endblock %}
+
+{% block _team_users_entry_row %}
+    {{form_widget(form)}}
+{% endblock %} 
+
+{% block _team_users_entry_widget %}
+    
+    <div class="row form-group mb-0 align-items-center nbItems" id = "block_{{id}}">
+        <div class="col-10 mt-2">
+            <div class="form-group">
+                <div class="input-group">
+                    {# <div class="input-group-prepend">
+                        {{ form_label(form.user_, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                    </div> #}
+                    {{ form_widget(form.user_, {'attr': {'class': "form-control select2"}}) }}
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <button type="button" data-action="delete" data-target="#block_{{id}}" class="mt-1 btn btn-danger">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+
+    </div>
+
+
+{% endblock %}

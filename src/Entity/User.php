@@ -209,6 +209,8 @@ class User implements UserInterface
      */
     private $pointingLocation;
 
+    private $user_;
+
     /**
      * Permet d'initialiser la date de création de l'utilisateur
      *
@@ -795,6 +797,26 @@ class User implements UserInterface
     public function setPointingLocation(?PointingLocation $pointingLocation): self
     {
         $this->pointingLocation = $pointingLocation;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of user_
+     */
+    public function getUser_()
+    {
+        return $this->user_;
+    }
+
+    /**
+     * Set the value of user_
+     *
+     * @return  self
+     */
+    public function setUser_($user_)
+    {
+        $this->user_ = $user_;
 
         return $this;
     }

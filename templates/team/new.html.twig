@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Création d'une Équipe {% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="fal fa-users mr-2"></i>Équipe</h4>  
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Création</a></li>
+<li class="active"><a href="#">Équipe</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fal fa-users"></i>Création d'une nouvelle Équipe
+        
+    </h1>
+    {# <a href="#" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a> #}
+</div>
+
+<div class="row ">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2 class="mt-2 mb-4 header-title">Créer Équipe</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {{ form_start(form) }}
+                    {#{{ form_widget(form) }}#}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.name, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.name, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.responsible, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.responsible, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+                          
+                    <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                        Save
+                    </button>
+
+                    {{ form_end(form) }}
+            
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+    
+</script>
+
+{% endblock %}

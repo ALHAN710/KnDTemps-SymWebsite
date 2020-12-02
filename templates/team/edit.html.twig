@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Modification d'une Équipe {% endblock %}
+
+{% block stylesheets %}
+<!-- page related CSS below -->
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/select2/select2.bundle.css">
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="fal fa-users mr-2"></i>Équipe</h4>  
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Modification</a></li>
+<li class="active"><a href="#">Équipe</a></li>
+{% endblock %}
+
+{# {% form_theme form 'team/_collection.html.twig' %} #}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fal fa-users"></i>Modification d'une Équipe
+        
+    </h1>
+    {# <a href="#" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a> #}
+</div>
+
+<div class="row ">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2 class="mt-2 mb-4 header-title">Modifier Équipe</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {{ form_start(form) }}
+                    {#{{ form_widget(form) }}#}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.name, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.name, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            {# <div class="input-group-prepend">
+                                {{ form_label(form.responsible, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div> #}
+                            {{ form_widget(form.responsible, {'attr': {'class': "form-control select2"}}) }}
+                            
+                        </div>
+                        <span class="help-block">Responsable de l'équipe</span>
+                    </div>
+
+                    {# {{form_widget(form.users)}}       #}
+
+                    <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                        Save
+                    </button>
+
+                    {{ form_end(form) }}
+            
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="/js/formplugins/select2/select2.bundle.js"></script>
+{# <script src="/js/team.js"></script> #}
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+    $(document).ready(function(){
+        $(".select2").select2({
+            placeholder: "Choisir un employé",
+            //width: '50%'
+        });
+    })
+    
+</script>
+
+{% endblock %}

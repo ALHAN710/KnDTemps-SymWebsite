@@ -42,8 +42,15 @@
                     <span class="nav-link-text">Dashboard</span>
                 </a>
             </li>
-            {% if app.user.enterprise.offices|length > 0 %}
-            <li class="nav-title">Catégories</li>
+            <li class="nav-title">Work Time</li>
+            <li>
+                <a href="{{ path('employees_home') }}" title="Fiche Temps" data-filter-tags="Fiche Temps">
+                    <i class="fal fa-clock"></i>
+                    <span class="nav-link-text">Fiche des Temps</span>
+                </a>
+            </li>
+            {# {% if app.user.enterprise.offices|length > 0 %} #}
+            <li class="nav-title">Rubrique des Fonctions</li>
             <li>
                 <a href="#" title="Postes" data-filter-tags="Postes">
                     <i class="fas fa-graduation-cap"></i>
@@ -51,7 +58,7 @@
                 </a>
                 <ul>
                     <li class="">
-                        <a href="#" title="Accueil" data-filter-tags="Accueil">
+                        <a href="{{path('offices_index')}}" title="Accueil" data-filter-tags="Accueil">
                             <span class="nav-link-text">Accueil</span>
                         </a>
                     </li>
@@ -64,17 +71,17 @@
                 {% endfor %}
                 </ul>
             </li>
-            {% endif %}
-            {% if app.user.enterprise.teams|length > 0 %}
+            {# {% endif %} #}
+            {# {% if app.user.enterprise.teams|length > 0 %} #}
             <li class="nav-title">Ressources Humaines</li>
             <li>
-                <a href="#" title="Equipes" data-filter-tags="Equipes">
+                <a href="#" title="Équipes" data-filter-tags="Équipes">
                     <i class="fal fa-users"></i>
-                    <span class="nav-link-text">Equipes</span>
+                    <span class="nav-link-text">Équipes</span>
                 </a>
                 <ul>
                     <li class="">
-                        <a href="#" title="Accueil" data-filter-tags="Accueil">
+                        <a href="{{path('teams_index')}}" title="Accueil" data-filter-tags="Accueil">
                             <span class="nav-link-text" >Accueil</span>
                         </a>
                     </li>
@@ -88,12 +95,19 @@
                 </ul>
                 
             </li>
-            {% endif %}
+            {# {% endif %} #}
             <li class="nav-title"><i class="mdi mdi-settings mr-1"></i>Paramètres</li>
             <li>
                 <a href="#" title="Mon Compte" data-filter-tags="Mon Compte">
                     <i class="fas fa-user-cog"></i>
                     <span class="nav-link-text">Mon Compte</span>
+                </a>
+                                
+            </li>
+            <li>
+                <a href="{{ path('pointing_locations_index') }}" title="Zones de Pointage" data-filter-tags="Zones de Pointage">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="nav-link-text">Zones de Pointage</span>
                 </a>
                                 
             </li>

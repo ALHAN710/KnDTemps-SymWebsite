@@ -1,0 +1,260 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil Équipes{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
+<link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
+        
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Accueil</a></li>
+<li class="active"><a href="#">Équipes</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fal fa-users"></i>Liste des Équipes de {{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{teams|length}}</sup>
+        
+    </h1>
+    <a href="{{ path('team_create')}} " data-toggle="tooltip" data-placement="top" title="Ajouter une nouvelle Équipe" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i><i class="fal fa-users"></i></a>
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Tableau des <span class="fw-300 mr-1"><i>Équipes</i></span>
+                </h2>
+                
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {# <div class="panel-tag">
+                        <p>Exporting data from a table can often be a key part of a complex application. The Buttons extension for DataTables provides three plug-ins that provide overlapping functionality for data export:</p>
+                        <ul>
+                            <li>
+                                HTML5 export buttons - makes use of HTML5 APIs to create files client-side
+                            </li>
+                            <li class="font-italic">
+                                <del>Flash export buttons - uses Adobe Flash for legacy browsers</del>
+                            </li>
+                            <li>
+                                Print button
+                            </li>
+                        </ul>
+                        <p>
+                            Since SmartAdmin WebApp is built for the "next generation" browsers, we removed the flash (.swf) alternative plugin due to security reasons and ActionScript's memory leakage
+                        </p>
+                    </div> #}
+                    <!-- datatable start -->
+                    <table id="dt-teams" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-600">
+                            <tr class="text-center">
+                                <th>Équipe</th>
+                                <th>Responsable</th>
+                                <th>Total Effectif</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            {% for team in teams %}
+                            <tr id="{{team.id}}" data-row="{{loop.index0}}">
+                                <td>{{team.name}}</td>
+                                <td>{{team.responsible.fullName}}</td>
+                                <td>{{team.users|length}}</td>
+                                <td>
+                                    <a href="{{path('team_edit', {'id':team.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier l'Équipe ?"><i class="far fa-edit"></i> </a>
+                                    <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('team_delete', {'id':team.id})}}" data-name="{{team.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer l'Équipe"><i class="fas fa-trash"></i> </a>
+                                                
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {# <tfoot>
+                            <th>Équipe</th>
+                            <th>Responsable</th>
+                            <th>Total Effectif</th>
+                            <th>Actions</th>
+                        </tfoot> #}
+                    </table>
+                    <!-- datatable end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<!-- datatble responsive bundle contains: 
+    + jquery.dataTables.js
+    + dataTables.bootstrap4.js
+    + dataTables.autofill.js							
+    + dataTables.buttons.js
+    + buttons.bootstrap4.js
+    + buttons.html5.js
+    + buttons.print.js
+    + buttons.colVis.js
+    + dataTables.colreorder.js							
+    + dataTables.fixedcolumns.js							
+    + dataTables.fixedheader.js						
+    + dataTables.keytable.js						
+    + dataTables.responsive.js							
+    + dataTables.rowgroup.js							
+    + dataTables.rowreorder.js							
+    + dataTables.scroller.js							
+    + dataTables.select.js							
+    + datatables.styles.app.js
+    + datatables.styles.buttons.app.js -->
+<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+<!-- datatbles buttons bundle contains: 
+    + "jszip.js",
+    + "pdfmake.js",
+    + "vfs_fonts.js"	
+    NOTE: 	The file size is pretty big, but you can always use the
+            build.json file to deselect any components you do not need under "export" -->
+<script src="/js/datagrid/datatables/datatables.export.js"></script>
+
+<!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
+<script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+    $(document).ready(function()
+    {
+        // initialize datatable
+        var teamsTable = $('#dt-teams').dataTable(
+        {
+            responsive: true,
+            lengthChange: true,
+            pageLength: 100,
+            dom:
+                /*	--- Layout Structure 
+                    --- Options
+                    l	-	length changing input control
+                    f	-	filtering input
+                    t	-	The table!
+                    i	-	Table information summary
+                    p	-	pagination control
+                    r	-	processing display element
+                    B	-	buttons
+                    R	-	ColReorder
+                    S	-	Select
+
+                    --- Markup
+                    < and >				- div element
+                    <"class" and >		- div with a class
+                    <"#id" and >		- div with an ID
+                    <"#id.class" and >	- div with an ID and a class
+
+                    --- Further reading
+                    https://datatables.net/reference/option/dom
+                    --------------------------------------
+                    */
+                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                
+            ] 
+        });
+
+        {# teamsTable.buttons().container()
+        .appendTo('#statistics_wrapper .col-md-6:eq(0)'); #}
+
+        {# $('.buttons-html5').children('span').prepend('<i class="mdi mdi-download mr-2"></i>');
+        $('.dataTables_length').addClass('mr-2'); #}
+        
+        
+        $('.deleteBtn').click(function(){
+            console.log('url = ' + $(this).data("url"));
+            //var newURL = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname + window.location.search;
+            var url = window.location.protocol + "//" + window.location.host + $(this).data("url");
+            console.log('new url = ' + url);
+            if($(this).data("url")){
+                var $data = JSON.stringify({
+                    "blabla": "",
+                });
+
+                Swal.mixin(
+                {
+                    customClass:
+                    {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-danger ml-2"
+                    },
+                    buttonsStyling: false
+                }).queue([{
+                        type: "warning",
+                        title: 'Confirmation de Suppression',
+                        confirmButtonText: 'Confirmez',
+                        text: "Êtes-vous sûre de vouloir supprimer l'Équipe suivante :\r\n " + $(this).data("name") + ' ?',
+                        showCancelButton: true,
+                        showLoaderOnConfirm: true,
+                        //confirmButtonClass: 'btn btn-primary',
+                        //cancelButtonClass: 'btn btn-danger ml-2',
+                        preConfirm: function () {
+                            return new Promise(function (resolve) { 
+                                //console.log(resolve);
+                                var settings = {
+                                    "url": url,
+                                    "method": "GET",
+                                    "timeout": 0,
+                                    /*"headers": {
+                                        "Cookie": "PHPSESSID=vhteuvl19r3f9gqpk79kuancha"
+                                    },*/
+                                };
+
+                                $.ajax(settings).done(function (response) {
+                                    console.log(response);
+                                                                 
+                                    Swal.fire("Succès !", "L'Équipe a été supprimé avec succès !", "success");
+                                    function reload_() {
+                                        //window.location.replace("https://waytolearnx.com");
+                                        location.reload(true);
+                                    }
+                                    setTimeout(function () {
+                                        resolve();
+                                        reload_();
+                                    }, 3000);
+                                });
+                                
+                        })  
+                    },
+                    //allowOutsideClick: false
+                    /*allowOutsideClick: function allowOutsideClick()
+                    {
+                        return !Swal.isLoading();
+                    }*/
+                }]).then((result) => {
+                    if (result.isConfirmed) {
+                        
+                    }else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        Swal.fire(
+                        'Annulation',
+                        'Choix Annulé',
+                        'error'
+                        )
+                    }
+                });
+            }
+            else{
+                Swal.fire({
+                    type: "error",
+                    title: "Oops...",
+                    text: "Impossible de suprrimer l'Équipe !",
+                    {# footer: "<a href>Why do I have this issue?</a>" #}
+                });
+            }
+        })
+
+    });
+
+</script>
+{% endblock %}
