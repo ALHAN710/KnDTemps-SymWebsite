@@ -167,7 +167,7 @@ class EmployeeController extends ApplicationController
                         'dat'   => $paramJSON['date'] . '%'
                     ])
                     ->getResult();
-                dump($employeePointings);
+                //dump($employeePointings);
                 $date = new DateTime($paramJSON['date'] . '-01');
                 return $this->render('employee/workTimeSheet.html.twig', [
                     'emp'               => $emp,

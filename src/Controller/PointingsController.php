@@ -76,7 +76,7 @@ class PointingsController extends ApplicationController
             $wtperday[] = $this->timeToDecimal($value['DailyWorkTime']);
         }
 
-        $point = $manager->createQuery("SELECT p
+        /*$point = $manager->createQuery("SELECT p
                                         FROM App\Entity\Pointing p
                                         WHERE p.employee = :empId
                                         AND p.timeIn LIKE :dat 
@@ -86,7 +86,7 @@ class PointingsController extends ApplicationController
                 'empId' => $this->getUser()->getId(),
                 'dat'   => $date->format('Y-m-d') . '%'
             ])
-            ->getResult();
+            ->getResult();*/
         //if (!empty($point))  dump($point[0]);
         //dump($currentMonthTotalTime);
         //dump($totalTimePerDay);
@@ -128,7 +128,8 @@ class PointingsController extends ApplicationController
                 $date = new DateTime(date('Y-m-d H:i:s'));
                 if ($paramJSON['type'] === 'In') {
                     $pointing = new Pointing();
-                    $status = $this->getUser()->getRoles()[0] === 'ROLE_USER' ? 'on pending' : 'approved';
+                    //$status = $this->getUser()->getRoles()[0] === 'ROLE_USER' ? 'on pending' : 'approved';
+                    $status = 'on pending';
                     $pointing->setEmployee($this->getUser())
                         ->setStatut($status)
                         ->setTimeIn($date);
@@ -195,7 +196,7 @@ class PointingsController extends ApplicationController
     { //@Security( "is_granted('ROLE_USER')" )
         $paramJSON = $this->getJSONRequest($request->getContent());
         //$paramJSON = $request->request->get("pointingsApprovedIds");
-        dump($request->request);
+        //dump($request->request);
 
         if (array_key_exists("pointingsApprovedIds", $paramJSON) && !empty($paramJSON['pointingsApprovedIds'])) {
             $flag = 0;

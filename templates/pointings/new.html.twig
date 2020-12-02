@@ -55,7 +55,7 @@
 
     <body class="account-body"{#class="mod-bg-1 "#}>
     {% set WtToDo = app.user.wtperday * WDNb %}
-        <div class="blankpage-form-field width-mobile-auto height-mobile-auto">{# expand-full-width-on-mobile expand-full-height-on-mobile #}
+        <div class="blankpage-form-field width-mobile-auto mt-4 ">{# expand-full-width-on-mobile height-mobile-auto expand-full-height-on-mobile #}
             <div class="page-logo m-0 w-100 align-items-center justify-content-center rounded border-bottom-left-radius-0 border-bottom-right-radius-0 px-4">
                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
                     <img src="/img/logo.png" alt="KnD Time WebApp" aria-roledescription="logo">
@@ -136,7 +136,7 @@
                                     </div>
                                     
                                 </div> #}
-                                {% if wtperday|length > 0 %}
+                                {# {% if wtperday|length > 0 %}
                                 {% set wtValues = "" %}
                                 {% for index,wt in wtperday %}
                                     {% if index == 0 %}
@@ -152,7 +152,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                {% endif %}
+                                {% endif %} #}
                             </div>
                         </div>
                     </div>
@@ -206,11 +206,16 @@
                     </div>  
                 </form> #}
             </div>
-            {% if app.user.roles[0] is not same as('ROLE_USER') %}
-            <div class="blankpage-footer text-right">
-                <a href="{{path('employees_home')}}"><strong>Continuez<i class="mdi mdi-arrow-right ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+            <div class="blankpage-footer">
+                {% if app.user.roles[0] is not same as('ROLE_USER') %}
+                <span class="h4 float-right">
+                    <a href="{{path('employees_home')}}"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                </span>
+                {% endif %}
+                <span class="h4 float-left">
+                    <a href="{{path('account_logout')}}"><strong>Deconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                </span>
             </div>
-            {% endif %}
         </div>
         {# <div class="login-footer p-2">
             <div class="row">
@@ -378,14 +383,14 @@
                         type: "warning",
                         title: 'Confirmation de Pointage',
                         confirmButtonText: 'Confirmez',
-                        text: 'Etes-vous sûre de vouloir pointer en ' + pointingType_ + ' ?',
+                        text: 'Êtes-vous sûre de vouloir pointer en ' + pointingType_ + ' ?',
                         showCancelButton: true,
                         showLoaderOnConfirm: true,
                         //confirmButtonClass: 'btn btn-primary',
                         //cancelButtonClass: 'btn btn-danger ml-2',
                         preConfirm: function () {
                             return new Promise(function (resolve) { 
-                                console.log(resolve);
+                                {# console.log(resolve); #}
                                 $.ajax({
                                     type: "POST", // method type
                                     contentType: "application/json; charset=utf-8",
@@ -439,7 +444,7 @@
                                         );*/
                                         Swal.fire({
                                             type: "error",
-                                            title: "Oops...",
+                                            title: "Oops...500",
                                             text: "Désolé votre Pointage " + pointingType + "  n'a pas été pris en compte !",
                                             footer: "<a href>Why do I have this issue?</a>"
                                         });
