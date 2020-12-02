@@ -206,7 +206,11 @@
                     </div>  
                 </form> #}
             </div>
-            
+            {% if app.user.roles[0] is not same as('ROLE_USER') %}
+            <div class="blankpage-footer text-right">
+                <a href="{{path('employees_home')}}"><strong>Continuez<i class="mdi mdi-arrow-right ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+            </div>
+            {% endif %}
         </div>
         {# <div class="login-footer p-2">
             <div class="row">
