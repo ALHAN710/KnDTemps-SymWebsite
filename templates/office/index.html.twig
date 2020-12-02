@@ -69,8 +69,8 @@
                                 <td>{{office.monthlySalary}}</td>
                                 <td>{{office.employees|length}}</td>
                                 <td>
-                                    <a href="{{path('office_edit', {'id':office.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
-                                    <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('office_delete', {'id':office.id})}}" data-name="{{office.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer la Zone de Pointage"><i class="fas fa-trash"></i> </a>
+                                    <a href="{{path('office_edit', {'id':office.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier le Poste ?"><i class="far fa-edit"></i> </a>
+                                    <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('office_delete', {'id':office.id})}}" data-name="{{office.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer le Poste"><i class="fas fa-trash"></i> </a>
                                                 
                                 </td>
                             </tr>
@@ -216,7 +216,7 @@
                                 $.ajax(settings).done(function (response) {
                                     console.log(response);
                                                                  
-                                    Swal.fire("Succès !", "La Zone de Pointage a été supprimé avec succès !", "success");
+                                    Swal.fire("Succès !", "Le Poste a été supprimé avec succès !", "success");
                                     function reload_() {
                                         //window.location.replace("https://waytolearnx.com");
                                         location.reload(true);
@@ -253,7 +253,7 @@
                 Swal.fire({
                     type: "error",
                     title: "Oops...",
-                    text: "Impossible de suprrimer la Zone de Pointage !",
+                    text: "Impossible de suprrimer le Poste !",
                     {# footer: "<a href>Why do I have this issue?</a>" #}
                 });
             }
