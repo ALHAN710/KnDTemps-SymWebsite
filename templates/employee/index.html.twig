@@ -55,6 +55,7 @@
                             Since SmartAdmin WebApp is built for the "next generation" browsers, we removed the flash (.swf) alternative plugin due to security reasons and ActionScript's memory leakage
                         </p>
                     </div> #}
+                    <div class="datepickerClass"></div>
                     <div class="input-group mb-2 d-flex align-content-center">
                         <input type="text" class="form-control " placeholder="Choisir un mois" id="datepicker">
                         <div class="input-group-append">
@@ -506,6 +507,11 @@
                     },
                 "POST", "_blank");
 
+            }
+            else{
+                $('.datepickerClass').
+                prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><div class="alert-text"><strong>Veuillez selectionner une date s\'il vous plait !</strong></div><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="mdi mdi-close"></i></span></button></div>');
+                
             }
         })
 
