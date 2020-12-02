@@ -14,22 +14,41 @@ use Symfony\Component\Routing\Annotation\Route;
 class EmployeeController extends ApplicationController
 {
     /**
-     * @Route("/employee/home", name="employees_home")
+     * @Route("/employees/home", name="employees_home")
      */
     public function index(EntityManagerInterface $manager): Response
     {
         $date = new DateTime('2020-10-07');
-        $employees = $manager->createQuery("SELECT emp
-                                           FROM App\Entity\User emp
-                                           WHERE emp.enterprise = :entId
-                                           AND emp.statut = 'In Function'
-                                           AND emp.attribut IN ('Leader','Subordinate')
-                                           
-        ")
-            ->setParameters(array(
-                'entId' => $this->getUser()->getEnterprise(),
-            ))
-            ->getResult();
+        $team = null;
+        if ($this->getUser()->getRoles()[0] !== 'ROLE_LEADER') {
+            //AND emp.attribut IN ('Leader','Subordinate')
+            //AND emp.team IS NOT NULL
+            $employees = $manager->createQuery("SELECT emp
+                                               FROM App\Entity\User emp
+                                               WHERE emp.enterprise = :entId
+                                               AND emp.statut = 'In Function'
+                                               
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                ))
+                ->getResult();
+        } else {
+            $employees = $manager->createQuery("SELECT emp
+                                               FROM App\Entity\User emp
+                                               WHERE emp.enterprise = :entId
+                                               AND emp.statut = 'In Function'
+                                               AND emp.team = :teamId
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                    'teamId' => $this->getUser()->getTeam()->getId(),
+                ))
+                ->getResult();
+            $team = $this->getUser()->getTeam();
+        }
         //dump($employees);
         //Récupération du temps de travail déjà réalisé pour le mois en cours
         /*$currentMonthTotalTime = $manager->createQuery("SELECT p.employee, SecToTime(SUM(TimeToSec(TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn)))) AS TotalWorkTime,
@@ -50,7 +69,8 @@ class EmployeeController extends ApplicationController
 
         return $this->render('employee/index.html.twig', [
             'controller_name' => 'EmployeeController',
-            'employees' => $employees,
+            'employees'       => $employees,
+            'team'            => $team,
         ]);
     }
 
@@ -68,13 +88,14 @@ class EmployeeController extends ApplicationController
         $employeesWorkTime  = [];
 
         $paramJSON = $this->getJSONRequest($request->getContent());
-
+        //AND emp.attribut IN ('Leader','Subordinate')
+        //AND emp.team IS NOT NULL
         if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date']))) {
             $employees = $manager->createQuery("SELECT emp
                                            FROM App\Entity\User emp
                                            WHERE emp.enterprise = :entId
                                            AND emp.statut = 'In Function'
-                                           AND emp.attribut IN ('Leader','Subordinate')
+                                           
                                            
             ")
                 ->setParameters(array(
