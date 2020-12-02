@@ -117,6 +117,44 @@
                             {% endblock %}
                             <li class="position-absolute pos-top pos-right d-none d-sm-block"><span class="js-get-date"></span></li>
                         </ol>
+                        {% for label, messages in app.flashes %}
+                        {# <div class="alert alert-{{label}} border-{{label}} bg-transparent text-{{label}} alert-dismissible fade show" role="alert">
+                            
+                            <div class="alert-text">
+                                {% for message in messages %}
+                                {% if label == 'success' %}<i class="mdi mdi-check-all alert-icon mr-2"></i>{% endif %}<strong>{{ message | raw }}</strong>.
+                                {% endfor %}
+                            </div>    
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                            </button>    
+
+
+                        </div> #}
+                        <div class="alert alert-{{label}} alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                            </button>
+                            <div class="d-flex align-items-center">
+                                <div class="alert-icon width-3">
+                                    <span class="icon-stack icon-stack-sm">
+                                        {% if label == 'success' %}
+                                        <i class="base-7 icon-stack-3x color-success-600"></i>
+                                        <i class="fal fa-check icon-stack-1x text-white"></i>
+                                        {% elseif label == 'danger' %}
+                                        <i class="fal fa-exclamation-triangle"></i>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="flex-1">
+                                    {% for message in messages %}
+                                    <strong>{{ message|raw }}</strong>.
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}           
+                        
                         {% block body %}
                         <div class="subheader">
                             <h1 class="subheader-title">

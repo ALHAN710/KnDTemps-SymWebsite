@@ -143,7 +143,7 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
                     </button>
-                    <strong>An error has occurred, the username or password is invalid</strong> Change a few things up and try submitting again.
+                    <strong>Une erreur s'est produite, l'email ou le mot de passe est invalide</strong> Effectuer quelques modifications et soumettez à nouveau.
                 </div>
                 {% endif %}  
                 {# {% if error %}
@@ -151,7 +151,7 @@
                 {% endif %}    #}
 
                 {% for label, messages in app.flashes %}
-                <div class="alert icon-custom-alert alert-outline-{{label}} alert-{{label}}-shadow alert-dismissible fade show" role="alert">
+                {# <div class="alert alert-{{label}} border-{{label}} bg-transparent text-{{label}} alert-dismissible fade show" role="alert">
                     {% if label == 'success' %}<i class="mdi mdi-check-all alert-icon"></i>{% endif %}
                     <div class="alert-text">
                         {% for message in messages %}
@@ -161,6 +161,28 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
                     </button>                                        
+                </div> #}
+                <div class="alert alert-{{label}} alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                    </button>
+                    <div class="d-flex align-items-center">
+                        <div class="alert-icon width-3">
+                            <span class="icon-stack icon-stack-sm">
+                                {% if label == 'success' %}
+                                <i class="base-7 icon-stack-3x color-success-600"></i>
+                                <i class="fal fa-check icon-stack-1x text-white"></i>
+                                {% elseif label == 'danger' %}
+                                <i class="fal fa-exclamation-triangle"></i>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="flex-1">
+                            {% for message in messages %}
+                            <strong>{{ message|raw }}</strong>.
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}           
                 <form action="{{ path("account_login") }}" method="POST" id="js-login">
