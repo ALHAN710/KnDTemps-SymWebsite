@@ -16,12 +16,14 @@
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="subheader-icon fas fa-map-marker-alt"></i>Liste des Zones de Pointage de {{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{pointingLocations|length}}</sup>
+        <i class="subheader-icon fas fa-map-marker-alt"></i>Liste des Zones de Pointage de {{app.user.enterprise.socialReason}}{#<sup class="badge badge-info fw-500">{{pointingLocations|length}}</sup>#}
         
     </h1>
+    {# {{dump(app.user.enterprise.pointingLocations|length)}} #}
+    {% if app.user.enterprise.pointingLocations|length == 0 %}
     <a href="{{ path('pointing_location_create')}} " data-toggle="tooltip" data-placement="top" title="Ajouter une nouvelle Zone de Pointage" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i><i class="fas fa-map-marker-alt"></i></a>
+    {% endif %}
 </div>
-
 <div class="row">
     <div class="col-xl-12">
         <div id="panel-1" class="panel">
@@ -58,7 +60,7 @@
                                 <th>Latitude</th>
                                 <th>Longitude</th>
                                 <th>Rayon (km)</th>
-                                <th>Nbre d'employés</th>
+                                {# <th>Nbre d'employés</th> #}
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -69,7 +71,7 @@
                                 <td>{{pointingLocation.latitude}}</td>
                                 <td>{{pointingLocation.longitude}}</td>
                                 <td>{{ pointingLocation.ray }}</td>
-                                <td>{{pointingLocation.users|length}}</td>
+                                {# <td>{{pointingLocation.users|length}}</td> #}
                                 <td>
                                     <a href="{{path('pointing_location_edit', {'id':pointingLocation.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
                                     <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('pointing_location_delete', {'id':pointingLocation.id})}}" data-name="{{pointingLocation.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer la Zone de Pointage"><i class="fas fa-trash"></i> </a>

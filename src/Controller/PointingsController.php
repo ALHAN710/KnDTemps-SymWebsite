@@ -118,11 +118,21 @@ class PointingsController extends ApplicationController
     public function pointingAction(Request $request, EntityManagerInterface $manager)
     {
         $paramJSON = $this->getJSONRequest($request->getContent());
+        $ray  = 0;
+        $lat  = 0;
+        $long = 0;
 
         if ((array_key_exists("type", $paramJSON) && !empty($paramJSON['type'])) && (array_key_exists("lat", $paramJSON) && !empty($paramJSON['lat'])) && (array_key_exists("long", $paramJSON) && !empty($paramJSON['long']))) {
-            $ray  = $this->getUser()->getPointingLocation()->getRay();
-            $lat  = $this->getUser()->getPointingLocation()->getLatitude();
-            $long = $this->getUser()->getPointingLocation()->getLongitude();
+            if (count($this->getUser()->getEnterprise()->getPointingLocations()) > 0) {
+                $ray  = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getRay();
+                $lat  = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getLatitude();
+                $long = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getLongitude();
+            } else {
+                return $this->json([
+                    'code'    => 403,
+                    'message' => 'Zone de pointage non définie !',
+                ], 200);
+            }
             $distance = $this->calcCrow($lat, $long, $paramJSON['lat'], $paramJSON['long']);
             if ($distance <= $ray) {
                 $date = new DateTime(date('Y-m-d H:i:s'));
