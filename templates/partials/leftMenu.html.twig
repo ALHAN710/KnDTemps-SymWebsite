@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="info-card">
-            <img src="{{ app.user.enterprise.logo != null  ? '/img/uploads/logo/' ~ app.user.enterprise.logo : '/img/uploads/logo/logo.png' }}" class="profile-image rounded-circle" alt="{{app.user.enterprise.socialReason}} logo">
+            <img src="{{ app.user.enterprise.logo != null  ? '/images/uploads/logo/' ~ app.user.enterprise.logo : '/img/uploads/logo/logo.png' }}" class="profile-image rounded-circle" alt="{{app.user.enterprise.socialReason}} logo">
             <div class="info-card-text">
                 <a href="#" class="d-flex align-items-center text-white">
                     <span class="text-truncate text-truncate-sm d-inline-block">
@@ -52,11 +52,15 @@
             {# {% if app.user.enterprise.offices|length > 0 %} #}
             <li class="nav-title">Rubrique des Fonctions</li>
             <li>
-                <a href="#" title="Postes" data-filter-tags="Postes">
+                {# <a href="#" title="Postes" data-filter-tags="Postes">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="nav-link-text">Postes</span>
+                </a> #}
+                <a href="{{path('offices_index')}}" title="Accueil" data-filter-tags="Accueil">
                     <i class="fas fa-graduation-cap"></i>
                     <span class="nav-link-text">Postes</span>
                 </a>
-                <ul>
+                {# <ul>
                     <li class="">
                         <a href="{{path('offices_index')}}" title="Accueil" data-filter-tags="Accueil">
                             <span class="nav-link-text">Accueil</span>
@@ -69,17 +73,21 @@
                         </a>
                     </li>
                 {% endfor %}
-                </ul>
+                </ul> #}
             </li>
             {# {% endif %} #}
             {# {% if app.user.enterprise.teams|length > 0 %} #}
             <li class="nav-title">Ressources Humaines</li>
             <li>
-                <a href="#" title="Équipes" data-filter-tags="Équipes">
+                {# <a href="#" title="Équipes" data-filter-tags="Équipes">
+                    <i class="fal fa-users"></i>
+                    <span class="nav-link-text">Équipes</span>
+                </a> #}
+                <a href="{{path('teams_index')}}" title="Accueil" data-filter-tags="Accueil">
                     <i class="fal fa-users"></i>
                     <span class="nav-link-text">Équipes</span>
                 </a>
-                <ul>
+                {# <ul>
                     <li class="">
                         <a href="{{path('teams_index')}}" title="Accueil" data-filter-tags="Accueil">
                             <span class="nav-link-text" >Accueil</span>
@@ -92,13 +100,13 @@
                         </a>
                     </li>
                 {% endfor %}
-                </ul>
+                </ul> #}
                 
             </li>
             {# {% endif %} #}
             <li class="nav-title"><i class="mdi mdi-settings mr-1"></i>Paramètres</li>
             <li>
-                <a href="#" title="Mon Compte" data-filter-tags="Mon Compte">
+                <a href="{{ path('enterprise_account_profile',{'id':app.user.enterprise.id}) }}" title="Mon Compte" data-filter-tags="Mon Compte">
                     <i class="fas fa-user-cog"></i>
                     <span class="nav-link-text">Mon Compte</span>
                 </a>
