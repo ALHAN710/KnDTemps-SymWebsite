@@ -23,32 +23,32 @@ class EnterpriseType extends ApplicationType
             ->add(
                 'socialReason',
                 TextType::class,
-                $this->getConfiguration("(*)", "Entrer la raison sociale ou nom(Obligatoire)")
+                $this->getConfiguration("Raison Sociale ou Nom de l'entreprise*", "Entrer la raison sociale ou nom")
             )
             ->add(
                 'niu',
                 TextType::class,
-                $this->getConfiguration("", "Entrer le numéro d'idantification unique(NIU)...", ['required' => false])
+                $this->getConfiguration("Numéro d'Iddentification Unique de l'entreprise", "Entrer le numéro d'identification unique(NIU)...", ['required' => false])
             )
             ->add(
                 'rccm',
                 TextType::class,
-                $this->getConfiguration("", "Entrer le RCCM...", ['required' => false])
+                $this->getConfiguration("Registre du Commerce de l'entreprise", "Entrer le RCCM...", ['required' => false])
             )
             ->add(
                 'address',
                 TextType::class,
-                $this->getConfiguration("", "Adresse siège sociale...")
+                $this->getConfiguration("Adresse du Siège Sociale", "Adresse siège sociale...")
             )
             ->add(
                 'phoneNumber',
                 TextType::class,
-                $this->getConfiguration("(*)", "Numéro de téléphone(Obligatoire)...")
+                $this->getConfiguration("Numéro de téléphone de l'entreprise*", "Numéro de téléphone(Obligatoire)...")
             )
             ->add(
                 'email',
                 EmailType::class,
-                $this->getConfiguration("Email (*)", "Email...")
+                $this->getConfiguration("Email de l'entreprise*", "Email...")
             )
             ->add(
                 'logo',
@@ -78,15 +78,6 @@ class EnterpriseType extends ApplicationType
                         ],
                     ]
                 )
-            )
-            ->add(
-                'tva',
-                NumberType::class,
-                $this->getConfiguration("TVA", "TVA appliqué...", [
-                    'attr' => [
-                        'min'   => '0',
-                    ]
-                ])
             )
             ->add(
                 'country',

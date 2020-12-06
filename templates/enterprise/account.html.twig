@@ -1,0 +1,390 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil Employés{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
+        
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Compte</a></li>
+<li class="active"><a href="#">{{app.user.enterprise.socialReason}}</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class='subheader-icon fal fa-plus-circle'></i> Profil
+        <small>
+            Profil du compte
+        </small>
+    </h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 col-xl-3 order-lg-1 order-xl-1">
+        <!-- profile summary -->
+        <div class="card mb-g rounded-top">
+            <div class="row no-gutters row-grid">
+                <div class="col-12">
+                    <div class="d-flex flex-column align-items-center justify-content-center p-4">
+                        <img src="{{ app.user.enterprise.logo != null  ? '/images/uploads/logo/' ~ app.user.enterprise.logo : '/img/uploads/logo/logo.png' }}" class="rounded-circle shadow-2 img-thumbnail" alt="{{app.user.enterprise.socialReason}} logo">
+                        <h5 class="mb-0 fw-700 text-center mt-3">
+                            {{app.user.enterprise.socialReason}}
+                            <small class="text-muted mb-0">{{app.user.enterprise.town}}, {{app.user.enterprise.country}}</small>
+                        </h5>
+                        <div class="mt-4 text-center demo">
+                            <a href="javascript:void(0);" class="fs-xl" style="color:#3b5998">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="javascript:void(0);" class="fs-xl" style="color:#38A1F3">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            {# <a href="javascript:void(0);" class="fs-xl" style="color:#db3236">
+                                <i class="fab fa-google-plus"></i>
+                            </a> #}
+                            <a href="javascript:void(0);" class="fs-xl" style="color:#0077B5">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            {# <a href="javascript:void(0);" class="fs-xl" style="color:#000000">
+                                <i class="fab fa-reddit-alien"></i>
+                            </a> #}
+                            <a href="javascript:void(0);" class="fs-xl" style="color:#00AFF0">
+                                <i class="fab fa-skype"></i>
+                            </a>
+                            {# <a href="javascript:void(0);" class="fs-xl" style="color:#0063DC">
+                                <i class="fab fa-flickr"></i>
+                            </a> #}
+                        </div>
+                    </div>
+                </div>
+                {# <div class="col-6">
+                    <div class="text-center py-3">
+                        <h5 class="mb-0 fw-700">
+                            764
+                            <small class="text-muted mb-0">Connections</small>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="text-center py-3">
+                        <h5 class="mb-0 fw-700">
+                            1,673
+                            <small class="text-muted mb-0">Followers</small>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3 text-center">
+                        <a href="javascript:void(0);" class="btn-link font-weight-bold">Follow</a> <span class="text-primary d-inline-block mx-3">&#9679;</span>
+                        <a href="javascript:void(0);" class="btn-link font-weight-bold">Message</a> <span class="text-primary d-inline-block mx-3">&#9679;</span>
+                        <a href="javascript:void(0);" class="btn-link font-weight-bold">Connect</a>
+                    </div>
+                </div> #}
+            </div>
+        </div>
+        {# <!-- photos -->
+        <div class="card mb-g">
+            <div class="row row-grid no-gutters">
+                <div class="col-12">
+                    <div class="p-3">
+                        <h2 class="mb-0 fs-xl">
+                            Photos
+                        </h2>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/1.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/2.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/3.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/4.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/5.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/6.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/7.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/8.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="javascript:void(0);" class="text-center px-3 py-4 d-flex position-relative height-10 border">
+                        <span class="position-absolute pos-top pos-left pos-right pos-bottom" style="background-image: url('/img/demo/gallery/thumb/9.jpg');background-size: cover;"></span>
+                    </a>
+                </div>
+                <div class="col-12">
+                    <div class="p-3 text-center">
+                        <a href="javascript:void(0);" class="btn-link font-weight-bold">View all</a>
+                    </div>
+                </div>
+            </div>
+        </div> #}
+        {% set leaderNb = 0 %}
+        {% for leader in app.user.enterprise.users %}
+            {% if leader.roles[0] == 'ROLE_LEADER' %}
+                {% set leaderNb = leaderNb + 1 %}
+            {% endif %}
+        {% endfor %}   
+        {% if leaderNb > 0 %}     
+        <!-- leaders -->
+        <div class="card mb-g">
+            <div class="row row-grid no-gutters">
+                <div class="col-12">
+                    <div class="p-3">
+                        <h2 class="mb-0 fs-xl">
+                            Chef d'équipes
+                        </h2>
+                    </div>
+                </div>
+                {% for leader in app.user.enterprise.users %}
+                {% if leader.roles[0] == 'ROLE_LEADER' %}
+                <div class="col-4">
+                {% set imgPath = leader.avatar != null  ? '/images/uploads/avatar/' ~ leader.avatar : '/img/uploads/avatar/user.png' %}
+                    <a href="javascript:void(0);" class="text-center p-3 d-flex flex-column hover-highlight">
+                        <span class="profile-image rounded-circle d-block m-auto" style="background-image:url({{imgPath}}); background-size: cover;"></span>
+                        <span class="d-block text-truncate text-muted fs-xs mt-1">{{leader.fullName}}</span>
+                    </a>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-12 col-xl-6 order-lg-3 order-xl-2">
+        <div class="card border mb-g">
+            <div class="card-body pl-4 pt-4 pr-4 pb-0">
+                <div class="d-flex flex-column">
+                    {{ form_start(form, {'attr': {'class': "form-horizontal form-material mb-0"}}) }}
+                        <div class="form-group">
+                            {# <input type="text" placeholder="Full Name" class="form-control"> #}
+                            {{ form_widget(form.socialReason, {'attr': {'class': "form-control"}}) }}
+                            {{ form_label(form.socialReason, null, {'label_attr': {'class': 'help-block'}}) }}
+                        </div>
+                        
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                {# <input type="email" placeholder="Email" class="form-control" name="example-email" id="example-email"> #}
+                                {{ form_widget(form.niu, {'attr': {'class': "form-control"}}) }}
+                                {{ form_label(form.niu, null, {'label_attr': {'class': 'help-block'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {# <input type="password" placeholder="password" class="form-control"> #}
+                                {{ form_widget(form.rccm, {'attr': {'class': "form-control"}}) }}
+                                {{ form_label(form.rccm, null, {'label_attr': {'class': 'help-block'}}) }}
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                {# <input type="text" placeholder="Phone No" class="form-control"> #}
+                                {{ form_widget(form.phoneNumber, {'attr': {'class': "form-control"}}) }}
+                                {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'help-block'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_widget(form.email, {'attr': {'class': "form-control"}}) }}
+                                {{ form_label(form.email, null, {'label_attr': {'class': 'help-block'}}) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_widget(form.country, {'attr': {'class': "form-control"}}) }}
+                                {{ form_label(form.country, null, {'label_attr': {'class': 'help-block'}}) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {# <input type="text" placeholder="Full Name" class="form-control"> #}
+                            {{ form_widget(form.address, {'attr': {'class': "form-control"}}) }}
+                            {{ form_label(form.address, null, {'label_attr': {'class': 'help-block'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {# <input type="text" placeholder="Full Name" class="form-control"> #}
+                            {{ form_widget(form.logo, {'attr': {'class': "form-control"}}) }}
+                            {{ form_label(form.logo, null, {'label_attr': {'class': 'help-block'}}) }}
+                        </div>
+                        <div class="form-group">
+                            {# <textarea rows="5" placeholder="Message" class="form-control"></textarea> #}
+                            {{ form_widget(form.description, {'attr': {'class': "form-control"}}) }}
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'help-block'}}) }}
+                            <button type="submit" class="btn btn-primary btn-sm text-light px-4 my-3 float-right mb-0" id="updateBtn">Update Profile</button>
+                        </div>
+                    {# </form> #}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-lg-6 col-xl-3 order-lg-2 order-xl-3">
+        <!-- add : -->
+        <div class="card mb-2">
+            <div class="card-body">
+                <a href="javascript:void(0);" class="d-flex flex-row align-items-center">
+                    <div class='icon-stack display-3 flex-shrink-0'>
+                        <i class="fal fa-circle icon-stack-3x opacity-100 color-primary-400"></i>
+                        <i class="fas fa-graduation-cap icon-stack-1x opacity-100 color-primary-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <strong>
+                            POSTES
+                        </strong>
+                        <br>
+                        <span class="badge badge-primary fw-500">{{app.user.enterprise.offices|length}}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="card mb-g">
+            <div class="card-body">
+                <a href="javascript:void(0);" class="d-flex flex-row align-items-center">
+                    <div class='icon-stack display-3 flex-shrink-0'>
+                        <i class="fal fa-circle icon-stack-3x opacity-100 color-warning-400"></i>
+                        <i class="fas fa-handshake icon-stack-1x opacity-100 color-warning-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <strong>
+                            Équipes
+                        </strong>
+                        <br>
+                        <span class="badge badge-warning fw-500">{{app.user.enterprise.teams|length}}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- rating -->
+        <div class="card mb-g">
+            <div class="row row-grid no-gutters">
+                <div class="col-12">
+                    <div class="p-3">
+                        <h2 class="mb-0 fs-xl">
+                            Détails Abonnement
+                        </h2>
+                    </div>
+                </div>
+                {# <div class="col-12">
+                    <div class="p-3 d-flex text-primary align-items-center fs-xl">
+                        <i class="fas fa-star mr-1"></i>
+                        <i class="fas fa-star mr-1"></i>
+                        <i class="fas fa-star mr-1"></i>
+                        <i class="fas fa-star mr-1"></i>
+                        <i class="fal fa-star mr-1"></i>
+                        <span class="ml-auto">4/5 Stars</span>
+                    </div>
+                </div> #}
+                <div class="col-12">
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Ref Abonnement</div>
+                        <div class="text-info text-center mt-2">
+                            {{"RF1234"}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Durée de validité : {{app.user.enterprise.subscriptionDuration}} Mois</div>
+                        <div class="progress progress-xs mt-2">
+                            <div class="progress-bar bg-primary-300 bg-primary-gradient" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Date de souscription</div>
+                        <div class="text-info text-center mt-2">
+                            {{ app.user.enterprise.subscribeAt|date('d-m-Y') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Nombre d'employé max</div>
+                        <div class="text-info text-center mt-2">
+                            {% if employeeNumber == 7102020 %}Illimités{% else %}{{ employeeNumber }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                </h5>
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Fin d'abonnenemnt dans :</div>
+                        <div class="{% if app.user.enterprise.isActivated == true %}text-warning{% else %}text-danger{% endif %} text-center mt-2">
+                            {% if app.user.enterprise.isActivated == true %}{{app.user.enterprise.subscriptionDeadLine}}{% else %}Abonnement Expiré{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<!-- datatble responsive bundle contains: 
+    + jquery.dataTables.js
+    + dataTables.bootstrap4.js
+    + dataTables.autofill.js							
+    + dataTables.buttons.js
+    + buttons.bootstrap4.js
+    + buttons.html5.js
+    + buttons.print.js
+    + buttons.colVis.js
+    + dataTables.colreorder.js							
+    + dataTables.fixedcolumns.js							
+    + dataTables.fixedheader.js						
+    + dataTables.keytable.js						
+    + dataTables.responsive.js							
+    + dataTables.rowgroup.js							
+    + dataTables.rowreorder.js							
+    + dataTables.scroller.js							
+    + dataTables.select.js							
+    + datatables.styles.app.js
+    + datatables.styles.buttons.app.js -->
+<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+<!-- datatbles buttons bundle contains: 
+    + "jszip.js",
+    + "pdfmake.js",
+    + "vfs_fonts.js"	
+    NOTE: 	The file size is pretty big, but you can always use the
+            build.json file to deselect any components you do not need under "export" -->
+<script src="/js/datagrid/datatables/datatables.export.js"></script>
+<script src="/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+<!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
+<script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+    $(document).ready(function()
+    {
+        
+    });
+
+</script>
+{% endblock %}
