@@ -49,13 +49,15 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            {# <div class="input-group-prepend">
-                                {{ form_label(form.responsible, null, {'label_attr': {'class': 'input-group-text'}}) }}
-                            </div> #}
                             {{ form_widget(form.responsible, {'attr': {'class': "form-control select2"}}) }}
-                            
                         </div>
-                        <span class="help-block">Responsable de l'équipe</span>
+                        {{ form_label(form.responsible, null, {'label_attr': {'class': 'help-block'}}) }}
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            {{ form_widget(form.pointingLocation, {'attr': {'class': "form-control select2"}}) }}
+                        </div>
+                        {{ form_label(form.pointingLocation, null, {'label_attr': {'class': 'help-block'}}) }}
                     </div>
 
                     {# {{form_widget(form.users)}}       #}

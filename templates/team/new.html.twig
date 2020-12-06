@@ -3,7 +3,8 @@
 {% block title %} Création d'une Équipe {% endblock %}
 
 {% block stylesheets %}
-
+<!-- page related CSS below -->
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/select2/select2.bundle.css">
 {% endblock %}
 
 {% block pageTitle %}
@@ -46,12 +47,16 @@
 
                     <div class="form-group">
                         <div class="input-group">
-                            <div class="input-group-prepend">
-                                {{ form_label(form.responsible, null, {'label_attr': {'class': 'input-group-text'}}) }}
-                            </div>
-                            {{ form_widget(form.responsible, {'attr': {'class': "form-control"}}) }}
-                            
+                            {{ form_widget(form.responsible, {'attr': {'class': "form-control select2"}}) }}
                         </div>
+                        {{ form_label(form.responsible, null, {'label_attr': {'class': 'help-block'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            {{ form_widget(form.pointingLocation, {'attr': {'class': "form-control select2"}}) }}
+                        </div>
+                        {{ form_label(form.pointingLocation, null, {'label_attr': {'class': 'help-block'}}) }}
                     </div>
                           
                     <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
@@ -70,12 +75,20 @@
 {% endblock %}
 
 {% block javascripts %}
+<script src="/js/formplugins/select2/select2.bundle.js"></script>
 <script>
     $('#saveBtn').click(function(){
         //block of code that runs when the click event triggers
         $(this).children('i').addClass('d-none');
         $(this).children('span').removeClass('d-none');
         //$('#saveBtn').prop('disabled', true);
+    });
+
+    $(document).ready(function(){
+        $(".select2").select2({
+            placeholder: "Choisir un employé",
+            //width: '50%'
+        });
     });
     
 </script>

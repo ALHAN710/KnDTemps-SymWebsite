@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\PointingLocation;
 use App\Entity\Team;
 use App\Entity\User;
 //use Symfony\Component\Form\AbstractType;
@@ -51,6 +52,30 @@ class TeamType extends ApplicationType
                     // 'multiple' => true,
                     // 'expanded' => true,
                     'label'    => 'Responsable'
+                ]
+            )
+            ->add(
+                'pointingLocation',
+                EntityType::class,
+                [
+                    // looks for choices from this entity
+                    'class' => PointingLocation::class,
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('pl')
+                            ->where('pl.enterprise = :entId')
+                            ->setParameters(array(
+                                'entId'    => $this->entId,
+
+                            ));
+                        //->orderBy('u.username', 'ASC');
+                    },
+                    // uses the User.username property as the visible option string
+                    'choice_label' => 'name',
+
+                    // used to render a select box, check boxes or radios
+                    // 'multiple' => true,
+                    // 'expanded' => true,
+                    'label'    => 'Zone de Pointage'
                 ]
             )
             /*->add(

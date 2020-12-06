@@ -20,9 +20,8 @@
         
     </h1>
     {# {{dump(app.user.enterprise.pointingLocations|length)}} #}
-    {% if app.user.enterprise.pointingLocations|length == 0 %}
     <a href="{{ path('pointing_location_create')}} " data-toggle="tooltip" data-placement="top" title="Ajouter une nouvelle Zone de Pointage" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i><i class="fas fa-map-marker-alt"></i></a>
-    {% endif %}
+    
 </div>
 <div class="row">
     <div class="col-xl-12">

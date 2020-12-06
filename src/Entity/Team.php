@@ -44,6 +44,12 @@ class Team
      */
     private $enterprise;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=PointingLocation::class, inversedBy="teams")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $pointingLocation;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -116,6 +122,18 @@ class Team
     public function setEnterprise(?Enterprise $enterprise): self
     {
         $this->enterprise = $enterprise;
+
+        return $this;
+    }
+
+    public function getPointingLocation(): ?PointingLocation
+    {
+        return $this->pointingLocation;
+    }
+
+    public function setPointingLocation(?PointingLocation $pointingLocation): self
+    {
+        $this->pointingLocation = $pointingLocation;
 
         return $this;
     }

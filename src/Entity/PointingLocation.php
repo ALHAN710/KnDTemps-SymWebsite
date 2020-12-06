@@ -55,9 +55,15 @@ class PointingLocation
      */
     private $name;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Team::class, mappedBy="pointingLocation")
+     */
+    private $teams;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->teams = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,6 +157,36 @@ class PointingLocation
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): self
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams[] = $team;
+            $team->setPointingLocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): self
+    {
+        if ($this->teams->removeElement($team)) {
+            // set the owning side to null (unless already changed)
+            if ($team->getPointingLocation() === $this) {
+                $team->setPointingLocation(null);
+            }
+        }
 
         return $this;
     }
