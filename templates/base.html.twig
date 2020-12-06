@@ -36,6 +36,9 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body class="mod-bg-1 ">
+        {% set subIsActivated = app.user.enterprise.isActivated %}
+        {% set employeeNumber = app.user.enterprise.subscription.employeeNumber %}
+        
         <!-- DOC: script to save and load page settings -->
         <script>
             /**
