@@ -32,22 +32,22 @@ class RegistrationType extends ApplicationType
             ->add(
                 'firstName',
                 TextType::class,
-                $this->getConfiguration("Prénom (*)", "Veuillez Entrer le Prénom svp...")
+                $this->getConfiguration("Prénom (*)", "Veuillez Entrer le Prénom svp (Obligatoire)...")
             )
             ->add(
                 'lastName',
                 TextType::class,
-                $this->getConfiguration("Nom (*)", "Veuillez Entrer le Nom svp...")
+                $this->getConfiguration("Nom (*)", "Veuillez Entrer le Nom svp (Obligatoire)...")
             )
             ->add(
                 'email',
                 EmailType::class,
-                $this->getConfiguration("Email (*)", "Veuillez Entrer l'adresse Email...")
+                $this->getConfiguration("Email", "Veuillez Entrer l'adresse Email...", ['required' => false])
             )
             ->add(
                 'phoneNumber',
                 TextType::class,
-                $this->getConfiguration("N° Tel (*) :", "Numéro de téléphone svp...")
+                $this->getConfiguration("N° Tel (*) :", "Numéro de téléphone svp (Obligatoire)...")
             )
             ->add(
                 'avatar',
@@ -187,6 +187,20 @@ class RegistrationType extends ApplicationType
                 ]
             )
             ->add(
+                'role',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'SUBORDONNÉ'    => 'ROLE_USER',
+                        "CHEF D'ÉQUIPE" => 'ROLE_LEADER',
+                        "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
+                        'ADMIN'      => 'ROLE_ADMIN',
+
+                    ],
+                    'label'    => 'Attribut'
+                ]
+            )
+            /*->add(
                 'pointingLocation',
                 EntityType::class,
                 [
@@ -210,7 +224,7 @@ class RegistrationType extends ApplicationType
                     // 'expanded' => true,
                     'label'    => 'Zone de Pointage'
                 ]
-            );
+            )*/;
         if (!$options['isEdit']) {
             $builder
                 ->add(
@@ -249,21 +263,7 @@ class RegistrationType extends ApplicationType
                     // 'multiple' => true,
                     // 'expanded' => true,
                 ]
-            )
-                ->add(
-                    'role',
-                    ChoiceType::class,
-                    [
-                        'choices' => [
-                            'SUBORDONNÉ'    => 'ROLE_USER',
-                            "CHEF D'ÉQUIPE" => 'ROLE_LEADER',
-                            "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
-                            'ADMIN'      => 'ROLE_ADMIN',
-
-                        ],
-                        'label'    => 'Attribut'
-                    ]
-                );
+            );
         }
             /*
             ->add('wtperday')

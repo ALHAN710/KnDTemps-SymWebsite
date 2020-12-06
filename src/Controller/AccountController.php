@@ -237,6 +237,7 @@ class AccountController extends ApplicationController
         $form = $this->createForm(RegistrationType::class, $user_, [
             'isSupAdmin' => $isSupAdmin,
             'isEdit'     => true,
+            'entId' => $this->getUser()->getEnterprise()->getId(),
         ]);
 
         $form->handleRequest($request);
@@ -292,15 +293,15 @@ class AccountController extends ApplicationController
 
             $this->addFlash(
                 'success',
-                "La modification de l'utilisateur <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
+                "La modification de l'employé <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
             );
             if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->redirectToRoute('admin_users_index');
-            else return $this->redirectToRoute('users_entreprise_index');
+            else return $this->redirectToRoute('employees_home');
         }
         if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->render('admin/users/edit.html.twig', [
             'form' => $form->createView()
         ]);
-        else return $this->render('user_entreprise/edit.html.twig', [
+        else return $this->render('enterprise/user_edit.html.twig', [
             'form' => $form->createView()
         ]);
     }
