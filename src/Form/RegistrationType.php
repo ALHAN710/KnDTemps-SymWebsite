@@ -194,7 +194,7 @@ class RegistrationType extends ApplicationType
                         'SUBORDONNÉ'    => 'ROLE_USER',
                         "CHEF D'ÉQUIPE" => 'ROLE_LEADER',
                         "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
-                        'ADMIN'      => 'ROLE_ADMIN',
+                        'ADMINISTRATEUR'      => 'ROLE_ADMIN',
 
                     ],
                     'label'    => 'Attribut'

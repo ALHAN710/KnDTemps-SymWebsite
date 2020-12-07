@@ -164,6 +164,15 @@
                             
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.role, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.role, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
                     {# <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
@@ -189,15 +198,6 @@
                                 {{ form_label(form.enterprise, null, {'label_attr': {'class': 'input-group-text'}}) }}
                             </div>
                             {{ form_widget(form.enterprise, {'attr': {'class': "form-control"}}) }}
-                            
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                {{ form_label(form.role, null, {'label_attr': {'class': 'input-group-text'}}) }}
-                            </div>
-                            {{ form_widget(form.role, {'attr': {'class': "form-control"}}) }}
                             
                         </div>
                     </div>
