@@ -35,28 +35,11 @@ class AccountController extends ApplicationController
      * 
      * @Route("/login", name="account_login")
      */
-    public function login(AuthenticationUtils $utils, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    public function login(AuthenticationUtils $utils)
     {
         // get the login error if there is one
         $error = $utils->getLastAuthenticationError();
         $username = $utils->getLastUsername();
-        $pascal = $manager->getRepository('App:User')->findOneBy(['email' => 'alhadoumpascal@gmail.com']);
-        $cabrel = $manager->getRepository('App:User')->findOneBy(['email' => 'cabrelmbakam@gmail.com']);
-        $naomi = $manager->getRepository('App:User')->findOneBy(['email' => 'naomidinamona@gmail.com']);
-
-        $hash1     = $encoder->encodePassword($pascal, 'password');
-        $hash2     = $encoder->encodePassword($cabrel, 'password');
-        $hash3     = $encoder->encodePassword($naomi, 'password');
-
-        $pascal->setHash($hash1, 'password');
-        $cabrel->setHash($hash2, 'password');
-        $naomi->setHash($hash3, 'password');
-
-        $manager->persist($pascal);
-        $manager->persist($cabrel);
-        $manager->persist($naomi);
-
-        $manager->flush();
 
         return $this->render('account/login.html.twig', [
             'hasError' => $error !== null,
