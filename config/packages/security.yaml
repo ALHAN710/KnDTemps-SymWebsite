@@ -41,7 +41,7 @@ security:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/account/recover/password, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/account/code-verification, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/pointing/change/status, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        #- { path: ^/pointing/change/status, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         # catch all other URLs
         - { path: ^/, roles: ROLE_USER, requires_channel: https }
         # - { path: ^/admin, roles: ROLE_ADMIN }
