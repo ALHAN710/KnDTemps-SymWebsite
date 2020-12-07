@@ -3,18 +3,22 @@
 namespace App\Controller;
 
 use DateTime;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Controller\ApplicationController;
-use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 //use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class EmployeeController extends ApplicationController
 {
     /**
      * @Route("/employees/home", name="employees_home")
+     * 
+     * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
+     * 
      */
     public function index(EntityManagerInterface $manager): Response
     {
@@ -79,6 +83,8 @@ class EmployeeController extends ApplicationController
      * 
      * @Route("update/employees/work-time", name="update_employees_dt_wk")
      *
+     * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
+     * 
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return void
@@ -140,6 +146,8 @@ class EmployeeController extends ApplicationController
      * Permet d'avoir les données de pointage d'un employé pour un mois donné
      * 
      * @Route("/employee/month/pointings", name="employee_pointings")
+     * 
+     * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
@@ -149,6 +157,7 @@ class EmployeeController extends ApplicationController
     {
         //$paramJSON = $this->getJSONRequest($request->getContent());
         $paramJSON = $request->request->get("params");
+        dump($paramJSON);
         if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
             $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
@@ -167,7 +176,7 @@ class EmployeeController extends ApplicationController
                         'dat'   => $paramJSON['date'] . '%'
                     ])
                     ->getResult();
-                //dump($employeePointings);
+                dump($employeePointings);
                 $date = new DateTime($paramJSON['date'] . '-01');
                 return $this->render('employee/workTimeSheet.html.twig', [
                     'emp'               => $emp,
