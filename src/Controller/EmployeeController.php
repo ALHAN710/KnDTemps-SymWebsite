@@ -158,6 +158,8 @@ class EmployeeController extends ApplicationController
         //$paramJSON = $this->getJSONRequest($request->getContent());
         $paramJSON = $request->request->get("params");
         //dump($paramJSON);
+        //AND p.timeOut LIKE :dat
+
         if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
             $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
@@ -167,7 +169,6 @@ class EmployeeController extends ApplicationController
                                                     FROM App\Entity\Pointing p
                                                     WHERE p.employee = :empId
                                                     AND p.timeIn LIKE :dat 
-                                                    AND p.timeOut LIKE :dat
                                                     ORDER BY date_ DESC
                                                
                 ")

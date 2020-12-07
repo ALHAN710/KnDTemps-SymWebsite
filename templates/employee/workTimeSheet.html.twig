@@ -80,7 +80,7 @@
                                 {% set status = pointing["Status_"] %}
                                 <td>{{date(pointing["date_"])|date('d M Y')}}</td>
                                 <td>{{pointing["TimeIn"]}}</td>
-                                <td>{{pointing["TimeOut_"]}}</td>
+                                <td>{{pointing["TimeOut_"] ?? '-'}}</td>
                                 <td>{{pointing["Duration"]}}</td>
                                 <td><span class="badge badge-{% if status == 'approved' %}success{% elseif status == 'on pending' %}warning{% else %}danger{% endif %}">{% if status == 'approved' %}approuvé{% elseif status == 'on pending' %}en attente{% else %}désapprouvé{% endif %}</span></td>
                                 <td>
