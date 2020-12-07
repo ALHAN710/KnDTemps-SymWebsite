@@ -44,9 +44,9 @@ class AccountController extends ApplicationController
         $cabrel = $manager->getRepository('App:User')->findOneBy(['email' => 'cabrelmbakam@gmail.com']);
         $naomi = $manager->getRepository('App:User')->findOneBy(['email' => 'naomidinamona@gmail.com']);
 
-        $hash1     = $this->encoder->encodePassword($pascal, 'password');
-        $hash2     = $this->encoder->encodePassword($cabrel, 'password');
-        $hash3     = $this->encoder->encodePassword($naomi, 'password');
+        $hash1     = $encoder->encodePassword($pascal, 'password');
+        $hash2     = $encoder->encodePassword($cabrel, 'password');
+        $hash3     = $encoder->encodePassword($naomi, 'password');
 
         $pascal->setHash($hash1, 'password');
         $cabrel->setHash($hash2, 'password');
