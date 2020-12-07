@@ -124,9 +124,9 @@ class PointingsController extends ApplicationController
 
         if ((array_key_exists("type", $paramJSON) && !empty($paramJSON['type'])) && (array_key_exists("lat", $paramJSON) && !empty($paramJSON['lat'])) && (array_key_exists("long", $paramJSON) && !empty($paramJSON['long']))) {
             if (count($this->getUser()->getEnterprise()->getPointingLocations()) > 0) {
-                $ray  = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getRay();
-                $lat  = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getLatitude();
-                $long = $this->getUser()->getEnterprise()->getPointingLocations()[0]->getLongitude();
+                $ray  = $this->getUser()->getTeam()->getPointingLocation()->getRay();
+                $lat  = $this->getUser()->getTeam()->getPointingLocation()->getLatitude();
+                $long = $this->getUser()->getTeam()->getPointingLocation()->getLongitude();
             } else {
                 return $this->json([
                     'code'    => 403,
