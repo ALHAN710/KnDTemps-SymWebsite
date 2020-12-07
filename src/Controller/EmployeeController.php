@@ -157,7 +157,7 @@ class EmployeeController extends ApplicationController
     {
         //$paramJSON = $this->getJSONRequest($request->getContent());
         $paramJSON = $request->request->get("params");
-        dump($paramJSON);
+        //dump($paramJSON);
         if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
             $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
@@ -176,7 +176,7 @@ class EmployeeController extends ApplicationController
                         'dat'   => $paramJSON['date'] . '%'
                     ])
                     ->getResult();
-                dump($employeePointings);
+                //dump($employeePointings);
                 $date = new DateTime($paramJSON['date'] . '-01');
                 return $this->render('employee/workTimeSheet.html.twig', [
                     'emp'               => $emp,
