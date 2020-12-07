@@ -26,7 +26,7 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
      * @Assert\NotBlank()
      * @Assert\Email(message="Veuillez renseigner une adresse email valide !")
      */
@@ -58,7 +58,7 @@ class User implements UserInterface
     private $hash;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank(message="Please enter your primary phone number")
      */
     private $phoneNumber;
