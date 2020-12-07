@@ -605,7 +605,7 @@
                         </span>
                         <div class="info-card-text">
                             <div class="fs-lg text-truncate text-truncate-lg">{{app.user.grade}} {{app.user.fullName}}</div>
-                            <span class="text-truncate text-truncate-md opacity-80">{{app.user.email}}</span>
+                            <span class="text-truncate text-truncate-md opacity-80">{{app.user.email ?? app.user.phoneNumber }}</span>
                         </div>
                     </div>
                 </div>
