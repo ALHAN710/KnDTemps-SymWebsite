@@ -89,7 +89,7 @@
                                 <td>{{ employee.seniority }}</td>
                                 <td>00:00:00</td>
                                 <td>
-                                    <a href="{{path('user_edit', {'id':employee.id})}}"  class="btn btn-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit"></i> </a></a>
+                                    <a href="{{path('user_edit', {'id':employee.id})}}"  class="btn btn-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit"></i> </a>
                                     {# <a href="{{path('user_delete', {'id':employee.id})}}" class="btn btn-soft-danger btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Supprimez l'employé ?"><i class="fas fa-trash"></i> </a>    #}
                                 </td> 
                             </tr>
@@ -104,6 +104,7 @@
                                 <th>Age</th>
                                 <th>Ancienneté</th>
                                 <th>Temps de travail</th>
+                                <th>Actions</th>
                             </tr>
                         </tfoot>
                     </table>
