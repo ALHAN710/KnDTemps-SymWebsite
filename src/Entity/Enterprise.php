@@ -138,6 +138,11 @@ class Enterprise
      */
     private $pointingLocations;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $timeZone;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -622,6 +627,18 @@ class Enterprise
                 $pointingLocation->setEnterprise(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTimeZone(): ?int
+    {
+        return $this->timeZone;
+    }
+
+    public function setTimeZone(int $timeZone): self
+    {
+        $this->timeZone = $timeZone;
 
         return $this;
     }

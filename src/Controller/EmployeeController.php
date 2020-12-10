@@ -162,9 +162,9 @@ class EmployeeController extends ApplicationController
 
         if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
             $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
-
+            $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
             if ($emp) {
-                $employeePointings = $manager->createQuery("SELECT p.id, SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Status_,
+                $employeePointings = $manager->createQuery("SELECT p.id, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
                                                     TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
                                                     FROM App\Entity\Pointing p
                                                     WHERE p.employee = :empId
@@ -174,7 +174,8 @@ class EmployeeController extends ApplicationController
                 ")
                     ->setParameters([
                         'empId' => $paramJSON['emp'],
-                        'dat'   => $paramJSON['date'] . '%'
+                        'dat'   => $paramJSON['date'] . '%',
+                        'fus'   => $fuseau,
                     ])
                     ->getResult();
                 //dump($employeePointings);
@@ -239,10 +240,11 @@ class EmployeeController extends ApplicationController
         }
         //dump($employees);
         $nowDate = new DateTime('now');
+        $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
         foreach ($employees as $employee) {
             //Récupération du temps de travail déjà réalisé pour le mois en cours
             //AND p.statut = 'approved'
-            $employeeAttendance_ = $manager->createQuery("SELECT SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+            $employeeAttendance_ = $manager->createQuery("SELECT AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Statut,
                                                         CASE 
                                                         WHEN (p.timeIn IS NULL) THEN 'absent'
                                                         WHEN (p.timeIn IS NOT NULL) THEN 'présent'
@@ -255,7 +257,8 @@ class EmployeeController extends ApplicationController
                 ")
                 ->setParameters([
                     'empId' => $employee->getId(),
-                    'dat'   => $nowDate->format('Y-m-d') . '%'
+                    'dat'   => $nowDate->format('Y-m-d') . '%',
+                    'fus'   => $fuseau,
                 ])
                 ->getResult();
 
@@ -276,6 +279,7 @@ class EmployeeController extends ApplicationController
             }
         }
         //dump($employeesAttendance);
+        //dump($this->getUser()->getEnterprise()->getTimeZone());
         return $this->render('employee/attendanceRecord.html.twig', [
             'employees'         => $employees,
             'employeesAttendance' => (array)$employeesAttendance,
@@ -313,11 +317,11 @@ class EmployeeController extends ApplicationController
                     'entId' => $this->getUser()->getEnterprise(),
                 ))
                 ->getResult();
-
+            $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
             foreach ($employees as $employee) {
                 //Récupération du temps de travail déjà réalisé pour le mois en cours
                 //AND p.statut = 'approved'
-                $employeeAttendance_ = $manager->createQuery("SELECT SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+                $employeeAttendance_ = $manager->createQuery("SELECT AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Statut,
                                                         CASE 
                                                         WHEN (p.timeIn IS NULL) THEN 'absent'
                                                         WHEN (p.timeIn IS NOT NULL) THEN 'présent'
@@ -330,7 +334,8 @@ class EmployeeController extends ApplicationController
                 ")
                     ->setParameters([
                         'empId' => $employee->getId(),
-                        'dat'   => $paramJSON['date'] . '%'
+                        'dat'   => $paramJSON['date'] . '%',
+                        'fus'   => $fuseau,
                     ])
                     ->getResult();
 
@@ -388,8 +393,8 @@ class EmployeeController extends ApplicationController
             //$emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
             //if ($emp) {
-
-            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+            $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
+            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Statut,
                                                         CASE 
                                                         WHEN (p.timeIn IS NULL) THEN 'absent'
                                                         WHEN (p.timeIn IS NOT NULL) THEN 'présent'
@@ -402,7 +407,8 @@ class EmployeeController extends ApplicationController
                 ")
                 ->setParameters([
                     'empId' => $emp->getId(),
-                    'dat'   => $paramJSON['date'] . '%'
+                    'dat'   => $paramJSON['date'] . '%',
+                    'fus'   => $fuseau,
                 ])
                 ->getResult();
 
@@ -445,10 +451,10 @@ class EmployeeController extends ApplicationController
             //$emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
             //if ($emp) {
-
+            $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
             //Récupération des présence au travail pour un mois donné
             //AND p.statut = 'approved'
-            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Statut,
                                                         CASE 
                                                         WHEN (p.timeIn IS NULL) THEN 'absent'
                                                         WHEN (p.timeIn IS NOT NULL) THEN 'présent'
@@ -461,7 +467,8 @@ class EmployeeController extends ApplicationController
                 ")
                 ->setParameters([
                     'empId' => $emp->getId(),
-                    'dat'   => $paramJSON['date'] . '%'
+                    'dat'   => $paramJSON['date'] . '%',
+                    'fus'   => $fuseau,
                 ])
                 ->getResult();
             //}

@@ -67,8 +67,8 @@
                         <thead class="bg-primary-600">
                             <tr class="text-center">
                                 <th>Date</th>
-                                <th>Heure d'entrée (GMT)</th>
-                                <th>Heure de sortie (GMT)</th>
+                                <th>Heure d'entrée</th>
+                                <th>Heure de sortie</th>
                                 <th>Durée Totale</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -533,7 +533,7 @@
                 };
                 tabApproved.push(obj);
             });
-            console.log(tabApproved);
+            {# console.log(tabApproved); #}
             
             if (tabApproved.length > 0){
                 var $data = JSON.stringify({
