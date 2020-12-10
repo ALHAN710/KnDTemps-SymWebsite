@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class OfficeController extends AbstractController
@@ -30,12 +31,12 @@ class OfficeController extends AbstractController
      *
      * @Route("/office/new", name = "office_create")
      * 
-     * 
+     * @Security( "user.getEnterprise().getIsActivated() == true " )
      * 
      * @return Response
      */
     public function create(Request $request, EntityManagerInterface $manager)
-    { //@Security( "( is_granted('ROLE_STOCK_MANAGER') and user.getEnterprise().getIsActivated() == true ) " )
+    { //
         $office = new Office();
         $office->setEnterprise($this->getUser()->getEnterprise());
 
@@ -76,7 +77,7 @@ class OfficeController extends AbstractController
      *
      * @Route("/office/{id<\d+>}/edit", name="office_edit")
      * 
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') or is_granted('ROLE_ADMIN') ) and ( office.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @return Response
      */
@@ -109,16 +110,16 @@ class OfficeController extends AbstractController
     /**
      * Permet de supprimer un Poste
      * 
-     * @Route("/office/{id}/delete", name="office_delete")
+     * @Route("/office/{id<\d+>}/delete", name="office_delete")
      *
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') or is_granted('ROLE_ADMIN') ) and ( office.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @param Office $office
      * @param EntityManagerInterface $manager
      * @return void
      */
     public function delete(Office $office, EntityManagerInterface $manager)
-    { //@Security( "is_granted('ROLE_SUPER_ADMIN') or ( is_granted('ROLE_STOCK_MANAGER') and office.getEnterprise() === user.getEnterprise() )" ) 
+    {
         $enterprise = $office->getEnterprise();
         $enterprise->removeOffice($office);
 
