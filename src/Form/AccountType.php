@@ -71,7 +71,7 @@ class AccountType extends ApplicationType
                 'passwordConfirm',
                 PasswordType::class,
                 $this->getConfiguration("Confirmation de mot de passe", "Veuillez confirmer votre mot de passe")
-            )*/
+            )
             ->add(
                 'countryCode',
                 TextType::class,
@@ -79,7 +79,7 @@ class AccountType extends ApplicationType
                     'required' => false,
                 ])
 
-            )
+            )*/
             ->add(
                 'phoneNumber',
                 TextType::class,
