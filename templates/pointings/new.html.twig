@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>KnD Time | Interface de Pointage</title>
+        <title>KnD Temps | Interface de Pointage</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="description" content="Login">
@@ -58,8 +58,8 @@
         <div class="blankpage-form-field width-mobile-auto mt-4 ">{# expand-full-width-on-mobile height-mobile-auto expand-full-height-on-mobile #}
             <div class="page-logo m-0 w-100 align-items-center justify-content-center rounded border-bottom-left-radius-0 border-bottom-right-radius-0 px-4">
                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
-                    <img src="/img/logo.png" alt="KnD Time WebApp" aria-roledescription="logo">
-                    <span class="page-logo-text mr-1">KnD Time WebApp</span>
+                    <img src="/img/logo.png" alt="KnD Temps WebApp" aria-roledescription="logo">
+                    <span class="page-logo-text mr-1">KnD Temps WebApp</span>
                     <i class="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
                 </a>
             </div>
@@ -207,11 +207,9 @@
                 </form> #}
             </div>
             <div class="blankpage-footer">
-                {% if app.user.roles[0] is not same as('ROLE_USER') %}
                 <span class="h4 float-right">
-                    <a href="{{path('employees_home')}}"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                    <a href="{% if app.user.roles[0] is not same as('ROLE_USER') %}{{path('employees_attendance_record')}}{% else %}#{% endif %}" id="continueLink"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
-                {% endif %}
                 <span class="h4 float-left">
                     <a href="{{path('account_logout')}}"><strong>Deconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
@@ -329,6 +327,8 @@
         <script src="/js/statistics/easypiechart/easypiechart.bundle.js"></script>
         <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
         <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+        <script src="/js/jquery.redirect.js"></script>
 
         <script>
             var id;
@@ -630,6 +630,21 @@
                    
                 }
             });
+
+            {% if app.user.roles[0] == 'ROLE_USER' %}
+            $('#continueLink').click(function(){
+                var now = new Date();
+                var date = now.getFullYear()+'-'+(now.getMonth()+1);
+                //console.log('empId = ' + $(this).data("emp"));
+                //console.log('date = ' + date);
+                $.redirect("{{path('employee_month_attendance_sheet',{'id':app.user.id})}}",
+                    {
+                        params: {'date':date},
+                        
+                    },
+                "POST", "");
+            })
+            {% endif %}
 
         </script>
     </body>
