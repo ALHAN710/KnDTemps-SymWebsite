@@ -43,19 +43,22 @@
                 </a>
             </li> #}
             {# <li class="nav-title">Work Time</li> #}
+            {% if (app.user.roles[0] is not same as('ROLE_USER')) %}
             <li>
                 <a href="{{ path('employees_home') }}" title="Fiche Temps" data-filter-tags="Fiche Temps">
                     <i class="fal fa-clock"></i>
                     <span class="nav-link-text">Fiche des Temps</span>
                 </a>
             </li>
+            {% endif %}
             <li>
-                <a href="{{ path('employees_attendance_record') }}" title="Fiche de Présence" data-filter-tags="Fiche de Présence">
+                <a href="{% if (app.user.roles[0] is not same as('ROLE_USER')) %}{{ path('employees_attendance_record') }}{% else %}#{% endif %}" {% if app.user.roles[0] == 'ROLE_USER' %}data-url="{{ path('employee_month_attendance_sheet', {'id':app.user.id}) }}"{% endif %} title="Fiche de Présence" data-filter-tags="Fiche de Présence">
                     <i class="fas fa-user-check"></i>
                     <span class="nav-link-text">Fiche de Présence</span>
                 </a>
             </li>
             {# {% if app.user.enterprise.offices|length > 0 %} #}
+            {% if (app.user.roles[0] is not same as('ROLE_USER')) %}
             <li class="nav-title">Rubrique des Fonctions</li>
             <li>
                 {# <a href="#" title="Postes" data-filter-tags="Postes">
@@ -111,13 +114,14 @@
             </li>
             {# {% endif %} #}
             <li class="nav-title"><i class="mdi mdi-settings mr-1"></i>Paramètres</li>
+            {% if app.user.roles[0] == 'ROLE_ADMIN' %}
             <li>
                 <a href="{{ path('enterprise_account_profile',{'id':app.user.enterprise.id}) }}" title="Mon Compte" data-filter-tags="Mon Compte">
                     <i class="fas fa-user-cog"></i>
                     <span class="nav-link-text">Mon Compte</span>
-                </a>
-                                
+                </a>         
             </li>
+            {% endif %}
             <li>
                 <a href="{{ path('pointing_locations_index') }}" title="Zones de Pointage" data-filter-tags="Zones de Pointage">
                     <i class="fas fa-map-marker-alt"></i>
@@ -125,6 +129,7 @@
                 </a>
                                 
             </li>
+            {% endif %}
             {# <li class="active open">
                 <a href="#" title="Application Intel" data-filter-tags="application intel">
                     <i class="fal fa-info-circle"></i>
