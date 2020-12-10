@@ -23,3 +23,4 @@ doctrine:
                 timediff: DoctrineExtensions\Query\Mysql\TimeDiff
                 timetosec: DoctrineExtensions\Query\Mysql\TimeToSec
                 sectotime: DoctrineExtensions\Query\Mysql\SecToTime
+                addtime: DoctrineExtensions\Query\Mysql\AddTime
