@@ -1,0 +1,559 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche de Présence{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
+        
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Fiche</a></li>
+<li class="active"><a href="#">Présence</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon fal fa-users"></i>Fiche de Présence {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
+        
+    </h1>
+    {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Tableau de <span class="fw-300 mr-1"><i>Présence</i></span>{% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
+                </h2>
+                {# <div class="panel-toolbar">
+                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                </div> #}
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {# <div class="panel-tag">
+                        <p>Exporting data from a table can often be a key part of a complex application. The Buttons extension for DataTables provides three plug-ins that provide overlapping functionality for data export:</p>
+                        <ul>
+                            <li>
+                                HTML5 export buttons - makes use of HTML5 APIs to create files client-side
+                            </li>
+                            <li class="font-italic">
+                                <del>Flash export buttons - uses Adobe Flash for legacy browsers</del>
+                            </li>
+                            <li>
+                                Print button
+                            </li>
+                        </ul>
+                        <p>
+                            Since SmartAdmin WebApp is built for the "next generation" browsers, we removed the flash (.swf) alternative plugin due to security reasons and ActionScript's memory leakage
+                        </p>
+                    </div> #}
+                    <div class="datepickerClass"></div>
+                    <div class="input-group mb-2 d-flex align-content-center">
+                        <input type="text" class="form-control " value="" placeholder="Choisir un mois" id="datepicker">
+                        <div class="input-group-append">
+                            <span class="input-group-text fs-xl">
+                                <i class="fal fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- datatable start -->
+                    <table id="dt-employees" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                        <thead class="bg-primary-600">
+                            <tr class="text-center">
+                                <th>Nom</th>
+                                <th>Tél</th>
+                                <th>Poste</th>
+                                <th>Équipe</th>
+                                <th>Présence</th>
+                                <th>Heure d'Entrée</th>
+                                <th>Heure de Sortie</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            {% for employee in employees %}
+                            <tr id="{{employee.id}}" data-row="{{loop.index0}}">
+                                {% set status = employeesAttendance[employee.id]['Statut'] %}
+                                {% set presenceStatus = employeesAttendance[employee.id]['PresenceStatus'] %}
+                                <td><a href="#" class="empClass" data-emp={{employee.id}}>{% if (employee.roles[0] is same as('ROLE_LEADER')) %}<i class="fa fa-user-tie mr-1"></i>{% endif %}{{employee.fullName}}</a></td>
+                                <td>{{employee.phoneNumber}}</td>
+                                <td>{{employee.office.name}}</td>
+                                <td>{{employee.team.name ?? ("<span class='badge badge-warning'>Sans Équipe</span>")|raw}}</td>
+                                <td><span class="badge badge-{% if presenceStatus == 'présent' %}success{% else %}danger{% endif %}">{{presenceStatus}}</span></td>
+                                <td>{{ employeesAttendance[employee.id]['TimeIn'] }}</td>
+                                <td>{{ employeesAttendance[employee.id]['TimeOut'] }}</td>
+                                <td><span class="badge badge-{% if status == 'approved' %}success{% elseif status == 'on pending' %}warning{% else %}danger{% endif %}">{% if status == 'approved' %}approuvé{% elseif status == 'on pending' %}en attente{% else %}désapprouvé{% endif %}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="text-center">
+                                <th>Nom</th>
+                                <th>Tél</th>
+                                <th>Poste</th>
+                                <th>Équipe</th>
+                                <th>Présence</th>
+                                <th>Heure d'Entrée</th>
+                                <th>Heure de Sortie</th>
+                                <th>Statut</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- datatable end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<!-- datatble responsive bundle contains: 
+    + jquery.dataTables.js
+    + dataTables.bootstrap4.js
+    + dataTables.autofill.js							
+    + dataTables.buttons.js
+    + buttons.bootstrap4.js
+    + buttons.html5.js
+    + buttons.print.js
+    + buttons.colVis.js
+    + dataTables.colreorder.js							
+    + dataTables.fixedcolumns.js							
+    + dataTables.fixedheader.js						
+    + dataTables.keytable.js						
+    + dataTables.responsive.js							
+    + dataTables.rowgroup.js							
+    + dataTables.rowreorder.js							
+    + dataTables.scroller.js							
+    + dataTables.select.js							
+    + datatables.styles.app.js
+    + datatables.styles.buttons.app.js -->
+<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+<!-- datatbles buttons bundle contains: 
+    + "jszip.js",
+    + "pdfmake.js",
+    + "vfs_fonts.js"	
+    NOTE: 	The file size is pretty big, but you can always use the
+            build.json file to deselect any components you do not need under "export" -->
+<script src="/js/datagrid/datatables/datatables.export.js"></script>
+<script src="/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+
+<!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
+<script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script src="/js/jquery.redirect.js"></script>
+
+<script>
+    $(document).ready(function()
+    {
+        var now = new Date();
+        var jsDate = now.getDate()+'-'+(now.getMonth()+1)+'-'+now.getFullYear();
+        var FileName = "{{app.user.enterprise.socialReason}}_Fiche_Temps_de_Presence" + jsDate;
+        // initialize datatable
+        var employeesTable = $('#dt-employees').dataTable(
+        {
+            responsive: true,
+            lengthChange: true,
+            pageLength: 100,
+            dom:
+                /*	--- Layout Structure 
+                    --- Options
+                    l	-	length changing input control
+                    f	-	filtering input
+                    t	-	The table!
+                    i	-	Table information summary
+                    p	-	pagination control
+                    r	-	processing display element
+                    B	-	buttons
+                    R	-	ColReorder
+                    S	-	Select
+
+                    --- Markup
+                    < and >				- div element
+                    <"class" and >		- div with a class
+                    <"#id" and >		- div with an ID
+                    <"#id.class" and >	- div with an ID and a class
+
+                    --- Further reading
+                    https://datatables.net/reference/option/dom
+                    --------------------------------------
+                    */
+                "<'row mb-3'<'col-sm-12 col-md-6 mb-3 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                {
+                    extend:    'colvis',
+                    text:      'Colonne Visible',
+                    titleAttr: 'Choisir les colonnes visibles',
+                    className: 'btn-outline-info btn-sm mr-sm-3'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    titleAttr: 'Générer le fichier PDF',
+                    className: 'btn-outline-danger btn-sm mr-1',
+                    filename: FileName,
+                    exportOptions: {
+                        //columns: [ 0, 1, 4 ],
+                        columns: ':visible',
+                        search: 'applied',
+                        order: 'applied'
+                    },
+                    title: function( thead, data, start, end, display ) {
+                        return "{{app.user.enterprise.socialReason}}\r\nListe des Employés\r\n" + jsDate;
+                    },
+                    {#customize: function (doc) {
+                        //Remove the title created by datatTables
+                        # {% if app.user.enterprise.logo != null %}
+                        var logo = getBase64FromImageUrl("{{ '/images/uploads/logo/' ~ app.user.enterprise.logo }}");
+                        {% endif %}
+                        //doc.content.splice(0,1);
+                        doc.content.splice( 1, 0, {
+                            margin: [ 0, 0, 0, 12 ],
+                            alignment: 'center',
+                            {% if app.user.enterprise.logo != null %}image: logo{% endif %}
+                        } ); #
+                        //Create a date string that we use in the footer. Format is dd-mm-yyyy
+                        var now = new Date();
+                        var jsDate = now.getDate()+'-'+(now.getMonth()+1)+'-'+now.getFullYear();
+                        // Logo converted to base64
+                        // var logo = getBase64FromImageUrl('https://datatables.net/media/images/logo.png');
+                        // The above call should work, but not when called from codepen.io
+                        // So we use a online converter and paste the string in.
+                        // Done on http://codebeautify.org/image-to-base64-converter
+                        // It's a LONG string scroll down to see the rest of the code !!!
+                        //var logo = 'data:image/jpeg;base64,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ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA=';
+                        // A documentation reference can be found at
+                        // https://github.com/bpampuch/pdfmake#getting-started
+                        // Set page margins [left,top,right,bottom] or [horizontal,vertical]
+                        // or one number for equal spread
+                        // It's important to create enough space at the top for a header !!!
+                        doc.pageMargins = [60,60,60,30];
+                        // Set the font size fot the entire document
+                        doc.defaultStyle.fontSize = 12;
+                        // Set the fontsize for the table header
+                        doc.styles.tableHeader.fontSize = 13;
+                        //doc.styles.tableBodyOdd.fillColor = "yellow";
+                        doc.styles.tableBodyOdd.alignment = function (rowIndex, node, columnIndex) {
+                                                        return (rowIndex >= 0) ? 'center' : null;
+                                                    };
+                        doc.styles.tableHeader.fillColor = "#6c757d";
+                        console.log(doc);
+                        var objTable = {};
+                        //objTable['heights'] = (function(i) { return 100; });
+                        //objTable['widths'] = ['*', 'auto', '*', 'auto', 'auto', 'auto'];
+                        //objTable['widths']   = (function(i) { return ['*', 'auto', '*', 'auto', 'auto', 'auto']; });
+                        //doc.content[1].table = objTable; 
+                        doc.content[1].table.widths = ['*', 'auto', '*', 'auto', '*', 'auto']; 
+                        //doc.content[1].table.heights = (function(i) { return 100; }); 
+                        doc.content[1].layout = {
+                                                    fillColor: function (rowIndex, node, columnIndex) {
+                                                        return (rowIndex % 2 === 0) ? '#CCCCCC' : null;
+                                                    }
+                                                }; 
+                            
+                        // Create a header object with 3 columns
+                        // Left side: Logo
+                        // Middle: brandname
+                        // Right side: A document title
+                        /*doc['header']=(function() {
+                            return {
+                                columns: [
+                                    {
+                                        //image: logo,
+                                        "width": 24
+                                    },
+                                    {
+                                        alignment: 'left',
+                                        italics: true,
+                                        text: 'dataTables',
+                                        fontSize: 18,
+                                        margin: [10,0]
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        fontSize: 14,
+                                        text: 'Custom PDF export with dataTables'
+                                    }
+                                ],
+                                margin: 20
+                            }
+                        });*/
+                        // Create a footer object with 2 columns
+                        // Left side: report creation date
+                        // Right side: current page and total pages
+                        doc['footer']=(function(page, pages) {
+                            return {
+                                columns: [
+                                    {
+                                        alignment: 'left',
+                                        text: ['Crée le : ', { text: jsDate.toString() }]
+                                    },
+                                    {
+                                        alignment: 'center',
+                                        text: ['{{app.user.enterprise.socialReason}} {% if app.user.enterprise.niu is not empty %}- NIU : {{app.user.enterprise.niu}} {% endif %} {% if app.user.enterprise.rccm is not empty %}- RCCM : {{app.user.enterprise.rccm}}{% endif %}']
+                                    },
+                                    {
+                                        alignment: 'right',
+                                        text: ['page ', { text: page.toString() },	' de ',	{ text: pages.toString() }]
+                                    }
+                                ],
+                                margin: 20
+                            }
+                        });
+                        // Change dataTable layout (Table styling)
+                        // To use predefined layouts uncomment the line below and comment the custom lines below
+                        // doc.content[0].layout = 'lightHorizontalLines'; // noBorders , headerLineOnly
+                        var objLayout = {};
+                        objLayout['hLineWidth']   = (function(i) { return .5; });
+                        objLayout['vLineWidth']   = (function(i) { return .5; });
+                        objLayout['hLineColor']   = (function(i) { return '#ccc'; });
+                        objLayout['vLineColor']   = (function(i) { return '#ccc'; });
+                        objLayout['paddingLeft']  = (function(i) { return 4; });
+                        objLayout['paddingRight'] = (function(i) { return 4; });
+                        doc.content[0].layout = objLayout;
+                    }#}
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    titleAttr: 'Générer le fichier Excel',
+                    className: 'btn-outline-success btn-sm mr-1'
+                },
+                /*{
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    titleAttr: 'Generate CSV',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'copyHtml5',
+                    text: 'Copy',
+                    titleAttr: 'Copy to clipboard',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    titleAttr: 'Print Table',
+                    className: 'btn-outline-primary btn-sm'
+                }*/
+            ]
+        });
+
+        {# employeesTable.buttons().container()
+        .appendTo('#statistics_wrapper .col-md-6:eq(0)'); #}
+
+        $('.buttons-html5').children('span').prepend('<i class="mdi mdi-download mr-2"></i>');
+        $('.buttons-html5').addClass('mb-2');
+        $('.buttons-colvis').addClass('mb-2');
+        $('.dataTables_length').addClass('mr-2');
+        
+        // Class definition
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+
+        var runDatePicker = function()
+        {
+
+            $('#datepicker').datepicker(
+            {
+                orientation: "bottom left",
+                language: 'de-DE',
+                todayHighlight: true,
+                autoclose: true,
+                endDate: '0d',
+                {# todayBtn: true,
+                clearBtn: true,  #}
+                immediateUpdates: true,
+                defaultViewDate: 'today',
+                templates: controls,
+                format: "dd-mm-yyyy",
+                {# viewMode: "months", 
+                minViewMode: "months" #}
+            });
+        
+        };
+        runDatePicker();
+
+        $( '#datepicker' ).datepicker( 'setDate', 'today' );
+        
+        var date = $('#datepicker').datepicker('getDate');
+        var date1 = $('#datepicker').val();
+        console.log('date = ' + date1);
+        
+        var _url = "{{ path('update_employees_dt_at') }}";
+
+        $('#datepicker').datepicker().on('changeDate', function(e) {
+            // `e` here contains the extra attributes
+            {# console.log('date = ' + e.date);
+            console.log(e.format('yyyy-mm-dd')); #}
+            date = e.format('yyyy-mm-dd');
+            date1 = e.format('yyyy-mm');
+
+            //var date = $('#datepicker').datepicker('getDate').getFormattedDate('yyyy-mm-dd');
+            //console.log('date = ' + date);
+
+            var $data = JSON.stringify({
+                "date": e.format('yyyy-mm-dd'),//tabGridId,
+                
+            });   
+
+            Swal.mixin(
+            {
+                customClass:
+                {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-danger ml-2"
+                },
+                buttonsStyling: false
+            }).queue([{
+                    type: "warning",
+                    title: 'Confirmation de Sélection',
+                    confirmButtonText: 'Confirmez',
+                    text: 'Fiche de Présence du ' + e.format('dd-mm-yyyy') + ' ?',
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    //confirmButtonClass: 'btn btn-primary',
+                    //cancelButtonClass: 'btn btn-danger ml-2',
+                    preConfirm: function () {
+                        return new Promise(function (resolve) { 
+                            //console.log(resolve);
+                            $.ajax({
+                                type: "POST", // method type
+                                contentType: "application/json; charset=utf-8",
+                                url: _url, // /Target function that will be return result
+                                data: $data, // parameter pass data is parameter name param is value
+                                dataType: "json",
+                                timeout: 120000, // 64241
+                                success: function (data) {
+                                    // $('.fa-sync').removeClass('fa-spin');
+                                    //console.log(data);
+                                    if(data.code === 200){
+                                                                                        
+                                        Swal.fire("Succès !", "Le tableau a été mis à jour avec succès !", "success");
+                                        /*Swal.fire({
+                                            type: "success",
+                                            position: 'top-end',
+                                            title: "Succès !",
+                                            text: "Le tableau a été mis à jour avec succès !",
+                                            timer: 3000,
+                                            timerProgressBar: true,
+                                            footer: "<a href>Why do I have this issue?</a>"
+                                        });*/
+                                        data['employeesAttendance'].forEach(function (value, index) {
+                                            {# console.log('Id = ' + value['Id'] + ' PresenceStatus = ' + value['PresenceStatus']);
+                                            console.log(employeesTable); #}
+                                            var presenceStatus = value['PresenceStatus'];
+                                            var presenceStr = '';
+                                            if( presenceStatus === 'présent' ){
+                                                //presenceStatus = 'présent';
+                                                presenceStr = '<span class="badge badge-success">' + presenceStatus + '</span>';
+                                            }
+                                            else{
+                                                presenceStr = '<span class="badge badge-danger">' + presenceStatus + '</span>';
+                                            }
+                                            var status = value['Statut'];
+                                            var statutStr = '';
+                                            if( status === 'approved' ){
+                                                status = 'approuvé';
+                                                statutStr = '<span class="badge badge-success">' + status + '</span>';
+                                            }
+                                            else{
+                                                status = 'en attente';
+                                                statutStr = '<span class="badge badge-warning">' + status + '</span>';
+                                            }
+                                            employeesTable.fnUpdate(presenceStr,$('#' + value['Id']).data( "row" ),4);
+                                            employeesTable.fnUpdate(value['TimeIn'],$('#' + value['Id']).data( "row" ),5);
+                                            employeesTable.fnUpdate(value['TimeOut'],$('#' + value['Id']).data( "row" ),6);
+                                            employeesTable.fnUpdate(statutStr,$('#' + value['Id']).data( "row" ),7);
+                                        });
+
+                                        setTimeout(function () {
+                                            resolve()
+                                        }, 5000);
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            type: "error",
+                                            title: "Oops...",
+                                            text: "Une erreur est survenue !",
+                                            {# footer: "<a href>Why do I have this issue?</a>" #}
+                                        });
+                                        
+                                    }
+
+                                    
+                                },
+                                error: function (result) {
+                                    //console.log("Error");
+                                    console.log(result);
+                                    /*Swal.fire('Oops...', 'Something went wrong!', 'error'
+                                    // footer: '<a href>Why do I have this issue?</a>'
+                                    );*/
+                                    Swal.fire({
+                                        type: "error",
+                                        title: "Oops...",
+                                        text: "Une erreur est survenue !",
+                                        {# footer: "<a href>Why do I have this issue?</a>" #}
+                                    });
+                                }
+                            });
+                    })  
+                },
+                //allowOutsideClick: false
+                /*allowOutsideClick: function allowOutsideClick()
+                {
+                    return !Swal.isLoading();
+                }*/
+            }]).then((result) => {
+                if (result.isConfirmed) {
+                    
+                }else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire(
+                    'Annulation',
+                    'Choix Annulé',
+                    'error'
+                    )
+                }
+            });
+        });
+
+        $('.empClass').click(function(){
+            console.log('empId = ' + $(this).data("emp"));
+            console.log('date = ' + date1);
+            if($(this).data("emp") && date1){
+                $.redirect("{{path('employee_month_attendance_sheet')}}",
+                    {
+                        params: {'emp':$(this).data("emp"),'date':date1},
+                        
+                    },
+                "POST", "_blank");
+
+            }
+            else{
+                $('.datepickerClass').
+                prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><div class="alert-text"><strong>Veuillez selectionner une date s\'il vous plait !</strong></div><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="mdi mdi-close"></i></span></button></div>');
+                
+            }
+        })
+
+    });
+
+</script>
+{% endblock %}
