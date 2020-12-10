@@ -1230,11 +1230,26 @@
 						+ src/../jquery-snippets.js (core) -->
         <script src="/js/vendors.bundle.js"></script>
         <script src="/js/app.bundle.js"></script>
+        {% if app.user.roles[0] == 'ROLE_USER' %}
+        <script src="/js/jquery.redirect.js"></script>
         <script type="text/javascript">
-            /* Activate smart panels */
-            {# $('#js-page-content').smartPanel(); #}
+            {#/* Activate smart panels */
+            $('#js-page-content').smartPanel(); #}
+            
+            $('#redirect').click(function(){
+                var now = new Date();
+                var date = now.getFullYear()+'-'+(now.getMonth()+1);
+                $.redirect($(this).data("url"),
+                    {
+                        params: {'date':date},
+                        
+                    },
+                "POST", "");
+                
+            })
 
         </script>
+        {% endif %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>

@@ -52,7 +52,7 @@
             </li>
             {% endif %}
             <li>
-                <a href="{% if (app.user.roles[0] is not same as('ROLE_USER')) %}{{ path('employees_attendance_record') }}{% else %}#{% endif %}" {% if app.user.roles[0] == 'ROLE_USER' %}data-url="{{ path('employee_month_attendance_sheet', {'id':app.user.id}) }}"{% endif %} title="Fiche de Présence" data-filter-tags="Fiche de Présence">
+                <a href="{% if (app.user.roles[0] is not same as('ROLE_USER')) %}{{ path('employees_attendance_record') }}{% else %}#{% endif %}" {% if app.user.roles[0] == 'ROLE_USER' %}id="redirect" data-url="{{ path('employee_month_attendance_sheet', {'id':app.user.id}) }}"{% endif %} title="Fiche de Présence" data-filter-tags="Fiche de Présence">
                     <i class="fas fa-user-check"></i>
                     <span class="nav-link-text">Fiche de Présence</span>
                 </a>
