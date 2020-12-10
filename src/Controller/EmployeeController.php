@@ -286,7 +286,7 @@ class EmployeeController extends ApplicationController
     /**
      * Permet de mettre à jour le tableau de présence des employés
      * 
-     * @Route("update/employees/attendance/record", name="update_employees_dt_at")
+     * @Route("update/employees/attendance/record", name="update_employees_dt_attendance")
      *
      * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
      * 
@@ -369,27 +369,27 @@ class EmployeeController extends ApplicationController
     /**
      * Permet d'avoir la fiche de présence d'un employé pour un mois donné
      * 
-     * @Route("/employee/month/attendance/sheet", name="employee_month_attendance_sheet")
+     * @Route("/employee/{id<\d+>}/month/attendance/sheet", name="employee_month_attendance_sheet")
      * 
-     * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
-     *
+     * @Security( "(emp === user) or ( is_granted('ROLE_LEADER') and user.getTeam().getUsers().contains(emp) ) or ( (is_granted('ROLE_RH_MANAGER') or is_granted('ROLE_ADMIN')) and (emp.getEnterprise() === user.getEnterprise()) )" )
+     * 
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return void
      */
-    public function employeeAttendanceRecord(Request $request, EntityManagerInterface $manager)
+    public function employeeAttendanceRecord(User $emp, Request $request, EntityManagerInterface $manager)
     {
         //$paramJSON = $this->getJSONRequest($request->getContent());
         $paramJSON = $request->request->get("params");
         //dump($paramJSON);
         //AND p.timeOut LIKE :dat
 
-        if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
-            $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
+        if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date']))) {
+            //$emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
 
-            if ($emp) {
+            //if ($emp) {
 
-                $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
                                                         CASE 
                                                         WHEN (p.timeIn IS NULL) THEN 'absent'
                                                         WHEN (p.timeIn IS NOT NULL) THEN 'présent'
@@ -400,20 +400,82 @@ class EmployeeController extends ApplicationController
                                                         AND (p.timeIn LIKE :dat OR p.timeOut LIKE :dat)
                                                         
                 ")
-                    ->setParameters([
-                        'empId' => $paramJSON['emp'],
-                        'dat'   => $paramJSON['date'] . '%'
-                    ])
-                    ->getResult();
+                ->setParameters([
+                    'empId' => $emp->getId(),
+                    'dat'   => $paramJSON['date'] . '%'
+                ])
+                ->getResult();
 
-                //dd($employeeAttendance);
-                $date = new DateTime($paramJSON['date'] . '-01');
-                return $this->render('employee/attendanceSheet.html.twig', [
-                    'emp'                => $emp,
-                    'employeeAttendance' => $employeeAttendance,
-                    'month'              => $date->format('M Y'),
-                ]);
+            //dd($employeeAttendance);
+            $date = new DateTime($paramJSON['date'] . '-01');
+            return $this->render('employee/attendanceSheet.html.twig', [
+                'emp'                => $emp,
+                'employeeAttendance' => $employeeAttendance,
+                'month'              => $date->format('M Y'),
+                'date'               => $date,
+            ]);
+            //}
+        }
+
+        return $this->json([
+            'code' => 403,
+            'message' => 'Empty Array or Not exists !',
+        ], 403);
+    }
+
+    /**
+     * Permet de mettre à jour le tableau de présence de l'employé passé en paramètre
+     * 
+     * @Route("update/employee/{id<\d+>}/attendance/record", name="update_employee_dt_presence")
+     *
+     * @Security( "(emp === user) or (is_granted('ROLE_LEADER') and user.getTeam().getUsers().contains(emp)) or ( (is_granted('ROLE_RH_MANAGER') or is_granted('ROLE_ADMIN')) and (emp.getEnterprise() === user.getEnterprise()) )" )
+     * 
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function updateEmployeeAttendanceRecord(User $emp, Request $request, EntityManagerInterface $manager)
+    {
+        $employeeAttendance  = [];
+
+        $paramJSON = $this->getJSONRequest($request->getContent());
+        //AND emp.attribut IN ('Leader','Subordinate')
+        //AND emp.team IS NOT NULL
+        if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date']))) {
+            //$emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
+
+            //if ($emp) {
+
+            //Récupération des présence au travail pour un mois donné
+            //AND p.statut = 'approved'
+            $employeeAttendance = $manager->createQuery("SELECT SUBSTRING(p.timeIn,1,10) AS date_, SUBSTRING(p.timeIn,12) AS TimeIn, SUBSTRING(p.timeOut,12) AS TimeOut_, p.statut AS Statut,
+                                                        CASE 
+                                                        WHEN (p.timeIn IS NULL) THEN 'absent'
+                                                        WHEN (p.timeIn IS NOT NULL) THEN 'présent'
+                                                        ELSE 'absent'
+                                                        END AS PresenceStatus
+                                                        FROM App\Entity\Pointing p
+                                                        WHERE p.employee = :empId
+                                                        AND (p.timeIn LIKE :dat OR p.timeOut LIKE :dat)
+                                                        
+                ")
+                ->setParameters([
+                    'empId' => $emp->getId(),
+                    'dat'   => $paramJSON['date'] . '%'
+                ])
+                ->getResult();
+            //}
+
+            //dump($employeesAttendance);
+            foreach ($employeeAttendance as $key => $value) {
+                $date = new DateTime($value['date_'] . '00:00:00');
+                $employeeAttendance[$key]['date_'] = $date->format('D, d M Y');
             }
+            return $this->json([
+                'code'              => 200,
+                'employeeAttendance' => (array)$employeeAttendance,
+                'message'           => 'Success !',
+            ], 200);
         }
 
         return $this->json([

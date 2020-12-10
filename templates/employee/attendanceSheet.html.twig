@@ -62,8 +62,17 @@
                         </div>
 
                     </div> #}
+                    <div class="datepickerClass"></div>
+                    <div class="input-group mb-2 d-flex align-content-center">
+                        <input type="text" class="form-control " value="" placeholder="{{date(date)|date('m-Y')}}" id="datepicker">
+                        <div class="input-group-append">
+                            <span class="input-group-text fs-xl">
+                                <i class="fal fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                    </div>
                     <!-- datatable start -->
-                    <table id="dt-employee" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                    <table id="dt-attendance" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
                         <thead class="bg-primary-600">
                             <tr class="text-center">
                                 <th>#</th>
@@ -149,7 +158,7 @@
         var jsDate = "{{month}}";
         var FileName = "{{emp.fullName}}_Fiche_de_Présence_" + jsDate;
         // initialize datatable
-        var employeeTable = $('#dt-employee').dataTable(
+        var attendanceTable = $('#dt-attendance').dataTable(
         {
             responsive: true,
             lengthChange: false,
@@ -465,7 +474,194 @@
         $('.buttons-html5').children('span').prepend('<i class="mdi mdi-download mr-2"></i>');
         //$('.buttons-pdf').children('span').prepend('<i class="mdi mdi-download mr-2"></i>')
 
+        // Class definition
+
+        var controls = {
+            leftArrow: '<i class="fal fa-angle-left" style="font-size: 1.25rem"></i>',
+            rightArrow: '<i class="fal fa-angle-right" style="font-size: 1.25rem"></i>'
+        }
+
+        var runDatePicker = function()
+        {
+
+            $('#datepicker').datepicker(
+            {
+                orientation: "bottom left",
+                language: 'de-DE',
+                todayHighlight: true,
+                autoclose: true,
+                endDate: '0d',
+                {# todayBtn: true,
+                clearBtn: true,  #}
+                immediateUpdates: true,
+                //defaultViewDate: 'today',
+                templates: controls,
+                format: "mm-yyyy",
+                viewMode: "months", 
+                minViewMode: "months"
+            });
+        
+        };
+        runDatePicker();
+
+        //$( '#datepicker' ).datepicker( 'setDate', 'today' );
+        
+        //var date = $('#datepicker').datepicker('getDate');
+        //var date1 = now.getFullYear()+'-'+(now.getMonth()+1);
+        //console.log('date = ' + date1);
+        
+        var _url = "{{ path('update_employee_dt_presence',{'id':emp.id}) }}";
+
+        $('#datepicker').datepicker().on('changeDate', function(e) {
+            // `e` here contains the extra attributes
+            {# console.log('date = ' + e.date);
+            console.log(e.format('yyyy-mm')); #}
+            //date = e.format('yyyy-mm-dd');
+            //date1 = e.format('yyyy-mm');
+
+            //var date = $('#datepicker').datepicker('getDate').getFormattedDate('yyyy-mm-dd');
+            //console.log('date = ' + date);
+
+            var $data = JSON.stringify({
+                "date": e.format('yyyy-mm'),//tabGridId,
                 
+            });   
+
+            Swal.mixin(
+            {
+                customClass:
+                {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-danger ml-2"
+                },
+                buttonsStyling: false
+            }).queue([{
+                    type: "warning",
+                    title: 'Confirmation de Sélection',
+                    confirmButtonText: 'Confirmez',
+                    text: 'Fiche de Présence du Mois de ' + e.format('M yyyy') + ' ?',
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    //confirmButtonClass: 'btn btn-primary',
+                    //cancelButtonClass: 'btn btn-danger ml-2',
+                    preConfirm: function () {
+                        return new Promise(function (resolve) { 
+                            //console.log(resolve);
+                            $.ajax({
+                                type: "POST", // method type
+                                contentType: "application/json; charset=utf-8",
+                                url: _url, // /Target function that will be return result
+                                data: $data, // parameter pass data is parameter name param is value
+                                dataType: "json",
+                                timeout: 120000, // 64241
+                                success: function (data) {
+                                    // $('.fa-sync').removeClass('fa-spin');
+                                    //console.log(data);
+                                    if(data.code === 200){
+                                                                                        
+                                        Swal.fire("Succès !", "Le tableau a été mis à jour avec succès !", "success");
+                                        /*Swal.fire({
+                                            type: "success",
+                                            position: 'top-end',
+                                            title: "Succès !",
+                                            text: "Le tableau a été mis à jour avec succès !",
+                                            timer: 3000,
+                                            timerProgressBar: true,
+                                            footer: "<a href>Why do I have this issue?</a>"
+                                        });*/
+                                        
+                                        //On efface le tableau
+                                        attendanceTable.fnClearTable();
+                                            
+                                        data['employeeAttendance'].forEach(function (value, index) {
+                                            {# console.log('Id = ' + value['Id'] + ' PresenceStatus = ' + value['PresenceStatus']);
+                                            console.log(attendancesTable); #}
+
+                                            console.log(value);
+
+                                            var presenceStatus = value['PresenceStatus'];
+                                            var presenceStr = '';
+                                            if( presenceStatus === 'présent' ){
+                                                //presenceStatus = 'présent';
+                                                presenceStr = '<span class="badge badge-success">' + presenceStatus + '</span>';
+                                            }
+                                            else{
+                                                presenceStr = '<span class="badge badge-danger">' + presenceStatus + '</span>';
+                                            }
+                                            var status = value['Statut'];
+                                            var statutStr = '';
+                                            if( status === 'approved' ){
+                                                status = 'approuvé';
+                                                statutStr = '<span class="badge badge-success">' + status + '</span>';
+                                            }
+                                            else{
+                                                status = 'en attente';
+                                                statutStr = '<span class="badge badge-warning">' + status + '</span>';
+                                            }
+
+                                            attendanceTable.fnAddData( [
+                                                index + 1,
+                                                value['date_'], 
+                                                presenceStr,
+                                                value['TimeIn'], 
+                                                value['TimeOut_'],
+                                                statutStr
+                                            ] );
+                                        });
+
+                                        setTimeout(function () {
+                                            resolve()
+                                        }, 5000);
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            type: "error",
+                                            title: "Oops...",
+                                            text: "Une erreur est survenue !",
+                                            {# footer: "<a href>Why do I have this issue?</a>" #}
+                                        });
+                                        
+                                    }
+
+                                    
+                                },
+                                error: function (result) {
+                                    //console.log("Error");
+                                    console.log(result);
+                                    /*Swal.fire('Oops...', 'Something went wrong!', 'error'
+                                    // footer: '<a href>Why do I have this issue?</a>'
+                                    );*/
+                                    Swal.fire({
+                                        type: "error",
+                                        title: "Oops...",
+                                        text: "Une erreur est survenue !",
+                                        {# footer: "<a href>Why do I have this issue?</a>" #}
+                                    });
+                                }
+                            });
+                    })  
+                },
+                //allowOutsideClick: false
+                /*allowOutsideClick: function allowOutsideClick()
+                {
+                    return !Swal.isLoading();
+                }*/
+            }]).then((result) => {
+                if (result.isConfirmed) {
+                    
+                }else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire(
+                    'Annulation',
+                    'Choix Annulé',
+                    'error'
+                    )
+                }
+            });
+        });
+        
         
     });
 

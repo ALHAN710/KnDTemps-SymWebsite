@@ -17,7 +17,7 @@
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="subheader-icon fal fa-users"></i>Fiche de Présence {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
+        <i class="subheader-icon fas fa-user-check"></i>Fiche de Présence {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
         
     </h1>
     {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
@@ -83,7 +83,7 @@
                             <tr id="{{employee.id}}" data-row="{{loop.index0}}">
                                 {% set status = employeesAttendance[employee.id]['Statut'] %}
                                 {% set presenceStatus = employeesAttendance[employee.id]['PresenceStatus'] %}
-                                <td><a href="#" class="empClass" data-emp={{employee.id}}>{% if (employee.roles[0] is same as('ROLE_LEADER')) %}<i class="fa fa-user-tie mr-1"></i>{% endif %}{{employee.fullName}}</a></td>
+                                <td><a href="#" class="empClass" data-url="{{ path('employee_month_attendance_sheet',{'id':employee.id}) }}" data-emp={{employee.id}}>{% if (employee.roles[0] is same as('ROLE_LEADER')) %}<i class="fa fa-user-tie mr-1"></i>{% endif %}{{employee.fullName}}</a></td>
                                 <td>{{employee.phoneNumber}}</td>
                                 <td>{{employee.office.name}}</td>
                                 <td>{{employee.team.name ?? ("<span class='badge badge-warning'>Sans Équipe</span>")|raw}}</td>
@@ -391,10 +391,10 @@
         $( '#datepicker' ).datepicker( 'setDate', 'today' );
         
         var date = $('#datepicker').datepicker('getDate');
-        var date1 = $('#datepicker').val();
+        var date1 = now.getFullYear()+'-'+(now.getMonth()+1);
         console.log('date = ' + date1);
         
-        var _url = "{{ path('update_employees_dt_at') }}";
+        var _url = "{{ path('update_employees_dt_attendance') }}";
 
         $('#datepicker').datepicker().on('changeDate', function(e) {
             // `e` here contains the extra attributes
@@ -535,10 +535,10 @@
         });
 
         $('.empClass').click(function(){
-            console.log('empId = ' + $(this).data("emp"));
-            console.log('date = ' + date1);
+            //console.log('empId = ' + $(this).data("emp"));
+            //console.log('date = ' + date1);
             if($(this).data("emp") && date1){
-                $.redirect("{{path('employee_month_attendance_sheet')}}",
+                $.redirect($(this).data("url"),
                     {
                         params: {'emp':$(this).data("emp"),'date':date1},
                         
