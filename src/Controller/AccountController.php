@@ -65,7 +65,7 @@ class AccountController extends ApplicationController
      * 
      * @Route("/register", name="account_register")
      * 
-     * @IsGranted("ROLE_USER")
+     * @Security( " count(user.getEnterprise().getUsers()) < count(user.getEnterprise().getSubscription().getEmployeeNumber()) and user.getEnterprise().getIsActivated() == true " )
      *
      * @return Response
      */
@@ -207,7 +207,7 @@ class AccountController extends ApplicationController
 
             $this->addFlash(
                 'success',
-                "Profile changes have been successfully saved."
+                "Les Modifications du profil ont été sauvegardées avec succès."
             );
         }
 
@@ -223,7 +223,7 @@ class AccountController extends ApplicationController
      *
      * @Route("/user/{id<\d+>}/edit", name = "user_edit")
      * 
-     * @Security( "is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_HIDE_ADMIN') or ( is_granted('ROLE_ADMIN') and user_.getEnterprise() === user.getEnterprise() )" )
+     * @Security( "is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_HIDE_ADMIN') or ( (is_granted('ROLE_ADMIN') or is_granted('ROLE_RH_MANAGER') ) and user_.getEnterprise() === user.getEnterprise() )" )
      * 
      * @return Response
      */
@@ -311,7 +311,7 @@ class AccountController extends ApplicationController
      * 
      * @Route("/user/{id<\d+>}/delete", name="user_delete")
      * 
-     * @Security( "is_granted('ROLE_SUPER_ADMIN') or ( is_granted('ROLE_ADMIN') and user_.getEnterprise() === user.getEnterprise() )" )
+     * @Security( "(is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') ) and user_.getEnterprise() === user.getEnterprise() )" )
      * 
      * @param User $user_
      * @param EntityManagerInterface $manager
@@ -321,15 +321,24 @@ class AccountController extends ApplicationController
     {
         $_user = $user_->getFullName();
 
-        $manager->remove($user_);
-        $manager->flush();
+        if (count($user_->getTeams()) === 0) {
+            $enterprise = $user_->getEnterprise();
+            $enterprise->removeUser($user_);
+            $manager->remove($user_);
+            $manager->flush();
 
-        $this->addFlash(
-            'success',
-            "La suppression de l'utilisateur <strong>{$_user}</strong> a été effectuées avec succès !"
-        );
+            return $this->json([
+                'code'    => 200,
+                'name'    => $enterprise->getSocialReason(),
+                'message' => "La suppression de l'employé <strong> {$_user} </strong> a été effectuée avec succès !"
+            ], 200);
+        } else {
 
-        return $this->redirectToRoute("users_entreprise_index");
+            return $this->json([
+                'code'    => 403,
+                'message' => "La suppression de l'employé <strong> {$_user} </strong> n'a pas été effectuée car ce dernier est responsable d'une équipe !"
+            ], 200);
+        }
     }
 
     /**
@@ -371,7 +380,8 @@ class AccountController extends ApplicationController
                         "Votre mot de passe a bien été modifié"
                     );
 
-                    return $this->redirectToRoute('homepage');
+                    //return $this->redirectToRoute('homepage');
+
                 }
             } else {
                 $newPassword = $passwordUpdate->getNewPassword();

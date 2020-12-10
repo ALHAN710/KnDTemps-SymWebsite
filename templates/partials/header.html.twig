@@ -614,7 +614,7 @@
                     <span {#data-i18n="drpdwn.settings"#}>Profil</span>
                     <i class="fal fa-user float-right fw-n"></i>
                 </a>
-                <a href="#" class="dropdown-item" {#data-action="app-reset"#}>
+                <a href="{{path('account_password',{'id':app.user.id})}}" class="dropdown-item" {#data-action="app-reset"#}>
                     <span {#data-i18n="drpdwn.reset_layout"#}>Modifier Mot de Passe</span>
                     <i class="fal fa-edit float-right fw-n"></i>
                 </a>
