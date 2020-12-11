@@ -65,12 +65,12 @@ class AccountController extends ApplicationController
      * 
      * @Route("/register", name="account_register")
      * 
-     * @Security( " count(user.getEnterprise().getUsers()) < count(user.getEnterprise().getSubscription().getEmployeeNumber()) and user.getEnterprise().getIsActivated() == true " )
+     * 
      *
      * @return Response
      */
     public function create(EntityManagerInterface $manager, RoleRepository $roleRepo, Request $request, UserPasswordEncoderInterface $encoder)
-    {
+    { //@Security( " count(user.getEnterprise().getUsers()) < user.getEnterprise().getSubscription().getEmployeeNumber() and user.getEnterprise().getIsActivated() == true " )
         $isSupAdmin = false;
         $user = new User();
         if ($this->getUser()->getRoles()[0] === 'ROLE_ADMIN') $user->setEnterprise($this->getUser()->getEnterprise());
