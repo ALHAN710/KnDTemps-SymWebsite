@@ -9,6 +9,7 @@ use App\Controller\ApplicationController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 //use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PointingLocationController extends ApplicationController
@@ -17,6 +18,9 @@ class PointingLocationController extends ApplicationController
      * Page d'accueil des zones de pointage
      * 
      * @Route("/pointing/locations/home", name="pointing_locations_index")
+     * 
+     * @Security( " is_granted('ROLE_RH_MANAGER') " )
+     * 
      */
     public function index(): Response
     {
@@ -32,12 +36,12 @@ class PointingLocationController extends ApplicationController
      *
      * @Route("/pointing/location/new", name = "pointing_location_create")
      * 
-     * 
+     * @Security( "user.getEnterprise().getIsActivated() == true " )
      * 
      * @return Response
      */
     public function create(Request $request, EntityManagerInterface $manager)
-    { //@Security( "( is_granted('ROLE_STOCK_MANAGER') and user.getEnterprise().getIsActivated() == true ) " )
+    {
         $pointingLocation = new PointingLocation();
         $pointingLocation->setEnterprise($this->getUser()->getEnterprise());
 
@@ -78,12 +82,12 @@ class PointingLocationController extends ApplicationController
      *
      * @Route("pointing/location/{id<\d+>}/edit", name="pointing_location_edit")
      * 
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') ) and ( pointingLocation.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @return Response
      */
     public function edit(PointingLocation $pointingLocation, Request $request, EntityManagerInterface $manager)
-    { //@Security( "( is_granted('ROLE_STOCK_MANAGER') and pointingLocation.getEnterprise() === user.getEnterprise() )" )
+    {
 
         //  instancier un form externe
         $form = $this->createForm(PointingLocationType::class, $pointingLocation);
@@ -113,14 +117,14 @@ class PointingLocationController extends ApplicationController
      * 
      * @Route("/pointing/location/{id}/delete", name="pointing_location_delete")
      *
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') ) and ( pointingLocation.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @param PointingLocation $pointingLocation
      * @param EntityManagerInterface $manager
      * @return void
      */
     public function delete(PointingLocation $pointingLocation, EntityManagerInterface $manager)
-    { //@Security( "is_granted('ROLE_SUPER_ADMIN') or ( is_granted('ROLE_STOCK_MANAGER') and pointingLocation.getEnterprise() === user.getEnterprise() )" ) 
+    {
         $enterprise = $pointingLocation->getEnterprise();
         $enterprise->removePointingLocation($pointingLocation);
 

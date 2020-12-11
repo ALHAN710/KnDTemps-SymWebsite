@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TeamController extends AbstractController
@@ -29,15 +30,14 @@ class TeamController extends AbstractController
      *
      * @Route("/team/new", name = "team_create")
      * 
-     * 
+     * @Security( "user.getEnterprise().getIsActivated() == true " )
      * 
      * @return Response
      */
     public function create(Request $request, EntityManagerInterface $manager)
-    { //@Security( "( is_granted('ROLE_STOCK_MANAGER') and user.getEnterprise().getIsActivated() == true ) " )
+    {
         $team = new Team();
         $team->setEnterprise($this->getUser()->getEnterprise());
-
 
         //Permet d'obtenir un constructeur de formulaire
         // Externaliser la création du formulaire avec la cmd php bin/console make:form
@@ -78,12 +78,12 @@ class TeamController extends AbstractController
      *
      * @Route("/team/{id<\d+>}/edit", name="team_edit")
      * 
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') ) and ( team.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @return Response
      */
     public function edit(Team $team, Request $request, EntityManagerInterface $manager)
-    { //@Security( "( is_granted('ROLE_STOCK_MANAGER') and team.getEnterprise() === user.getEnterprise() )" )
+    {
 
         //  instancier un form externe
         $form = $this->createForm(TeamType::class, $team, [
@@ -123,14 +123,14 @@ class TeamController extends AbstractController
      * 
      * @Route("/team/{id}/delete", name="team_delete")
      *
-     * 
+     * @Security( " ( is_granted('ROLE_RH_MANAGER') ) and ( team.getEnterprise() === user.getEnterprise() ) " )
      * 
      * @param Team $team
      * @param EntityManagerInterface $manager
      * @return void
      */
     public function delete(Team $team, EntityManagerInterface $manager)
-    { //@Security( "is_granted('ROLE_SUPER_ADMIN') or ( is_granted('ROLE_STOCK_MANAGER') and team.getEnterprise() === user.getEnterprise() )" ) 
+    {
         $enterprise = $team->getEnterprise();
         $enterprise->removeTeam($team);
 

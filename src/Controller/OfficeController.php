@@ -15,6 +15,7 @@ class OfficeController extends AbstractController
 {
     /**
      * @Route("/offices/home", name="offices_index")
+     * @Security( " is_granted('ROLE_RH_MANAGER') " )
      */
     public function index(): Response
     {
