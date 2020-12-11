@@ -58,7 +58,7 @@
                 </a>
             </li>
             {# {% if app.user.enterprise.offices|length > 0 %} #}
-            {% if (app.user.roles[0] is not same as('ROLE_USER')) %}
+            {% if is_granted('ROLE_RH_MANAGER') %}
             <li class="nav-title">Rubrique des Fonctions</li>
             <li>
                 {# <a href="#" title="Postes" data-filter-tags="Postes">
