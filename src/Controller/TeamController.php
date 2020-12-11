@@ -15,6 +15,9 @@ class TeamController extends AbstractController
 {
     /**
      * @Route("/teams/home", name="teams_index")
+     * 
+     * @Security( " is_granted('ROLE_RH_MANAGER') " )
+     * 
      */
     public function index(): Response
     {
