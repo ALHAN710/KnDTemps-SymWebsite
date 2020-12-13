@@ -93,6 +93,53 @@ class EnterpriseType extends ApplicationType
                 ]
             )
             ->add(
+                'timeZone',
+                ChoiceType::class,
+                [
+                    'choices' => [
+                        'GMT'          => '0',
+                        'GMT+1:00'     => '1',
+                        'GMT+2:00'     => '2',
+                        'GMT+3:00'     => '3',
+                        'GMT+3:30'     => '3.5',
+                        'GMT+4:00'     => '4',
+                        'GMT+5:00'     => '5',
+                        'GMT+5:30'     => '5.3',
+                        'GMT+5:45'     => '5.75',
+                        'GMT+6:00'     => '6',
+                        'GMT+6:30'     => '6.5',
+                        'GMT+7:00'     => '7',
+                        'GMT+8:00'     => '8',
+                        'GMT+8:45'     => '8.75',
+                        'GMT+9:00'     => '9',
+                        'GMT+9:30'     => '9.5',
+                        'GMT+10:00'    => '10',
+                        'GMT+10:30'    => '10.5',
+                        'GMT+11:00'    => '11',
+                        'GMT+12:00'    => '12',
+                        'GMT+12:45'    => '12.75',
+                        'GMT+13:00'    => '13',
+                        'GMT+14:00'    => '14',
+                        'GMT-1:00'     => '-1',
+                        'GMT-2:00'     => '-2',
+                        'GMT-3:00'     => '-3',
+                        'GMT-3:30'     => '-3.5',
+                        'GMT-4:00'     => '-4',
+                        'GMT-5:00'     => '-5',
+                        'GMT-6:00'     => '-6',
+                        'GMT-7:00'     => '-7',
+                        'GMT-8:00'     => '-8',
+                        'GMT-9:00'     => '-9',
+                        'GMT-9:30'     => '-9.5',
+                        'GMT-10:00'    => '-10',
+                        'GMT-11:00'    => '-11',
+                        'GMT-12:00'    => '-12',
+                    ],
+
+                    'label'    => 'Fuseau Horaire'
+                ]
+            )
+            ->add(
                 'description',
                 TextareaType::class,
                 $this->getConfiguration("Description", "Brève Description de l'entreprise...", ['required' => false])
