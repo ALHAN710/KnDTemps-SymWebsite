@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Erreur 403 {% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Page Views</a></li>
+<li class=""><a href="javascript:void(0);">Error Pages</a></li>
+<li class="active"><a href="#">Access Forbidden Error</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="h-alt-hf d-flex flex-column align-items-center justify-content-center text-center">
+    <h1 class="page-error color-fusion-500">
+        ERROR <span class="text-danger">403</span>
+        <small class="fw-500">
+            Access <u>Forbidden</u> !
+        </small>
+    </h1>
+    <h3 class="fw-500 mb-5">
+        You have experienced a technical error. We apologize.
+    </h3>
+    <h4>
+        We are working hard to correct this issue. Please wait a few moments and try your search again.
+        <br>In the meantime, check out whats new on KnD Temps WebApp:
+    </h4>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    
+    
+</script>
+
+{% endblock %}
