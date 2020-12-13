@@ -1,0 +1,321 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Accueil Clients{% endblock %}
+
+{% block stylesheets %}
+
+<link href="/plugins/custombox/custombox.min.css" rel="stylesheet" type="text/css">
+
+<!-- DataTables -->
+<link href="/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Responsive datatable examples -->
+<link href="/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />  
+
+<!-- Sweet Alert -->
+<link href="/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="mdi mdi-account-multiple mr-2"></i>Clients</h4>  
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Accueil</li>
+            <li class="breadcrumb-item active">Clients</li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <h5 class="header-title">Liste des Clients</h5>
+                    <div class="mt-2 mb-2 mr-5 text-right">
+                        <a href="{{path('admin_enterprise_create')}}"  class="btn btn-info btn-lg rounded " data-toggle="tooltip" data-placement="top" title="Créer un nouveau client"><i class="fa fa-plus-circle mr-2"></i> <i class="mdi mdi-account-multiple"></i></a>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="datatable2" class="table table-striped table-fixed nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr class="text-center">
+                                    {# <th>#</th> #}
+                                    <th>Nom</th>
+                                    <th>Tél</th>
+                                    <th>Email</th>
+                                    <th>Pays</th>
+                                    <th>Ville</th> 
+                                    <th>Adresse</th>
+                                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                    <th>Actions</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                {% for enterprise in enterprises %}
+                                {% if enterprise != app.user.enterprise %}
+                                <tr class="text-center">
+                                    {# <td>{{enterprise.id}}</td> #}
+                                    <td class="text-left"><a href="#{#{{path('business_contact_details', {'id':enterprise.id})}}#}"  class="" >{{enterprise.socialReason}}</a></td>
+                                    <td>{{enterprise.phoneNumber }}</td>
+                                    <td>{{enterprise.email }}</td>
+                                    <td>{{enterprise.country }}</td>
+                                    <td>{{enterprise.town}}</td>
+                                    <td>{{enterprise.address}}</td>
+                                    
+                                    <td>
+                                        <a href="{{path('admin_enterprise_edit', {'id':enterprise.id})}}"  class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifier Client"><i class="far fa-edit"></i> </a>
+                                        <a href="#" data-ent={{enterprise.id}} class="btn btn-soft-primary btn-xs rounded text-right orderRef waves-effect" data-toggle="modal" data-target=".bd-example-modal-xl_orderForm" data-placement="top" title="Commander un nouvel abonnement"><i class="mdi mdi-cart-outline"></i></a>
+                                        <a href="{{ path('admin_enterprise_delete', {'id':enterprise.id}) }}" class="btn btn-soft-danger btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer le Client"><i class="fas fa-trash"></i> </a>
+                                    
+                                    </td>
+                                    
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            {% elseif is_granted('ROLE_SELLER') %}
+                                {% for invoice in app.user.invoices %}
+                                <tr class="text-center">
+                                    {# <td>{{enterprise.id}}</td> #}
+                                    <td class="text-left">{{invoice.enterprise.socialReason}}</td>
+                                    <td>{{invoice.enterprise.phoneNumber }}</td>
+                                    <td>{{invoice.enterprise.email }}</td>
+                                    <td>{{invoice.enterprise.country }}</td>
+                                    <td>{{invoice.enterprise.town}}</td>
+                                    <td>{{invoice.enterprise.address}}</td>
+                                    
+                                    {# <td>
+                                        <a href="{{path('admin_enterprise_edit', {'id':enterprise.id})}}"  class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifier Client"><i class="far fa-edit"></i> </a>
+                                        <a href="#" data-ent={{enterprise.id}} class="btn btn-soft-primary btn-xs rounded text-right orderRef waves-effect" data-toggle="modal" data-target=".bd-example-modal-xl_orderForm" data-placement="top" title="Commander un nouvel abonnement"><i class="mdi mdi-cart-outline"></i></a>
+                                        <a href="{{ path('admin_enterprise_delete', {'id':enterprise.id}) }}" class="btn btn-soft-danger btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer le Client"><i class="fas fa-trash"></i> </a>
+                                    
+                                    </td> #}
+                                    
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>   
+
+                    <!-- Custom Modal -->
+                    <div id="orderFomModal" class="modal fade bd-example-modal-xl_orderForm" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title mt-0" >Formulaire d'abonnement</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                {{ form_label(form.subscriptionName, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                            </div>
+                                            {{ form_widget(form.subscriptionName, {'attr': {'class': "form-control"}}) }}
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                {{ form_label(form.subscriptionDuration, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                            </div>
+                                            {{ form_widget(form.subscriptionDuration, {'attr': {'class': "form-control"}}) }}
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                {{ form_label(form.subscriptionPrice, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                            </div>
+                                            {{ form_widget(form.subscriptionPrice, {'attr': {'class': "form-control"}}) }}
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="orderBtn" class="btn btn-primary waves-effect">Commander</button>
+                                    <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>
+                                    
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>        
+                </div>
+            </div>
+        </div>
+    </div><!--end row-->
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- Required datatable js -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/plugins/datatables/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/datatables/jszip.min.js"></script>
+<script src="/plugins/datatables/pdfmake.min.js"></script>
+<script src="/plugins/datatables/vfs_fonts.js"></script>
+<script src="/plugins/datatables/buttons.html5.min.js"></script>
+<script src="/plugins/datatables/buttons.print.min.js"></script>
+<script src="/plugins/datatables/buttons.colVis.min.js"></script>
+<!-- Responsive examples -->
+<script src="/plugins/datatables/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables/responsive.bootstrap4.min.js"></script>
+<script src="/pages/jquery.datatable.init.js"></script>    
+
+<script src="/plugins/custombox/custombox.min.js"></script>
+<script src="/plugins/custombox/custombox.legacy.min.js"></script>
+
+<script src="/pages/jquery.modal-animation.js"></script>
+<script src="/js/jquery.redirect.js"></script> 
+
+<!-- Sweet-Alert  -->
+<script src="/plugins/sweet-alert2/sweetalert2.min.js"></script>
+
+
+<script>
+    
+
+    {# $('button[data-action="place"]').click(function(){
+        console.log('OK Btn clicked');
+        //block of code that runs when the click event triggers
+        { var id_ = this.dataset.target;//BC id
+        var stockId = '#stockId' + id_;
+        var stock = $(stockId).val();
+        var type;
+        var documentType = "input:checkbox[name=documentType" + id_ + "]:checked";
+        console.log('documentType = ' + documentType);
+        $("input:radio[name=documentType" + id_ + "]:checked").each(function(){
+            type = $(this).val();
+        });
+        console.log('Type = ' + type);
+        var _url = "/commercial/sheet/new/" + id_ + "/" + type + "/" + stock;
+        console.log('Url = ' + _url);
+        
+        window.location.replace(_url); }
+
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+    });  #}
+    var ent = 0;
+    var tarifs = JSON.parse('{{ tarifs | json_encode | raw }}');
+    var _url = "{{path('order_subscription')}}";
+    //console.log(tarifs);
+    
+    $('.orderRef').click(function(){
+        ent =  this.dataset.ent;
+        //alert('Place order for enterprise : ' + id);
+    });
+
+    var subscriptionId = '#admin_subscription_subscriptionName';
+    var subscriptionDurationId = '#admin_subscription_subscriptionDuration';
+    var subscriptionPriceId = '#admin_subscription_subscriptionPrice';
+        
+    $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    
+    $(subscriptionId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        //var puId_ = String(Name);
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+
+    $(subscriptionDurationId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+
+    $('#orderBtn').click(function(){
+        var Str = String($(subscriptionId).val());
+        //console.log('Product Price value = ' + $(productPriceId).val());
+        var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        var $data = JSON.stringify({
+            "subscriptionName": Name,//tabGridId,
+            "duration"        : $(subscriptionDurationId).val(),//tabFuelId,
+            'price'           : $(subscriptionPriceId).val(),
+            "ent"             : ent
+        });   
+
+        swal.queue([{
+            title: 'Veuillez Confirmer la Commande svp !',
+            confirmButtonText: 'Confirmez',
+            text: '',
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-danger ml-2',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    /*$.get('https://api.ipify.org?format=json')
+                        .done(function (data) {
+                            swal.insertQueueStep(data.ip)
+                            resolve()
+                        })*/
+                    $.ajax({
+                        type: "POST",//method type
+                        contentType: "application/json; charset=utf-8",
+                        url: _url,///Target function that will be return result
+                        data: $data,//parameter pass data is parameter name param is value 
+                        dataType: "json",
+                        timeout: 120000,//64241
+                        success: function (data) {
+                            //$('.fa-sync').removeClass('fa-spin');                                  
+                            console.log(data);
+                                                                                 
+                            swal({
+                                type: 'success',
+                                title: 'La commande a été effectuée avec succès !',
+                                //html: 'Submitted email: ' + email
+                            });
+
+                            setTimeout(function () {
+                                resolve();
+                                $('#orderFomModal').modal('toggle');
+                            }, 2000);
+                        },
+                        error: function (result) {
+                            //console.log("Error");
+                            //console.log(result);
+                            swal(
+                                'Oops...',
+                                'Something went wrong!',
+                                'error'
+                                //footer: '<a href>Why do I have this issue?</a>'
+                            );
+
+                            /*Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                                footer: '<a href>Why do I have this issue?</a>'
+                            });*/
+
+                            setTimeout(function () {
+                                resolve()
+                            }, 5000);
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }]);
+    });
+
+    
+</script>
+{% endblock %}

@@ -27,10 +27,10 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true, nullable=true)
-     * @Assert\NotBlank()
+     * 
      * @Assert\Email(message="Veuillez renseigner une adresse email valide !")
      */
-    private $email;
+    private $email; //@Assert\NotBlank()
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -208,6 +208,11 @@ class User implements UserInterface
      * @ORM\ManyToOne(targetEntity=PointingLocation::class, inversedBy="users")
      */
     private $pointingLocation;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Invoice::class, mappedBy="user")
+     */
+    private $invoices;
 
     private $user_;
 
@@ -817,6 +822,37 @@ class User implements UserInterface
     public function setUser_($user_)
     {
         $this->user_ = $user_;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Invoice[]
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
+
+    public function addInvoice(Invoice $invoice): self
+    {
+        if (!$this->invoices->contains($invoice)) {
+            $this->invoices[] = $invoice;
+            $invoice->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoice(Invoice $invoice): self
+    {
+        if ($this->invoices->contains($invoice)) {
+            $this->invoices->removeElement($invoice);
+            // set the owning side to null (unless already changed)
+            if ($invoice->getUser() === $this) {
+                $invoice->setUser(null);
+            }
+        }
 
         return $this;
     }

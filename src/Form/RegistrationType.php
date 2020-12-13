@@ -114,14 +114,16 @@ class RegistrationType extends ApplicationType
                 'hiringAt',
                 DateTimeType::class,
                 $this->getConfiguration("Date d'Embauche", "", [
-                    'widget' => "single_text"
+                    'widget' => "single_text",
+                    'required' => false
                 ])
             )
             ->add(
                 'bornAt',
                 DateTimeType::class,
                 $this->getConfiguration("Date de Naissance", "", [
-                    'widget' => "single_text"
+                    'widget' => "single_text",
+                    'required' => false
                 ])
             )
             ->add(
@@ -136,70 +138,7 @@ class RegistrationType extends ApplicationType
                     'label'    => 'Sexe'
                 ]
             )
-            ->add(
-                'office',
-                EntityType::class,
-                [
-                    // looks for choices from this entity
-                    'class' => Office::class,
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('off')
-                            ->innerJoin('off.enterprise', 'e')
-                            ->where('e.id = :entId')
-                            ->setParameters(array(
-                                'entId'    => $this->entId,
 
-                            ));
-                        //->orderBy('u.username', 'ASC');
-                    },
-                    // uses the User.username property as the visible option string
-                    'choice_label' => 'name',
-
-                    // used to render a select box, check boxes or radios
-                    // 'multiple' => true,
-                    // 'expanded' => true,
-                    'label'    => 'Poste'
-                ]
-            )
-            ->add(
-                'team',
-                EntityType::class,
-                [
-                    // looks for choices from this entity
-                    'class' => Team::class,
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('team')
-                            ->innerJoin('team.enterprise', 'e')
-                            ->where('e.id = :entId')
-                            ->setParameters(array(
-                                'entId'    => $this->entId,
-
-                            ));
-                        //->orderBy('u.username', 'ASC');
-                    },
-                    // uses the User.username property as the visible option string
-                    'choice_label' => 'name',
-
-                    // used to render a select box, check boxes or radios
-                    // 'multiple' => true,
-                    // 'expanded' => true,
-                    'label'    => 'Equipe'
-                ]
-            )
-            ->add(
-                'role',
-                ChoiceType::class,
-                [
-                    'choices' => [
-                        'SUBORDONNÉ'    => 'ROLE_USER',
-                        "CHEF D'ÉQUIPE" => 'ROLE_LEADER',
-                        "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
-                        'ADMINISTRATEUR'      => 'ROLE_ADMIN',
-
-                    ],
-                    'label'    => 'Attribut'
-                ]
-            )
             /*->add(
                 'pointingLocation',
                 EntityType::class,
@@ -239,13 +178,14 @@ class RegistrationType extends ApplicationType
                 );
         }
         if ($options['isSupAdmin']) {
-            $builder->add(
-                'enterprise',
-                EntityType::class,
-                [
-                    // looks for choices from this entity
-                    'class' => Enterprise::class,
-                    /*'query_builder' => function (EntityRepository $er) {
+            $builder
+                ->add(
+                    'enterprise',
+                    EntityType::class,
+                    [
+                        // looks for choices from this entity
+                        'class' => Enterprise::class,
+                        /*'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('p')
                                 ->innerJoin('p.enterprise', 'e')
                                 ->where('e.id = :entId')
@@ -256,14 +196,94 @@ class RegistrationType extends ApplicationType
                                 ));
                             //->orderBy('u.username', 'ASC');
                         },*/
-                    // uses the User.username property as the visible option string
-                    'choice_label' => 'socialReason',
+                        // uses the User.username property as the visible option string
+                        'choice_label' => 'socialReason',
 
-                    // used to render a select box, check boxes or radios
-                    // 'multiple' => true,
-                    // 'expanded' => true,
-                ]
-            );
+                        // used to render a select box, check boxes or radios
+                        // 'multiple' => true,
+                        // 'expanded' => true,
+                    ]
+                )
+                ->add(
+                    'role',
+                    ChoiceType::class,
+                    [
+                        'choices' => [
+                            "SELLER"            => 'ROLE_SELLER',
+                            "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
+                            'ADMINISTRATEUR'    => 'ROLE_ADMIN',
+
+                        ],
+                        'label'    => 'Attribut'
+                    ]
+                );
+        }
+        if (!$options['isSupAdmin']) {
+            $builder
+                ->add(
+                    'office',
+                    EntityType::class,
+                    [
+                        // looks for choices from this entity
+                        'class' => Office::class,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('off')
+                                ->innerJoin('off.enterprise', 'e')
+                                ->where('e.id = :entId')
+                                ->setParameters(array(
+                                    'entId'    => $this->entId,
+
+                                ));
+                            //->orderBy('u.username', 'ASC');
+                        },
+                        // uses the User.username property as the visible option string
+                        'choice_label' => 'name',
+
+                        // used to render a select box, check boxes or radios
+                        // 'multiple' => true,
+                        // 'expanded' => true,
+                        'label'    => 'Poste'
+                    ]
+                )
+                ->add(
+                    'team',
+                    EntityType::class,
+                    [
+                        // looks for choices from this entity
+                        'class' => Team::class,
+                        'query_builder' => function (EntityRepository $er) {
+                            return $er->createQueryBuilder('team')
+                                ->innerJoin('team.enterprise', 'e')
+                                ->where('e.id = :entId')
+                                ->setParameters(array(
+                                    'entId'    => $this->entId,
+
+                                ));
+                            //->orderBy('u.username', 'ASC');
+                        },
+                        // uses the User.username property as the visible option string
+                        'choice_label' => 'name',
+
+                        // used to render a select box, check boxes or radios
+                        // 'multiple' => true,
+                        // 'expanded' => true,
+                        'label'    => 'Equipe'
+                    ]
+                )
+                ->add(
+                    'role',
+                    ChoiceType::class,
+                    [
+                        'choices' => [
+                            'SUBORDONNÉ'        => 'ROLE_USER',
+                            "CHEF D'ÉQUIPE"     => 'ROLE_LEADER',
+                            "CHEF DU PERSONNEL" => 'ROLE_RH_MANAGER',
+                            'ADMINISTRATEUR'    => 'ROLE_ADMIN',
+
+                        ],
+                        'label'    => 'Attribut'
+                    ]
+                );
         }
             /*
             ->add('wtperday')

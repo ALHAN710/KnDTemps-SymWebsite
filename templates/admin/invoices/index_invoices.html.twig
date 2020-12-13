@@ -1,0 +1,629 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %} {% if type != 'ongoing' %}Accueil Factures{% else %}Abonnemet en cours{% endif %}  {% endblock %}
+
+{% block stylesheets %}
+<!-- DataTables -->
+<link href="/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Responsive datatable examples -->
+<link href="/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />  
+
+<!-- Sweet Alert -->
+<link href="/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block pageTitle %}
+{% if type != 'ongoing' %}<h4 class="page-title mb-2"><i class="mdi mdi-file-table-outline mr-2"></i>Factures</h4>  
+{% else %}<h4 class="page-title mb-2"><i class="mdi mdi-checkbox-marked-circle-outline mr-2"></i>Abonnement</h4>  
+{% endif %}
+{% endblock %}
+
+{% set iconStock = true %}
+{% block breadcrumb %}
+    <div class="">
+        <ol class="breadcrumb">
+            {% if type != 'ongoing' %}
+            <li class="breadcrumb-item active">Accueil</li>
+            <li class="breadcrumb-item active">Factures</li>
+            {# <li class="breadcrumb-item active">{{ docType }}</li> #}
+            {% else %}
+            <li class="breadcrumb-item active">Abonnement</li>
+            <li class="breadcrumb-item active">En cours</li>
+            {% endif %}
+        </ol>
+    </div>
+{% endblock %}
+
+{% block body %}
+    
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <h5 class="header-title">Liste des {% if type != 'ongoing' %}Factures{% else %}Abonnements en cours{% endif %}
+                    </h5>
+                    {% if type != 'ongoing' %}
+                    <div class="row ">
+                        <div class="col"></div>
+                        <div class="col text-right" id="colSaveBtn">
+                            {# <div class="mt-2 mb-2">
+                                <a href="{{path('customers_index')}}"  class="btn btn-info btn-lg rounded " data-toggle="tooltip" data-placement="top" title="Add New product"><i class="fa fa-plus-circle mr-2"></i> <i class="mdi mdi-cart-outline"></i></a>
+                            </div> #}
+                                                        
+                            <div class="mt-2 mb-2 savebtn">
+                                <button type="button" class="btn btn-primary" id="saveBtn" data-toggle="tooltip" data-placement="top" title="Sauvegarder les changements de status des commandes ?">
+                                    <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                                    Save
+                                </button>
+                            </div>
+                        
+                        </div>
+                    
+                    </div>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        {# <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#delivery" role="tab">En Attente de Livraison</a>
+                        </li> #}
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#payment" role="tab">En Attente de Paiement</a>
+                        </li>                                                
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#completed" role="tab">Payés et Validés</a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab panes mdi mdi-dump-truck mdi mdi-truck-check -->
+                    <div class="">    
+                        {# {% autoescape %}{{ '<span class="badge bg">on pending</span>'|raw }}{% endautoescape %} #}
+                        <div class="tab-content">
+                            <div class="tab-pane  p-3" id="delivery" role="tabpanel">    
+                                {# {% if type == 'bill' %}
+                                <button type="button" id="deliveryJournalBtn" class="btn btn-info btn-xs rounded mr-1 mb-2" data-toggle="tooltip" data-placement="top" title="Imprimer les Commandes cochées dans le journal des livraisons du jour ?"><i class="fa fa-print"></i></button>
+                                <button type="button" id="inventoryExitJournalBtn" class="btn btn-info btn-xs rounded mr-1 mb-2" data-toggle="tooltip" data-placement="top" title="Print Inventory Exit Journal"><i class="fa fa-print"></i></button>
+                                {% endif %}  #}
+                                <table id="datatableDelivery" class="table table-fixed nowrap table-striped table-bordered" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr class="text-center">
+                                            {# {% if type == 'bill' %}
+                                            <th style="width:0.5em">À Livrer ?</th>
+                                            {% endif %} #}
+                                            {# <th>N° Facture</th> #}
+                                            <th>Client</th>
+                                            <th>Tél</th>
+                                            <th>Email</th>
+                                            <th>Date de Souscription</th>
+                                            <th>Validé ?</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for invoice in invoices %}
+                                        {% if invoice.deliveryStatus == false %}
+                                        <tr class="text-center">
+                                            {% if type == 'bill' %}
+                                            <td style="width:5px">
+                                                <div class="checkbox checkbox-primary">
+                                                    <input id="Journal{{invoice.id}}" type="checkbox" name="journal" value="{{invoice.id}}">
+                                                    <label for="Journal{{invoice.id}}"></label>
+                                                </div>
+                                            </td>
+                                            {% endif %}
+                                            {# <td>{{invoice.number}}</td> #}
+                                            <td>{{invoice.enterprise.socialReason}}</td>
+                                            <td>{{invoice.enterprise.phoneNumber}}</td>
+                                            <td>{{invoice.enterprise.email}}</td>
+                                            <td>{{ invoice.enterprise.subscribeAt is empty ? "-" : invoice.enterprise.subscribeAt|date("d/m/Y") }}</td>
+                                            <td>
+                                                <div class="checkbox checkbox-primary">
+                                                    <input id="checkbox{{invoice.id}}" type="checkbox" name="delivered" value="{{invoice.id}}">
+                                                    <label for="checkbox{{invoice.id}}"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {# <a href="{{path('commercial_sheet_edit', {'id':invoice.id})}}"  class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifier la Commande"><i class="far fa-edit"></i> </a> #}
+                                                <a href="{{path('admin_invoice_print', {'id':invoice.id})}}" class="btn btn-soft-primary btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline "></i> </a>
+                                                {# <a href="{{path('commercial_sheet_delete', {'id':invoice.id})}}" class="btn btn-danger btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer Facture"><i class="fas fa-trash"></i> </a> #}
+                                                
+                                            </td>
+                                            
+                                        </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>                    
+                            </div>
+
+                            <div class="tab-pane active p-3" id="payment" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table id="datatablePayment" class="table table-striped table-fixed nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr class="text-center">
+                                                {# <th style="width:0.5em"></th> #}
+                                                {# <th>N° Facture</th> #}
+                                                <th>Client</th>
+                                                <th>Tél</th>
+                                                <th>Email</th>
+                                                <th>Date de Facturation</th>
+                                                {# <th>Date de Souscription</th> #}
+                                                <th>Payé ?</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for invoice in invoices %}
+                                            {# {{ invoice.deliverAt|date("d/m/Y") }} #}
+                                            {% if invoice.paymentStatus == false %}
+                                            <tr class="text-center align-items-center">
+                                                {# <td>
+                                                {{prefix}}{{invoice.id}}/{{invoice.createdAt|date("m")}}/{{invoice.createdAt|date("y")}}
+                                                </td> #}
+                                                <td>{{invoice.enterprise.socialReason}}</td>
+                                                <td>{{invoice.enterprise.phoneNumber}}</td>
+                                                <td>{{invoice.enterprise.email}}</td>
+                                                <td>{{invoice.createdAt is empty ? "-" : invoice.createdAt|date("d/m/Y") }}</td>
+                                                {# <td>{{invoice.deliverAt is empty ? "-" : invoice.deliverAt|date("d/m/Y") }}</td> 
+                                                <td>{{invoice.advancePayment}}</td>
+                                                <td>{{invoice.amountRestToPaid}}</td>#}
+                                                <td class="align-items-center">
+                                                    <div class="checkbox checkbox-primary">
+                                                        <input id="paidCheckbox{{invoice.id}}" type="checkbox" name="paid" value="{{invoice.id}}">
+                                                        <label for="paidCheckbox{{invoice.id}}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {# <a href="{{path('commercial_sheet_edit', {'id':invoice.id})}}"  class="btn btn-soft-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Commande"><i class="far fa-edit"></i> </a> #}
+                                                    <a href="{{path('admin_invoice_print', {'id':invoice.id})}}" class="btn btn-soft-primary btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>
+                                                    {# <a href="{{path('commercial_sheet_delete', {'id':invoice.id})}}" class="btn btn-danger btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer Facture"><i class="fas fa-trash"></i> </a> #}
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>  
+
+                            <div class="tab-pane p-3" id="completed" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table id="datatableCompleted" class="table table-striped table-fixed nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr class="text-center">
+                                                {# <th>N° Facture</th> #}
+                                                <th>Client</th>
+                                                <th>Date de Facturation</th>
+                                                {# <th>Date de Livraison</th> #}
+                                                <th>Date de Paiement</th>
+                                                <th>Seller</th>
+                                                <th>Montant (XAF)</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for invoice in invoices %}
+                                            {% if invoice.completedStatus == true %}
+                                            <tr class="text-center">
+                                                {# <td>{{prefix}}{{invoice.id}}/{{invoice.createdAt|date("m")}}/{{invoice.createdAt|date("y")}} #}
+                                                </td>
+                                                <td>{{invoice.enterprise.socialReason}}</td>
+                                                <td>{{ invoice.createdAt is empty ? "-" : invoice.createdAt|date("d/m/Y") }}</td>
+                                                {# <td>{{ invoice.deliverAt is empty ? "-" : invoice.deliverAt|date("d/m/Y") }}</td> #}
+                                                <td>{{ invoice.payAt is empty ? "-" : invoice.payAt|date("d/m/Y") }}</td>
+                                                <td>{{invoice.user.fullName}}</td>
+                                                <td>{{invoice.amountNetToPaid}}</td>
+                                                <td>
+                                                    <a href="{{path('admin_invoice_print', {'id':invoice.id})}}" class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>    
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!--end div-->
+                    {% else %}
+                    <div class="table-responsive">
+                        <table id="datatable2" class="table table-striped table-fixed nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr class="text-center">
+                                    {# <th style="width:0.5em"></th> #}
+                                    {# <th>N° Facture</th> #}
+                                    <th>Client</th>
+                                    <th>Tél</th>
+                                    <th>Email</th>
+                                    <th>Abonnement</th>
+                                    <th>Date de Souscription</th>
+                                    {# <th>Date de Souscription</th> #}
+                                    <th>Date de Fin</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for enterprise in enterprises %}
+                                {# {{ invoice.deliverAt|date("d/m/Y") }} #}
+                                {% if enterprise != app.user.enterprise %}
+                                {% if enterprise.isActivated == true %}
+                                <tr class="text-center align-items-center">
+                                    {# <td>
+                                    {{prefix}}{{enterprise.id}}/{{enterprise.createdAt|date("m")}}/{{enterprise.createdAt|date("y")}}
+                                    </td> #}
+                                    <td>{{enterprise.socialReason}}</td>
+                                    <td>{{enterprise.phoneNumber}}</td>
+                                    <td>{{enterprise.email}}</td>
+                                    <td class="text-info">{{enterprise.subscription.name}}</td>
+                                    <td>{{enterprise.subscribeAt is empty ? "-" : enterprise.subscribeAt|date("d/m/Y") }}</td>
+                                    <td>{{enterprise.endSubscription is empty ? "-" : enterprise.endSubscription|date("d/m/Y") }}</td> 
+                                    {#<td>{{enterprise.advancePayment}}</td>
+                                    <td>{{enterprise.amountRestToPaid}}</td>
+                                    <td class="align-items-center">
+                                        <div class="checkbox checkbox-primary">
+                                            <input id="paidCheckbox{{enterprise.id}}" type="checkbox" name="paid" value="{{enterprise.id}}">
+                                            <label for="paidCheckbox{{enterprise.id}}"></label>
+                                        </div>
+                                    </td>#}
+                                    <td>
+                                        <a href="#" class="btn btn-soft-primary btn-xs rounded waves-effect renew" data-ent={{enterprise.id}} data-sub="{{enterprise.subscription.name}}" data-duration={{enterprise.subscriptionDuration}} data-price={{enterprise.subscription.tarifs[enterprise.subscriptionDuration]}} data-toggle="tooltip" data-placement="top" title="Renouveler l'Abonnement"><i class="ti-reload"></i> </a>
+                                        <a href="#" data-ent={{enterprise.id}} class="btn btn-soft-warning btn-xs rounded waves-effect text-right orderRef" data-toggle="modal" data-target=".bd-example-modal-xl_orderForm" data-placement="top" title="Changer d'abonnement"><i class="fas fa-exchange-alt"></i></a>
+                                        {# <a href="{{path('admin_enterprise_print', {'id':enterprise.id})}}" class="btn btn-soft-primary btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>
+                                        <a href="{{path('commercial_sheet_delete', {'id':enterprise.id})}}" class="btn btn-danger btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Supprimer Facture"><i class="fas fa-trash"></i> </a> #}
+                                    </td>
+                                    
+                                </tr>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <!-- Custom Modal -->
+                        <div id="orderFomModal" class="modal fade bd-example-modal-xl_orderForm" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title mt-0" >Formulaire d'abonnement</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    {{ form_label(form.subscriptionName, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                                </div>
+                                                {{ form_widget(form.subscriptionName, {'attr': {'class': "form-control"}}) }}
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    {{ form_label(form.subscriptionDuration, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                                </div>
+                                                {{ form_widget(form.subscriptionDuration, {'attr': {'class': "form-control"}}) }}
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    {{ form_label(form.subscriptionPrice, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                                </div>
+                                                {{ form_widget(form.subscriptionPrice, {'attr': {'class': "form-control"}}) }}
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="orderBtn" class="btn btn-primary waves-effect">Commander</button>
+                                        <button type="button" class="btn btn-secondary waves-effect" data-dismiss="modal">Close</button>
+                                        
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div><!--end row-->
+{% endblock %}
+
+{% block javascripts %}
+<!-- Required datatable js -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/plugins/datatables/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/datatables/jszip.min.js"></script>
+<script src="/plugins/datatables/pdfmake.min.js"></script>
+<script src="/plugins/datatables/vfs_fonts.js"></script>
+<script src="/plugins/datatables/buttons.html5.min.js"></script>
+<script src="/plugins/datatables/buttons.print.min.js"></script>
+<script src="/plugins/datatables/buttons.colVis.min.js"></script>
+<!-- Responsive examples -->
+<script src="/plugins/datatables/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables/responsive.bootstrap4.min.js"></script>
+<script src="/pages/jquery.datatable.init.js"></script>   
+<script src="/js/jquery.redirect.js"></script> 
+
+<script src="/plugins/custombox/custombox.min.js"></script>
+<script src="/plugins/custombox/custombox.legacy.min.js"></script>
+
+{#<script src="/pages/jquery.modal-animation.js"></script> #}
+
+<!-- Sweet-Alert  -->
+<script src="/plugins/sweet-alert2/sweetalert2.min.js"></script>
+
+<script>
+    $('#saveBtn').click(function(){
+        var tabDelivered = [];
+        var tabPaid      = [];
+        var _url = "{{path('invoices_change_status')}}";
+        //block of code that runs when the click event triggers
+        {# $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none'); #}
+        //$('#saveBtn').prop('disabled', true);
+        $("input:checkbox[name=delivered]:checked").each(function(){
+            tabDelivered.push($(this).val());
+        });
+        $("input:checkbox[name=paid]:checked").each(function(){
+            tabPaid.push($(this).val());
+        });
+        console.log('Tab Mark Delivered : ' + tabDelivered)
+        console.log('Tab Mark Paid : ' + tabPaid)
+        if (tabDelivered.length > 0 || tabPaid.length > 0){
+            var $data = JSON.stringify({
+                "invoiceDeliveredIds": tabDelivered,//tabGridId,
+                "invoicePaidIds": tabPaid,//tabFuelId,
+                //"selectedDate": $date
+            });
+
+            swal.queue([{
+                title: 'Veuillez Confirmer la Sauvegarde',
+                confirmButtonText: 'Confirm',
+                text: '',
+                showCancelButton: true,
+                showLoaderOnConfirm: true,
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonClass: 'btn btn-danger ml-2',
+                preConfirm: function () {
+                    return new Promise(function (resolve) {
+                        
+                        $.ajax({
+                            type: "POST",//method type
+                            contentType: "application/json; charset=utf-8",
+                            url: _url,///Target function that will be return result
+                            data: $data,//parameter pass data is parameter name param is value 
+                            dataType: "json",
+                            timeout: 120000,//64241
+                            success: function (data) {
+                                //alert("Success");
+                                console.log(data);  
+                                function reload_() {
+                                    //window.location.replace("https://waytolearnx.com");
+                                    location.reload(true);
+                                }      
+                                setTimeout(reload_, 1000);  
+                                swal({
+                                    type: 'success',
+                                    title: 'La sauvegarde a été effectuée avec succès !',
+                                    //html: 'Submitted email: ' + email
+                                });
+
+                                setTimeout(function () {
+                                    resolve();
+                                    //reload_();
+                                }, 2000);
+                                
+                            },
+                            error: function (result) {
+                                swal(
+                                    'Oops...',
+                                    'Something went wrong!',
+                                    'error'
+                                    //footer: '<a href>Why do I have this issue?</a>'
+                                );
+                                setTimeout(function () {
+                                    resolve()
+                                }, 5000);
+                            }
+                        });
+                    })
+                },
+                allowOutsideClick: false
+            }]);
+
+        }
+        else{
+            $('#colSaveBtn').
+            prepend('<div class="alert icon-custom-alert alert-outline-danger alert-danger-shadow alert-dismissible fade show" role="alert"><div class="alert-text"><strong>Aucune Commande n\'est cochée comme payée !</strong></div><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="mdi mdi-close"></i></span></button></div>');
+            
+        }
+    });
+    
+    //Gestion du renouvellement d'abonnement
+    $('.renew').click(function(){
+        console.log('ent = ' + this.dataset.ent);
+        console.log('sub = ' + this.dataset.sub);
+        console.log('duration = ' + this.dataset.duration);
+        console.log('price = ' + this.dataset.price);
+
+        var $data = JSON.stringify({
+            "subscriptionName": this.dataset.sub,
+            "duration"        : this.dataset.duration,
+            'price'           : this.dataset.price,
+            "ent"             : this.dataset.ent
+        });   
+
+        swal.queue([{
+            title: "Veuillez Confirmer le renouvellement d'abonnement svp !",
+            confirmButtonText: 'Confirmez',
+            text: '',
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-danger ml-2',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    $.ajax({
+                        type: "POST",//method type
+                        contentType: "application/json; charset=utf-8",
+                        url: _url,///Target function that will be return result
+                        data: $data,//parameter pass data is parameter name param is value 
+                        dataType: "json",
+                        timeout: 120000,//64241
+                        success: function (data) {
+                            //$('.fa-sync').removeClass('fa-spin');                                  
+                            console.log(data);
+                                                                                 
+                            swal({
+                                type: 'success',
+                                title: "La commande pour renouvellement d'abonnement a été effectuée avec succès !",
+                                //html: 'Submitted email: ' + email
+                            });
+
+                            setTimeout(function () {
+                                resolve();
+                                //$('#orderFomModal').modal('toggle');
+                            }, 2000);
+                        },
+                        error: function (result) {
+                            //console.log("Error");
+                            //console.log(result);
+                            swal(
+                                'Oops...',
+                                'Something went wrong!',
+                                'error'
+                                //footer: '<a href>Why do I have this issue?</a>'
+                            );
+
+                            setTimeout(function () {
+                                resolve()
+                            }, 5000);
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }]);
+
+    });
+
+    //Gestion du changement d'abonnement
+    var _url = "{{path('order_subscription')}}";
+    var ent = 0;
+    var tarifs = JSON.parse('{{ tarifs | json_encode | raw }}');
+
+    $('.orderRef').click(function(){
+        ent =  this.dataset.ent;
+        //alert('Place order for enterprise : ' + id);
+    });
+    var subscriptionId = '#admin_subscription_subscriptionName';
+    var subscriptionDurationId = '#admin_subscription_subscriptionDuration';
+    var subscriptionPriceId = '#admin_subscription_subscriptionPrice';
+        
+    $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    
+    $(subscriptionId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        //var puId_ = String(Name);
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+
+    $(subscriptionDurationId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+
+    $('#orderBtn').click(function(){
+        var $data = JSON.stringify({
+            "subscriptionName": $(subscriptionId).val(),//tabGridId,
+            "duration"        : $(subscriptionDurationId).val(),//tabFuelId,
+            'price'           : $(subscriptionPriceId).val(),
+            "ent"             : ent
+        });   
+
+        swal.queue([{
+            title: 'Veuillez Confirmer la Commande svp !',
+            confirmButtonText: 'Confirmez',
+            text: '',
+            showCancelButton: true,
+            showLoaderOnConfirm: true,
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-danger ml-2',
+            preConfirm: function () {
+                return new Promise(function (resolve) {
+                    /*$.get('https://api.ipify.org?format=json')
+                        .done(function (data) {
+                            swal.insertQueueStep(data.ip)
+                            resolve()
+                        })*/
+                    $.ajax({
+                        type: "POST",//method type
+                        contentType: "application/json; charset=utf-8",
+                        url: _url,///Target function that will be return result
+                        data: $data,//parameter pass data is parameter name param is value 
+                        dataType: "json",
+                        timeout: 120000,//64241
+                        success: function (data) {
+                            //$('.fa-sync').removeClass('fa-spin');                                  
+                            console.log(data);
+                                                                                 
+                            swal({
+                                type: 'success',
+                                title: 'La commande a été effectuée avec succès !',
+                                //html: 'Submitted email: ' + email
+                            });
+
+                            setTimeout(function () {
+                                resolve();
+                                $('#orderFomModal').modal('toggle');
+                            }, 2000);
+                        },
+                        error: function (result) {
+                            //console.log("Error");
+                            //console.log(result);
+                            swal(
+                                'Oops...',
+                                'Something went wrong!',
+                                'error'
+                                //footer: '<a href>Why do I have this issue?</a>'
+                            );
+
+                            /*Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                                footer: '<a href>Why do I have this issue?</a>'
+                            });*/
+
+                            setTimeout(function () {
+                                resolve()
+                            }, 5000);
+                        }
+                    });
+                })
+            },
+            allowOutsideClick: false
+        }]);
+    });
+
+</script>
+{% endblock %}

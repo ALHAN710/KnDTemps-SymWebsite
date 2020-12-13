@@ -1,0 +1,161 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Accueil Utilisateurs{% endblock %}
+
+{% block stylesheets %}
+
+<link href="/plugins/custombox/custombox.min.css" rel="stylesheet" type="text/css">
+
+<!-- DataTables -->
+<link href="/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<!-- Responsive datatable examples -->
+<link href="/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />  
+
+<!-- Sweet Alert -->
+<link href="/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="mdi mdi-account mr-2"></i>Utilisateurs</h4>  
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Accueil</li>
+            <li class="breadcrumb-item active">Utilisateurs</li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 col-sm-12">
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <h5 class="header-title">Liste des Utilisateurs</h5>
+                    <div class="mt-2 mb-2 mr-5 text-right">
+                        <a href="{{path('account_register')}}"  class="btn btn-info btn-lg rounded " data-toggle="tooltip" data-placement="top" title="Ajouter un nouveau Seller"><i class="fa fa-plus-circle mr-2"></i> <i class="fas fa-user-tie"></i></a>
+                    </div>
+
+                    <ul class="nav nav-tabs" role="tablist">
+                        {% for key,item in roles %}
+                        {% if key != 'ROLE_SUPER_ADMIN' %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if loop.first %}active{% endif %}" data-toggle="tab" href="#{{key|lower}}" role="tab">{{item}}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="">    
+                        <div class="tab-content">
+                            {% for key,item in roles %}
+                            {% if key != 'ROLE_SUPER_ADMIN' %}
+                            <div class="tab-pane {% if loop.first %}active{% endif %} p-3" id="{{key|lower}}" role="tabpanel">    
+                                <div class="table-responsive">
+                                    <table id="role{{loop.index0}}" class="table table-striped table-fixed nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr class="text-center">
+                                                {# <th>#</th> #}
+                                                <th>Nom</th>
+                                                <th>Tél</th>
+                                                <th>Email</th>
+                                                <th>Entreprise</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for user in users %}
+                                            {% if user.roles[0] == key %}
+                                            <tr class="text-center">
+                                                {# <td>{{user.id}}</td> #}
+                                                <td class="text-left"><a href="{{ path('account_password',{'id':user.id}) }}" class="">{{user.fullName}}</a></td>
+                                                <td>{{user.phoneNumber }}</td>
+                                                <td>{{user.email}}</td>
+                                                <td>{{user.enterprise.socialReason}}</td>
+                                                <td>
+                                                    <a href="{{path('user_edit', {'id':user.id})}}"  class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifier Utilisateur ?"><i class="far fa-edit"></i> </a>
+                                                    {#<a href="{{ path('user_delete', {'id':user.id}) }}" data-user={{user.id}} class="btn btn-soft-danger btn-xs rounded sa-warning waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="Supprimer Utilisateur ?"><i class="fas fa-trash"></i> </a>#}                                                
+                                                    {% if user.roles[0] == 'ROLE_ADMIN' %}
+                                                    <a href="#" data-user={{user.id}} class="btn btn-soft-primary btn-xs rounded sa-warning waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="Envoyer un mail à l'utilisateur ?"><i class="mdi mdi-email"></i> </a>                                               
+                                                    {% endif %}
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            
+                        </div>
+
+                    </div> <!--end div-->  
+       
+                </div>
+            </div>
+        </div>
+    </div><!--end row-->
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- Required datatable js -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/plugins/datatables/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/datatables/jszip.min.js"></script>
+<script src="/plugins/datatables/pdfmake.min.js"></script>
+<script src="/plugins/datatables/vfs_fonts.js"></script>
+<script src="/plugins/datatables/buttons.html5.min.js"></script>
+<script src="/plugins/datatables/buttons.print.min.js"></script>
+<script src="/plugins/datatables/buttons.colVis.min.js"></script>
+<!-- Responsive examples -->
+<script src="/plugins/datatables/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables/responsive.bootstrap4.min.js"></script>
+<script src="/pages/jquery.datatable.init.js"></script>    
+
+{# <script src="/plugins/custombox/custombox.min.js"></script>
+<script src="/plugins/custombox/custombox.legacy.min.js"></script>
+
+<script src="/pages/jquery.modal-animation.js"></script>
+<script src="/js/jquery.redirect.js"></script> #}
+
+<!-- Sweet-Alert  -->
+<script src="/plugins/sweet-alert2/sweetalert2.min.js"></script> 
+
+<script>
+    {% for key,item in roles %}
+    $('#role{{loop.index0}}').DataTable();
+    {% endfor %}
+    {# //Warning Message
+    $('.sa-warning').click(function () {
+        swal({
+            title: 'Etes-vous sûre ?',
+            text: "Vous ne pourrez pas annuler cela !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonClass: 'btn btn-success',
+            cancelButtonClass: 'btn btn-danger ml-2',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(function () {
+            swal(
+                'Deleted!',
+                'Your file has been deleted.',
+                'success'
+            )
+        })
+    }); #}
+</script>
+
+{% endblock %}

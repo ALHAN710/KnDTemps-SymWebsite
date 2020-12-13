@@ -1,0 +1,53 @@
+<div class="left-sidenav">
+                    
+    <ul class="metismenu left-sidenav-menu" id="side-nav">
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <li class="menu-title">Main</li>
+
+        <li>
+            <a href="#"><i class="mdi mdi-monitor"></i><span>Dashboard</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>
+            
+        </li>
+        {% endif %}
+
+        <li class="menu-title">Partenaires d'Affaires</li>
+
+        <li>
+            <a href="{{ path('admin_enterprises_index') }}"><i class="mdi mdi-account-multiple"></i><span>Clients</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>  
+        </li>
+
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <li>
+            <a href="{{ path('admin_users_index') }}"><i class="mdi mdi-account"></i><span>Utilisateurs</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>    
+        </li>
+
+        
+        <li class="menu-title">Business</li>
+
+        <li>
+            <a href="{{ path('admin_products_index') }}"><i class="mdi mdi-google-pages"></i><span>Produits</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>  
+        </li>
+
+        <li>
+            <a href="{{ path('admin_invoices', {'type':'all'}) }}"><i class="mdi mdi-file-table-outline"></i><span>Factures</span></a>
+            {# <a href="javascript: void(0);"><i class="mdi mdi-file-table-outline"></i><span>Factures</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
+            <ul class="nav-second-level" aria-expanded="false">
+                 <li><a href="#">En Attente de Validation</a></li> 
+                <li><a href="{{ path('admin_invoices') ~ '#payment' }}">En Attente de Paiement</a></li>
+                <li><a href="{{ path('admin_invoices') ~ '#completed'  }}">Payé et Validé</a></li>
+            </ul> #}
+        </li>
+
+        <li>{# mdi mdi-check-circle-outline  mdi mdi-clipboard-text-play-outline #}
+            <a href="{{ path('admin_invoices', {'type':'ongoing'}) }}"><i class=" mdi mdi-checkbox-marked-circle-outline "></i><span>Abonnement en cours</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>    
+        </li>
+
+        <li class="menu-title">More</li>
+
+        <li>
+            <a href="#"><i class="dripicons-gear"></i><span>Paramètres</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>  
+        </li>
+        {% endif %}
+
+    </ul>
+</div>

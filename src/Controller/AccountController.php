@@ -74,7 +74,7 @@ class AccountController extends ApplicationController
         $isSupAdmin = false;
         $user = new User();
         if ($this->getUser()->getRoles()[0] === 'ROLE_ADMIN') $user->setEnterprise($this->getUser()->getEnterprise());
-        else $isSupAdmin = true;
+        else if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') $isSupAdmin = true;
         $slugify = new Slugify();
         $form = $this->createForm(RegistrationType::class, $user, [
             'isSupAdmin' => $isSupAdmin,
@@ -138,15 +138,25 @@ class AccountController extends ApplicationController
             $manager->persist($user);
             $manager->flush();
 
-            $this->addFlash(
-                'success',
-                "Le Compte utilisateur <strong> {$user->getFirstName()}</strong> a été crée avec succès. !"
-            );
-            if ($this->getUser()->getRoles()[0] === 'ROLE_ADMIN') return $this->redirectToRoute('employees_home');
-            else return $this->redirectToRoute('admin_sellers_index');
+            if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') {
+                $this->addFlash(
+                    'success',
+                    "Le Compte utilisateur <strong> {$user->getFirstName()}</strong> a été crée avec succès. !"
+                );
+                return $this->redirectToRoute('admin_users_index');
+            } else {
+                $this->addFlash(
+                    'success',
+                    "Le Compte de l'employé <strong> {$user->getFirstName()}</strong> a été crée avec succès. !"
+                );
+                return $this->redirectToRoute('employees_home');
+            }
         }
 
-        return $this->render('account/new.html.twig', [
+        if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->render('admin/users/new.html.twig', [
+            'form' => $form->createView()
+        ]);
+        else return $this->render('account/new.html.twig', [
             'form' => $form->createView(),
 
         ]);
@@ -291,12 +301,20 @@ class AccountController extends ApplicationController
             $manager->persist($user_);
             $manager->flush();
 
-            $this->addFlash(
-                'success',
-                "La modification de l'employé <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
-            );
-            if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->redirectToRoute('admin_users_index');
-            else return $this->redirectToRoute('employees_home');
+
+            if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') {
+                $this->addFlash(
+                    'success',
+                    "La modification de l'utilisateur <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
+                );
+                return $this->redirectToRoute('admin_users_index');
+            } else {
+                $this->addFlash(
+                    'success',
+                    "La modification de l'employé <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
+                );
+                return $this->redirectToRoute('employees_home');
+            }
         }
         if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->render('admin/users/edit.html.twig', [
             'form' => $form->createView()
@@ -320,7 +338,8 @@ class AccountController extends ApplicationController
     public function delete(User $user_, EntityManagerInterface $manager)
     {
         $_user = $user_->getFullName();
-
+        if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') $nomination = "l'utilisateur";
+        else $nomination = "l'employé";
         if (count($user_->getTeams()) === 0) {
             $enterprise = $user_->getEnterprise();
             $enterprise->removeUser($user_);
@@ -330,13 +349,13 @@ class AccountController extends ApplicationController
             return $this->json([
                 'code'    => 200,
                 'name'    => $enterprise->getSocialReason(),
-                'message' => "La suppression de l'employé <strong> {$_user} </strong> a été effectuée avec succès !"
+                'message' => "La suppression de {$nomination} <strong> {$_user} </strong> a été effectuée avec succès !"
             ], 200);
         } else {
 
             return $this->json([
                 'code'    => 403,
-                'message' => "La suppression de l'employé <strong> {$_user} </strong> n'a pas été effectuée car ce dernier est responsable d'une équipe !"
+                'message' => "La suppression de {$nomination} <strong> {$_user} </strong> n'a pas été effectuée car ce dernier est responsable d'une équipe !"
             ], 200);
         }
     }
@@ -465,7 +484,7 @@ class AccountController extends ApplicationController
                 ->setVerified(false);
             $manager->persist($user);
             $manager->flush();
-            $code = 'KnD Facts-' . $codeVerification . $user->getId();
+            $code = 'KnD Temps-' . $codeVerification . $user->getId();
             //dump($code);
             $object = "PASSWORD RESET";
             $message = 'Your verification code is ' . $code;
@@ -474,7 +493,7 @@ class AccountController extends ApplicationController
 But don’t worry! You can use the following code to reset your password: " . $code . "
 
 Thanks,
-The KnD Factures Team";
+The KnD Temps Team";
             $this->sendEmail($mailer, $email, $object, $message);
         } else if ($paramJSON['codeVerif'] != null) {
             $Verificationcode = $paramJSON['codeVerif'];
@@ -547,14 +566,14 @@ The KnD Factures Team";
 
                 $this->addFlash(
                     'success',
-                    "Your password has been changed"
+                    "Votre Mot de Passe a bien été modifié"
                 );
 
                 return $this->redirectToRoute('account_login');
             } else {
                 $this->addFlash(
                     'danger',
-                    "Unauthorized Modification"
+                    "Modification Non autorisée"
                 );
             }
         }

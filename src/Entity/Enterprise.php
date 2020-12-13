@@ -143,12 +143,18 @@ class Enterprise
      */
     private $timeZone;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Invoice::class, mappedBy="enterprise")
+     */
+    private $invoices;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->offices = new ArrayCollection();
         $this->teams = new ArrayCollection();
         $this->pointingLocations = new ArrayCollection();
+        $this->invoices = new ArrayCollection();
     }
 
     /**
@@ -181,6 +187,9 @@ class Enterprise
         }
     }
 
+    /**
+     * Permet de déterminer la date de fin d'abonnement
+     */
     public function endSubscription()
     {
         $periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
@@ -639,6 +648,37 @@ class Enterprise
     public function setTimeZone(int $timeZone): self
     {
         $this->timeZone = $timeZone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Invoice[]
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
+
+    public function addInvoice(Invoice $invoice): self
+    {
+        if (!$this->invoices->contains($invoice)) {
+            $this->invoices[] = $invoice;
+            $invoice->setEnterprise($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInvoice(Invoice $invoice): self
+    {
+        if ($this->invoices->contains($invoice)) {
+            $this->invoices->removeElement($invoice);
+            // set the owning side to null (unless already changed)
+            if ($invoice->getEnterprise() === $this) {
+                $invoice->setEnterprise(null);
+            }
+        }
 
         return $this;
     }

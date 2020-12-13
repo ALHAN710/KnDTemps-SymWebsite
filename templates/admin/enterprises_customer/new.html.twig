@@ -1,0 +1,249 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %} Création d'un Client {% endblock %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="mdi mdi-account-multiple mr-2"></i>Clients</h4>  
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Nouveau</li>
+            <li class="breadcrumb-item active">Client</li>
+        </ol>
+    </div>
+{% endblock %}
+
+{#{% form_theme form 'customer/_collection.html.twig' %}#}
+{% block body %}
+{# {{ dump(tarifs) }} #}
+<div class="row ">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body mx-5">        
+                <h4 class="mt-2 mb-4 header-title">Formulaire de Souscription d'un Client</h4>
+                {{ form_start(form) }}
+                {#{{ form_widget(form) }}#}
+
+                <div class="row ">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body mx-5">        
+                                <h4 class="mt-2 mb-4 header-title">Détails Abonnement</h4>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.subscription, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.subscription, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.subscriptionDuration, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.subscriptionDuration, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.subscriptionPrice, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.subscriptionPrice, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+                                {# <div class="form-group d-none">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.tarifs, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.tarifs, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div> #}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body mx-5">        
+                                <h4 class="mt-2 mb-4 header-title">Informations Client</h4>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.socialReason, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.socialReason, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.niu, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.niu, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.rccm, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.rccm, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.country, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.country, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.timeZone, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.timeZone, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.phoneNumber, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.phoneNumber, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.town, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.town, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.address, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.address, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.email, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.email, {'attr': {'class': "form-control",'required': false}}) }}
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.logo, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.logo, {'attr': {'required': false}}) }}
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    {# <textarea rows="5" placeholder="Message" class="form-control"></textarea> #}
+                                    {{ form_widget(form.description, {'attr': {'class': "form-control"}}) }}
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary waves-effect" id="saveBtn">
+                    <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                    Créer Client
+                </button>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+
+    var tarifs = JSON.parse('{{ tarifs | json_encode | raw }}');
+    //console.log(tarifs);
+    $('#admin_enterprise_tva').attr('type', 'number');
+    $('#admin_enterprise_niu').attr('required', false);
+    $('#admin_enterprise_rccm').attr('required', false);
+    {# $('#enterprise_email').attr('required', false);
+    $('#enterprise_address').attr('required', false); #}
+
+</script>
+<script>
+    var subscriptionId = '#admin_enterprise_subscription';
+    var subscriptionDurationId = '#admin_enterprise_subscriptionDuration';
+    var subscriptionPriceId = '#admin_enterprise_subscriptionPrice';
+        
+    $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    
+    $(subscriptionId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        //var puId_ = String(Name);
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+
+    $(subscriptionDurationId).change(() => {
+        //var Str = String($(subscriptionId).val());
+        //console.log('Product SKU value = ' + $(subscriptionId).val());
+        //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
+        $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    });
+</script>
+{% endblock %}

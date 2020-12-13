@@ -1,0 +1,305 @@
+{# {% if is_granted('ROLE_SUPER_ADMIN') %}
+{% extends 'admin/base.html.twig' %}
+{% elseif is_granted('ROLE_ADMIN') %} #}
+{% extends 'admin/base.html.twig' %}
+{# {% endif %} #}
+
+{% set docType = 'Facture' %}
+
+{% block title %} {{docType}} FR{{numOrder}}{{invoice.createdAt|date("m")}}{{invoice.createdAt|date("y")}} {% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="mdi mdi-file-table-outline mr-2"></i>Document</h4>  
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Document</li>
+            <li class="breadcrumb-item active">{{docType}}</li>
+        </ol>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-9 mx-auto">
+        <div class="card">
+            <div class="card-body invoice-head">
+                <div class="row">
+                    <div class="col-md-4 align-self-center">
+                        <img src="{{ invoice.user.enterprise.logo != null  ? '/images/uploads/logo/' ~ invoice.user.enterprise.logo : '/images/KnD.png' }}" alt="Logo Entreprise" class="logo-sm"
+                            height="80">
+                    </div>
+                    <div class="col-md-8">
+
+                        <ul class="list-inline mb-0 contact-detail float-right">
+                            <li class="list-inline-item">
+                                <div class="pl-3">
+                                    <i class="mdi mdi-email"></i>
+                                    <p class="text-muted mb-0">{{invoice.user.enterprise.email}}</p>
+                                    {#<p class="text-muted mb-0">www.qrstuvwxyz.com</p>#}
+                                </div>
+                            </li>
+                            <li class="list-inline-item">
+                                <div class="pl-3">
+                                    <i class="mdi mdi-phone"></i>
+                                    <p class="text-muted mb-0">{{invoice.enterprise.phoneNumber}}</p>
+                                </div>
+                            </li>
+                            <li class="list-inline-item">
+                                <div class="pl-3">
+                                    <i class="mdi mdi-map-marker"></i>
+                                    <p class="text-muted mb-0">{{invoice.enterprise.address}}</p>
+                                    {#<p class="text-muted mb-0">Cameroun.</p>#}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--end card-body-->
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h6><b>FACTURE</h6>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="">
+                            <h6 class="mb-0"><b>Date de Facturation :</b> {{invoice.createdAt|date("d/m/Y")}}</h6>
+                            <h6><b>N° de Facture : FR</b>{{numOrder}}{{invoice.createdAt|date("m")}}{{invoice.createdAt|date("y")}}</h6>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="float-left">
+                            <address class="font-13">
+                                <strong class="font-14">Facturé à :</strong><br>
+                                {{invoice.enterprise.socialReason}}<br>
+                                {{invoice.enterprise.address}}<br>
+                                <abbr title="Phone">P:</abbr> {{invoice.enterprise.phoneNumber}}
+                            </address>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="">
+                            <address class="font-13">
+                                <strong class="font-14">Livré à:</strong><br>
+                                {{invoice.enterprise.socialReason}}<br>
+                                {{invoice.enterprise.address}}<br>
+                                <abbr title="Phone">P:</abbr> {{invoice.enterprise.phoneNumber}}
+                            </address>
+                        </div>
+                    </div>
+
+                    {#<div class="col-md-3">
+                        <div class="text-center bg-light p-3 mb-3">
+                            <h5 class="bg-primary mt-0 p-2 text-white d-sm-inline-block">Payment Methods
+                            </h5>
+                            <h6 class="font-13">Paypal & Cards Payments :</h6>
+                            <p class="mb-0 text-muted">Companyaccountpaypal@gmai.com</p>
+                            <p class="mb-0 text-muted">Visa, Master Card, Chaque</p>
+                        </div>
+                    </div>#}
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th colspan="6" class="text-center font-14">Détail {{docType}}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        {# <th>Ref</th> #}
+                                        <th>Désignation</th>
+                                        <th class="text-center">P.U(XAF)</th>
+                                        <th class="text-center">Qté</th>
+                                        <th class="text-center">Montant HT Brut</th>
+                                        <th class="text-center">Remise(%)</th>
+                                        <th class="text-center">Montant HT Net</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set itemsReduction = 0 %}
+                                    {% set price = 0 %}
+                                    {% set promoAmount = 0 %}
+                                    {% set total = 0 %}
+                                    {% for invoiceItem in invoice.invoiceItems %}
+                                    <tr>
+                                        {# <td>{{invoiceItem.reference}}</td> #}
+                                        <td>{{invoiceItem.designation}}</td>
+                                        <td class="text-center">{{invoiceItem.pu}}</td>
+                                        <td class="text-center">{{invoiceItem.quantity}}</td>
+                                        <td class="text-center">{{(invoiceItem.quantity * invoiceItem.pu)|number_format(2, '.', ' ')}}</td>
+                                        <td class="text-center">{{invoiceItem.remise}}</td>
+                                        <td class="text-center">
+                                        {% set itemReduction = ( ((invoiceItem.quantity * invoiceItem.pu) * invoiceItem.remise ) / 100.0 ) %}
+                                        {% set itemsReduction = itemsReduction + itemReduction %}
+                                        {{ ((invoiceItem.quantity * invoiceItem.pu) - itemReduction)|number_format(2, '.', ' ') }}
+                                        </td>
+                                        
+                                    </tr>
+                                    {% endfor %}
+                                    {#<tr>
+                                        <th>1</th>
+                                        <td>Mobile</td>
+                                        <td>It is a long established fact that a reader will be
+                                            distracted.</td>
+                                        <td>$100.00</td>
+                                        <td>$100.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>3</th>
+                                        <td>Chair</td>
+                                        <td>Contrary to popular belief, Lorem Ipsum is not simply random
+                                            text.</td>
+                                        <td>$30.00</td>
+                                        <td>$90.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>1</th>
+                                        <td>Camera</td>
+                                        <td>Aldus PageMaker including versions of Lorem Ipsum.</td>
+                                        <td>$999.00</td>
+                                        <td>$999.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>3</th>
+                                        <td>Headphone</td>
+                                        <td>Various versions have evolved over the years, sometimes by
+                                            accident.</td>
+                                        <td>$20.00</td>
+                                        <td>$60.00</td>
+                                    </tr>#}
+                                    <tr>
+                                        <td colspan="3" class="border-0"></td>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Montant Brut HT :</b></td>
+                                        <td  class="border-0 font-14 text-left pr-4"><b>{{invoice.TotalAmountBrutHT|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td colspan="2" class="border-0 font-14 text-right pr-4"><b>{{itemsAmount}} XAF</b></td>#}
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Total des Remises sur les articles :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.amountReduction|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{invoice.amountReduction}} XAF</b></td>#}
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Total des Remises Forfaitaires :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.fixReduction|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{invoice.amountReduction}} XAF</b></td>#}
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Montant Net HT :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.TotalAmountNetHT|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{promoAmount}} XAF</b></td>#}
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="4" class="border-0"></th>
+                                        <td class="border-0 font-14 text-right "><b>Taxes{#( {{app.user.enterprise.tva}}% )#} :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.Taxes|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{promoAmount}} XAF</b></td>#}
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Montant TTC :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.AmountTTC|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{promoAmount}} XAF</b></td>#}
+                                    </tr>
+                                                                                                                                        
+                                    <tr class="bg-dark text-white">
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Montant Net à Payer :</b></td>
+                                        <td class="border-0 font-14 pr-4"><b>{{invoice.amountNetToPaid|number_format(2, '.', ' ')}} XAF</b></td>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="4" class="border-0"></th>
+                                        <td class="border-0 font-14 text-right "><b>Avance :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.advancePayment|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{promoAmount}} XAF</b></td>#}
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="border-0"></th>
+                                        <td colspan="2" class="border-0 font-14 text-right "><b>Reste à Payer :</b></td>
+                                        <td class="border-0 font-14 text-left pr-4"><b>{{invoice.amountRestToPaid|number_format(2, '.', ' ')}} XAF</b></td>
+                                        {#<td class="border-0 font-14"><b>{{promoAmount}} XAF</b></td>#}
+                                    </tr>
+                                    <tr>
+                                        <th colspan="6" class="border-0">Mode de Paiement : {{invoice.paymentMode}}</th>
+                                    </tr>
+                                    {# <tr>
+                                        <th colspan="6" class="border-0">Mode de Livraison : {{invoice.deliveryMode}}</th>
+                                    </tr> #}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center my-4">
+                    <small>Thank you very much for doing business with us. Thanks !</small>
+                </div>
+                {# <div class="row justify-content-center">
+                    <div class="col-lg-6">
+                        
+                    </div>
+                    <div class="col-lg-6 align-self-end">
+                        <div class="w-25 float-right">
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            
+                            <p class="border-top text-center">Signature</p>
+                        </div>
+                    </div>
+                </div> #}
+                <hr>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-9 col-xl-8 ml-auto align-self-center">
+                        <div class="text-center text-muted">
+                            {{invoice.user.enterprise.socialReason}} - 
+                            NIU : {{invoice.user.enterprise.niu}} - 
+                            RCCM : {{invoice.user.enterprise.rccm}}
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-xl-4">
+                        <div class="float-right d-print-none">
+                            {#<button type="button" onclick="printJS('printJS-form', 'html')" class="btn btn-info text-light">
+                                <i class="fa fa-print"></i>
+                            </button>#}
+                            <a href="javascript:window.print()"  class="btn btn-info text-light waves-effect"><i class="fa fa-print"></i></a>
+                            {#<a href="#" class="btn btn-primary text-light">Submit</a>
+                            printJS('docs/printjs.pdf')
+                            javascript:window.print()
+                            #}
+                            <a href="{{path('admin_invoices',{'type':'all'})}}" class="btn btn-danger text-light waves-effect"><i
+                                    class="fa fa-arrow-circle-left mr-2"></i>Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end card-->
+    </div>
+    <!--end col-->
+</div>
+<!--end row-->
+{% endblock %}
+
+{% block javascripts %}
+{# <script src="https://printjs-4de6.kxcdn.com/print.min.js" ></script> #}
+{% endblock %}

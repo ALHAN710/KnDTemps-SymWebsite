@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block suptitle %}KnD Temps Back-End |{% endblock %} {% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="A premium admin dashboard template by mannatthemes" name="description" />
+        <meta content="Mannatthemes" name="Pascal ALHADOUM" />
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/images/KnD.png">
+
+        {# <link href="assets/plugins/jvectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet"> #}
+
+        <!-- App css -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="/css/icons.css" rel="stylesheet" type="text/css" />
+        <link href="/css/metismenu.min.css" rel="stylesheet" type="text/css" />
+        <link href="/css/styleAdmin.css" rel="stylesheet" type="text/css" />
+        
+        
+        {% block stylesheets %}{% endblock %}
+
+
+    </head>
+
+    <body>
+
+        <!-- Top Bar Start -->
+        {% include 'admin/partials/topBar.html.twig' %}
+        <!-- Top Bar End -->
+
+        <div class="page-wrapper-img">
+            <div class="page-wrapper-img-inner">
+                <div class="sidebar-user media">                    
+                    <img src="{{ app.user.enterprise.logo != null  ? '/images/uploads/logo/' ~ app.user.enterprise.logo : '/images/uploads/logo/logo.png' }}" alt="User Avatar" class="rounded-circle img-thumbnail mb-1">
+                    {# <span class="online-icon"><i class="mdi mdi-record text-success"></i></span> #}
+                    <div class="media-body align-item-center">
+                        <h5 class="text-white">{{app.user.firstName}}</h5>
+                        <ul class="list-unstyled list-inline mb-0 mt-2">
+                            <li class="list-inline-item">
+                                <a href="{{ path('account_profile') }}" class=""><i class="mdi mdi-account text-light"></i></a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="{{ path('account_logout') }}" class=""><i class="mdi mdi-power text-danger"></i></a>
+                            </li>
+                        </ul>
+                    </div>                    
+                </div>
+                
+                <!-- Page-Title -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-title-box">
+                            {# <div class="float-right align-item-center mt-2">
+                                <button class="btn btn-info px-4 align-self-center report-btn">Creat Report</button>
+                            </div> #}
+                            {% block pageTitle %}
+                            <h4 class="page-title mb-2"><i class="mdi mdi-monitor mr-2"></i>Site {#{{site.name}}#} Dashboard</h4>  
+                            {% endblock %}
+                            {% block breadcrumb %}{% endblock %}                                      
+                        </div><!--end page title box-->
+                    </div>
+                </div>
+                <!-- end page title end breadcrumb -->
+            </div>
+        </div>
+        
+        <div class="page-wrapper">
+            <div class="page-wrapper-inner">
+
+                <!-- Left Sidenav -->
+                {% include 'admin/partials/verticalMenu.html.twig' %}
+                <!-- end left-sidenav-->
+
+                <!-- Page Content-->
+                <div class="page-content">
+                    <div class="container-fluid mb-5"> 
+                        {% for label, messages in app.flashes %}
+                        <div class="alert icon-custom-alert alert-outline-{{label}} alert-{{label}}-shadow alert-dismissible fade show" role="alert">
+                            {% if label == 'success' %}<i class="mdi mdi-check-all alert-icon"></i>{% endif %}
+                            <div class="alert-text">
+                                {% for message in messages %}
+                                    <strong>{{ message | raw }}</strong>.
+                                {% endfor %}
+                            </div>    
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                            </button>                                        
+                        </div>
+                        
+                        {% endfor %}
+                        {% block body %}
+                        {% endblock %}
+                    </div><!-- container -->
+
+                    {% block footer %} {% include 'admin/partials/footer.html.twig' %} {% endblock %}
+
+                <!-- end page content -->
+            </div>
+        </div>
+        <!-- end page-wrapper -->
+
+        <!-- jQuery  -->
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/metisMenu.min.js"></script>
+        <script src="/js/waves.min.js"></script>
+        <script src="/js/jquery.slimscroll.min.js"></script>
+
+        <!-- App js -->
+        <script src="/js/app.js"></script>
+
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>
