@@ -139,7 +139,7 @@ class Enterprise
     private $pointingLocations;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $timeZone;
 
@@ -185,6 +185,16 @@ class Enterprise
         if (empty($this->isActivated)) {
             $this->isActivated = false;
         }
+    }
+
+    /**
+     * Permet d'obtenir le nombre d'employé d'une entreprise
+     *
+     * @return void
+     */
+    public function getNumberOfEmployees()
+    {
+        return count($this->getUsers());
     }
 
     /**
@@ -640,12 +650,12 @@ class Enterprise
         return $this;
     }
 
-    public function getTimeZone(): ?int
+    public function getTimeZone(): ?float
     {
         return $this->timeZone;
     }
 
-    public function setTimeZone(int $timeZone): self
+    public function setTimeZone(float $timeZone): self
     {
         $this->timeZone = $timeZone;
 

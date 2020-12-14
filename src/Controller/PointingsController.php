@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use DateTime;
+use DateInterval;
+use App\Entity\Pointing;
+use App\Form\PointingType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Controller\ApplicationController;
-use App\Entity\Pointing;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -257,5 +259,83 @@ class PointingsController extends ApplicationController
             'code' => 403,
             'message' => 'Empty Array or Not exists !',
         ], 403);
+    }
+
+    /**
+     * Permet l'enregistrement Manuel d'un Pointage
+     * 
+     * @Route("/pointing/record", name="record_pointing")
+     * 
+     * @Security( "is_granted('ROLE_LEADER')" )
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function recordPointing(Request $request, EntityManagerInterface $manager)
+    {
+        $pointing = new Pointing();
+
+        $team = null;
+        if ($this->getUser()->getRoles()[0] === 'ROLE_LEADER') $team = $this->getUser()->getTeam();
+        //Permet d'obtenir un constructeur de formulaire
+        // Externaliser la création du formulaire avec la cmd php bin/console make:form
+        //  instancier un form externe
+        $form = $this->createForm(PointingType::class, $pointing, [
+            'entId'  => $this->getUser()->getEnterprise()->getId(),
+            'teamId' => $team !== null ? $team->getId() : 0,
+        ]);
+        $form->handleRequest($request);
+        //dump($site);
+        if ($form->isSubmitted() && $form->isValid()) {
+            //dump($pointing);
+            if ($this->getUser()->getEnterprise()->getTimeZone() > 0) {
+                $timeZone = $this->getUser()->getEnterprise()->getTimeZone();
+                $operator = 'sub';
+            } else {
+                $timeZone = $this->getUser()->getEnterprise()->getTimeZone() * (-1);
+                $operator = 'add';
+            }
+
+            $hours = intval($timeZone);
+            $mins  = intval(($timeZone - $hours) * 60);
+            if (!$hours) $hours = '00';
+            if (!$mins) $mins = '00';
+            $dateIn = new DateTime($pointing->getTimeIn()->format('Y-m-d H:i:s'));
+            $dateOut = new DateTime($pointing->getTimeOut()->format('Y-m-d H:i:s'));
+
+            if ($operator === 'add') {
+                $dateIn->add(new DateInterval("PT{$hours}H{$mins}M"));
+                $dateOut->add(new DateInterval("PT{$hours}H{$mins}M"));
+            } else {
+                $dateIn->sub(new DateInterval("PT{$hours}H{$mins}M"));
+                $dateOut->sub(new DateInterval("PT{$hours}H{$mins}M"));
+            }
+
+            $pointing->setStatut('approved')
+                ->setTimeIn($dateIn)
+                ->setTimeOut($dateOut);
+
+            //dd($pointing);
+            $manager->persist($pointing);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "Le <strong> Pointage </strong> a été enregistré avec succès !"
+            );
+
+
+            return $this->redirectToRoute('employees_attendance_record');
+        }
+
+
+        return $this->render(
+            'pointings/recordPointing.html.twig',
+            [
+                'form' => $form->createView(),
+                'timeZone' => $this->getUser()->getEnterprise()->getTimeZone(),
+            ]
+        );
     }
 }

@@ -1,0 +1,160 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Enregistrement d'un Pointage {% endblock %}
+
+{% block stylesheets %}
+<!-- page related CSS below -->
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/select2/select2.bundle.css">
+{% endblock %}
+
+{% block pageTitle %}
+<h4 class="page-title mb-2"><i class="mdi mdi-cursor-pointer mr-2"></i>Équipe</h4>  
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Enregistrement</a></li>
+<li class="active"><a href="#">Pointage</a></li>
+{% endblock %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        <i class="subheader-icon mdi mdi-cursor-pointer"></i>Enregistrement d'un Pointage
+    </h1>
+    {# <a href="#" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a> #}
+</div>
+
+<div class="row ">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2 class="mt-2 mb-4 header-title">Enregistrer Pointage</h2>
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {{ form_start(form) }}
+                    {#{{ form_widget(form) }}#}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.timeIn, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.timeIn, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form_label(form.timeOut, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                            </div>
+                            {{ form_widget(form.timeOut, {'attr': {'class': "form-control"}}) }}
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                            {{ form_widget(form.employee, {'attr': {'class': "form-control select2"}}) }}
+                        </div>
+                        {{ form_label(form.employee, null, {'label_attr': {'class': 'help-block'}}) }}
+                    </div>
+                          
+                    <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
+                        <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
+                        Sauvegarder
+                    </button>
+
+                    {{ form_end(form) }}
+            
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="/js/formplugins/select2/select2.bundle.js"></script>
+<script>
+    $('#saveBtn').click(function(){
+        //block of code that runs when the click event triggers
+        $(this).children('i').addClass('d-none');
+        $(this).children('span').removeClass('d-none');
+        //$('#saveBtn').prop('disabled', true);
+    });
+
+    $(document).ready(function(){
+        $(".select2").select2({
+            placeholder: "Choisir un employé",
+            //width: '50%'
+        });
+
+        $('#pointing_timeIn').attr("step","1");
+        $('#pointing_timeOut').attr("step","1");
+
+        var timeZone = {{timeZone}};
+        //$('#pointing_timeIn').attr("min","2020-12-01T00:00:00");
+        //console.log($('#pointing_timeIn').val());
+
+        $("input[type=datetime-local]").change(function(){
+            //console.log($(this).val());
+            if( $(this).attr("id") === 'pointing_timeIn' ){//Si c'est l'input d'entrée qui a changé de valeur
+                
+                $('#pointing_timeOut').val($(this).val());
+                //Modification de la valeur min et max de l'input sortie
+                $('#pointing_timeOut').attr("min",$(this).val());
+                var str = "" + $(this).val();
+                str = str.substring(0, str.indexOf('T')+1);
+                str += "23:59:59" ;
+                //console.log(str);
+                $('#pointing_timeOut').attr("max",str);
+                {# var myDate = new Date($(this).val());
+                myDate.setHours( myDate.getHours()- timeZone);
+                console.log(formatDate(myDate)); #}
+
+            }
+            else if($(this).attr( "id" ) === 'pointing_timeOut'){//Si c'est l'input de sortie qui a changé de valeur
+                //Modification de la valeur de sortie
+                //Modification de la valeur min et max de l'input sortie
+                $('#pointing_timeIn').attr("max",$(this).val());
+                var str = "" + $(this).val();
+                str = str.substring(0, str.indexOf('T')+1);
+                console.log(str);
+                str += "00:00:00" ;
+                console.log(str);
+                $('#pointing_timeIn').attr("min",str);
+
+            }
+        });
+
+        {# function formatDate(dateObject) {
+            //var d = new Date(dateObject);
+            var d = new Date(dateObject);
+            var day = d.getDate();
+            var month = d.getMonth() + 1;
+            var year = d.getFullYear();
+
+            var hour = d.getHours();
+            var min = d.getMinutes();
+            var sec = d.getSeconds();
+
+            //month++ ; // In js, first month is 0, not 1
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var date = year + "-" + month + "-" + day + "T" + hour + ":" + min + ":" + sec ;
+
+            return date;
+        }; #}
+
+    });
+    
+</script>
+
+{% endblock %}

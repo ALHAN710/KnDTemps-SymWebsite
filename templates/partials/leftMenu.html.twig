@@ -58,6 +58,15 @@
                 </a>
             </li>
             {# {% if app.user.enterprise.offices|length > 0 %} #}
+            {% if is_granted('ROLE_LEADER') %}
+            <li class="nav-title">Pointage</li>
+            <li>
+                <a href="{{path('record_pointing')}}" title="Enregistrer Pointage" data-filter-tags="Enregistrer Pointage">
+                    <i class="fas fa-hand-point-up"></i>
+                    <span class="nav-link-text">Enregistrer Pointage</span>
+                </a>
+            </li>
+            {% endif %}
             {% if is_granted('ROLE_RH_MANAGER') %}
             <li class="nav-title">Rubrique des Fonctions</li>
             <li>

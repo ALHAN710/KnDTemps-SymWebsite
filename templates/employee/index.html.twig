@@ -21,7 +21,7 @@
         <i class="subheader-icon fal fa-clock"></i>Fiche de Temps des Employés {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{app.user.enterprise.users|length}}</sup>{% else %} de la team {{team.name}}<sup class="badge badge-info fw-500">{{employees|length}}</sup>{% endif %}
         
     </h1>
-    {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
+    {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " data-toggle="tooltip" data-placement="top" title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
 </div>
 
 <div class="row">
