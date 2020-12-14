@@ -304,6 +304,23 @@ class PointingsController extends ApplicationController
             $dateIn = new DateTime($pointing->getTimeIn()->format('Y-m-d H:i:s'));
             $dateOut = new DateTime($pointing->getTimeOut()->format('Y-m-d H:i:s'));
 
+            $point = $manager->createQuery("SELECT p
+                                                    FROM App\Entity\Pointing p
+                                                    WHERE p.employee = :empId
+                                                    AND p.timeIn LIKE :dat 
+                                                         
+                    ")
+                ->setParameters([
+                    'empId' => $pointing->getEmployee()->getId(),
+                    'dat'   => $dateIn->format('Y-m-d') . '%'
+                ])
+                ->getResult();
+            //dd($point);
+            if (!empty($point)) {
+                $pointing = $point[0];
+            }
+            //dump($pointing);
+
             if ($operator === 'add') {
                 $dateIn->add(new DateInterval("PT{$hours}H{$mins}M"));
                 $dateOut->add(new DateInterval("PT{$hours}H{$mins}M"));
