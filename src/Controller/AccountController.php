@@ -65,14 +65,15 @@ class AccountController extends ApplicationController
      * 
      * @Route("/register", name="account_register")
      * 
-     * 
+     * @Security( "is_granted('ROLE_SUPER_ADMIN') or ( is_granted('ROLE_RH_MANAGER') and (user.getEnterprise().getSubscription().getEmployeeNumber() === 7102020 or ( user.getEnterprise().getNumberOfEmployees() < user.getEnterprise().getSubscription().getEmployeeNumber() ) ) and user.getEnterprise().getIsActivated() == true) ", message="Nombre d'employé atteint ou abonnement expiré" )
      *
      * @return Response
      */
     public function create(EntityManagerInterface $manager, RoleRepository $roleRepo, Request $request, UserPasswordEncoderInterface $encoder)
-    { //@Security( " count(user.getEnterprise().getUsers()) < user.getEnterprise().getSubscription().getEmployeeNumber() and user.getEnterprise().getIsActivated() == true " )
+    { //
         $isSupAdmin = false;
         $user = new User();
+        dump($this->getUser()->getEnterprise()->getNumberOfEmployees());
         if ($this->getUser()->getRoles()[0] === 'ROLE_ADMIN') $user->setEnterprise($this->getUser()->getEnterprise());
         else if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') $isSupAdmin = true;
         $slugify = new Slugify();
