@@ -16,6 +16,8 @@ class PointingsController extends ApplicationController
     /**
      * @Route("/pointing/home", name="pointings")
      * 
+     * @Security( "is_granted('ROLE_USER')" )
+     * 
      */
     public function index(EntityManagerInterface $manager): Response
     {
@@ -196,14 +198,14 @@ class PointingsController extends ApplicationController
      * 
      * @Route("/pointing/change/status", name="pointings_change_status")
      * 
-     * 
+     * @Security( "is_granted('ROLE_LEADER')" )
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
      * @return void
      */
     public function pointingsChangeStatus(Request $request, EntityManagerInterface $manager)
-    { //@Security( "is_granted('ROLE_USER')" )
+    { //
         $paramJSON = $this->getJSONRequest($request->getContent());
         //$paramJSON = $request->request->get("pointingsApprovedIds");
         //dump($request->request);
