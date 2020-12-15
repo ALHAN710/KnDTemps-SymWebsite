@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil Employés{% endblock %}
+{% block title %}Profil Compte{% endblock %}
 
 {% block stylesheets %}
 <link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
@@ -314,10 +314,13 @@
                 </div>
                 <div class="col-12">
                     <div class="p-3">
-                        <div class="fw-500 fs-xs">Durée de validité : {{app.user.enterprise.subscriptionDuration}} Mois</div>
-                        <div class="progress progress-xs mt-2">
-                            <div class="progress-bar bg-primary-300 bg-primary-gradient" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="fw-500 fs-xs">Durée de validité (Mois)</div>
+                        <div class="text-info text-center mt-2">
+                            {{app.user.enterprise.subscriptionDuration}}
                         </div>
+                        {# <div class="progress progress-xs mt-2">
+                            <div class="progress-bar bg-primary-300 bg-primary-gradient" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div> #}
                     </div>
                 </div>
                 <div class="col-12">
