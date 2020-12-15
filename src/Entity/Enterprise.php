@@ -540,7 +540,7 @@ class Enterprise
     {
         $nowDate = new DateTime("now");
         $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
-        $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'D'));
+        $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
         $interval = $nowDate->diff($this->periodofvalidity);
         //$interval = $this->periodofvalidity->diff($nowDate);
         if ($interval) {
