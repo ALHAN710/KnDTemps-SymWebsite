@@ -15,6 +15,8 @@
 <li class="active"><a href="#">Temps de Travail</a></li>
 {% endblock %}
 
+{% set onpendingNb = 0 %}
+
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
@@ -64,6 +66,11 @@
                     </div>
                     <!-- datatable start -->
                     <table id="dt-employee" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                        {% for pointing in employeePointings %}
+                            {% if pointing["Status_"] == 'on pending' %}
+                                {% set onpendingNb = onpendingNb + 1 %}
+                            {% endif %}
+                        {% endfor %}
                         <thead class="bg-primary-600">
                             <tr class="text-center">
                                 <th>Date</th>
@@ -71,7 +78,9 @@
                                 <th>Heure de sortie</th>
                                 <th>Durée Totale</th>
                                 <th>Status</th>
+                                {% if onpendingNb > 0 %}
                                 <th>Action</th>
+                                {% endif %}
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -83,6 +92,7 @@
                                 <td>{{pointing["TimeOut_"] ?? '-'}}</td>
                                 <td>{{pointing["Duration"]}}</td>
                                 <td><span class="badge badge-{% if status == 'approved' %}success{% elseif status == 'on pending' %}warning{% else %}danger{% endif %}">{% if status == 'approved' %}approuvé{% elseif status == 'on pending' %}en attente{% else %}désapprouvé{% endif %}</span></td>
+                                {% if onpendingNb > 0 %}
                                 <td>
                                     {% if status == 'on pending' %}
                                     <div class="row align-items-center">
@@ -96,9 +106,11 @@
                                         </div>
 
                                     </div>
-
-                                   {% endif %}
+                                    {% else %}
+                                    -
+                                    {% endif %}
                                 </td>
+                                {% endif %}
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -109,7 +121,19 @@
                                 <th>Heure de sortie</th>
                                 <th>Durée Totale</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                {% if onpendingNb > 0 %}
+                                <th>    
+                                    <div class="row align-items-center">
+                                        <div class="col text-right checkbox checkbox-primary ">
+                                            <input id="checkboxAll" type="checkbox" name="allApproved">
+                                            <label for="checkboxAll"></span></label>
+                                        </div>
+                                        <div class="col text-left">
+                                            Tout <span id="checkAll">coché
+                                        </div>    
+                                    </div>
+                                </th>
+                                {% endif %}
                             </tr>
                         </tfoot>
                     </table>
@@ -572,7 +596,7 @@
                                     //console.log(data);
                                     if(data.code === 200){
 
-                                        Swal.fire("Succès !", "Les modifications ont été bien pris en compte avec succès !", "success");
+                                        Swal.fire("Succès !", "Les modifications ont été bien pris en compte avec succès !\nLa page sera actualisée dans quelques secondes", "success");
                                         function reload_() {
                                             //window.location.replace("https://waytolearnx.com");
                                             location.reload(true);
@@ -654,16 +678,27 @@
            $('#modal-timeOut').data('row',$(checkboxId).data('row'));//Initialisation de la valeur de la ligne
         });
 
+        var rowEditedId = -1;
+        var colEditedId = [-1,-1];
+        var val = [-1,-1];
+        var hasChanged = [false,false];
         $("input[type=time]").change(function(){
             //console.log($(this).val());
-            employeeTable.fnUpdate($(this).val(),$(this).data( "row" ),$(this).data( "col" ));
+            rowEditedId = $(this).data( "row" );
+            //employeeTable.fnUpdate($(this).val(),$(this).data( "row" ),$(this).data( "col" ));
             if( $(this).data( "col" ) == 1 ){//Si c'est l'input d'entrée qui a changé de valeur
+                colEditedId[0] = $(this).data( "col" );
+                val[0] = $(this).val();
+                hasChanged[0] = true;
                 //Modification de la valeur d'entrée
                 $(checkboxId).data('timein', $(this).val());
                 //console.log($(checkboxId).data('timein'));
 
             }
             else if($(this).data( "col" ) == 2){//Si c'est l'input de sortie qui a changé de valeur
+                colEditedId[1] = $(this).data( "col" );
+                val[1] = $(this).val();
+                hasChanged[1] = true;
                 //Modification de la valeur de sortie
                 $(checkboxId).data('timeout', $(this).val());
                //console.log($(checkboxId).data('timeout'));
@@ -672,9 +707,22 @@
         });
 
         $('#modal-saveBtn').click(function(){
+            if(hasChanged[0] === true) employeeTable.fnUpdate(val[0],rowEditedId,colEditedId[0]);
+            if(hasChanged[1] === true) employeeTable.fnUpdate(val[1],rowEditedId,colEditedId[1]);
+            
             //Fermer le modal d'édition
             $('#edit-workTime-modal').modal('toggle');
         });
+        
+        $('#checkboxAll').change(function(){
+            var isChecked = $(this).is(':checked');
+            if(isChecked) $('#checkAll').html('décoché');
+            else $('#checkAll').html('coché');
+            $("input:checkbox[name=approved]").each(function(){
+                $(this).prop( "checked", isChecked );
+            });
+        });
+        
 
     });
 
