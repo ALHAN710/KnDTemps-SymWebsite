@@ -151,6 +151,8 @@
 <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
 <script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
+
 <script src="/js/jquery.redirect.js"></script>
 
 <script>
@@ -372,21 +374,127 @@
             {
                 orientation: "bottom left",
                 todayHighlight: true,
+                autoclose: true,
                 {# startDate: '0d',
                 clearBtn: true, #}
                 templates: controls,
-                format: "yyyy-mm",
+                format: "mm-yyyy",
                 viewMode: "months", 
                 minViewMode: "months"
             });
         
         };
         runDatePicker();
-        
+        $( '#datepicker' ).datepicker( 'setDate', 'today' );
         var date = $('#datepicker').datepicker('getDate');
-        {# console.log('date = ' + date); #}
+        date = moment(date).format( 'YYYY-MM');
+        console.log('date = ' + date);
         
         var _url = "{{ path('update_employees_dt_wk') }}";
+
+        var $data = JSON.stringify({
+            "date": date,//tabGridId,
+        });   
+
+        Swal.mixin(
+        {
+            customClass:
+            {
+                confirmButton: "btn btn-primary",
+                cancelButton: "btn btn-danger ml-2"
+            },
+            buttonsStyling: false
+        }).queue([{
+                type: "warning",
+                title: 'Confirmation de Sélection',
+                confirmButtonText: 'Confirmez',
+                text: 'Informations de temps de travail du mois de ' + date + ' ?',
+                showCancelButton: true,
+                showLoaderOnConfirm: true,
+                //confirmButtonClass: 'btn btn-primary',
+                //cancelButtonClass: 'btn btn-danger ml-2',
+                preConfirm: function () {
+                    return new Promise(function (resolve) { 
+                        //console.log(resolve);
+                        $.ajax({
+                            type: "POST", // method type
+                            contentType: "application/json; charset=utf-8",
+                            url: _url, // /Target function that will be return result
+                            data: $data, // parameter pass data is parameter name param is value
+                            dataType: "json",
+                            timeout: 120000, // 64241
+                            success: function (data) {
+                                // $('.fa-sync').removeClass('fa-spin');
+                                //console.log(data);
+                                if(data.code === 200){
+                                                                                    
+                                    Swal.fire("Succès !", "Le tableau a été mis à jour avec succès !", "success");
+                                    /*Swal.fire({
+                                        type: "success",
+                                        position: 'top-end',
+                                        title: "Succès !",
+                                        text: "Le tableau a été mis à jour avec succès !",
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        footer: "<a href>Why do I have this issue?</a>"
+                                    });*/
+                                    data['employeesWorkTime'].forEach(function (value, index) {
+                                        {# console.log('Id = ' + value['Id'] + ' WT = ' + value['WT']);
+                                        console.log(employeesTable); #}
+                                        employeesTable.fnUpdate(value['WT'],$('#' + value['Id']).data( "row" ),6);
+                                    });
+
+                                    setTimeout(function () {
+                                        resolve()
+                                    }, 5000);
+                                }
+                                else{
+                                    Swal.fire({
+                                        type: "error",
+                                        title: "Oops...",
+                                        text: "Une erreur est survenue !",
+                                        {# footer: "<a href>Why do I have this issue?</a>" #}
+                                    });
+                                    
+                                }
+
+                                
+                            },
+                            error: function (result) {
+                                //console.log("Error");
+                                console.log(result);
+                                /*Swal.fire('Oops...', 'Something went wrong!', 'error'
+                                // footer: '<a href>Why do I have this issue?</a>'
+                                );*/
+                                Swal.fire({
+                                    type: "error",
+                                    title: "Oops...",
+                                    text: "Une erreur est survenue !",
+                                    {# footer: "<a href>Why do I have this issue?</a>" #}
+                                });
+                            }
+                        });
+                })  
+            },
+            //allowOutsideClick: false
+            /*allowOutsideClick: function allowOutsideClick()
+            {
+                return !Swal.isLoading();
+            }*/
+        }]).then((result) => {
+            if (result.isConfirmed) {
+                
+            }else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === Swal.DismissReason.cancel
+            ) {
+                Swal.fire(
+                'Annulation',
+                'Choix Annulé',
+                'error'
+                )
+            }
+        });
 
         $('#datepicker').datepicker().on('changeDate', function(e) {
             // `e` here contains the extra attributes
