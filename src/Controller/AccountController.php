@@ -73,7 +73,7 @@ class AccountController extends ApplicationController
     { //
         $isSupAdmin = false;
         $user = new User();
-        dump($this->getUser()->getEnterprise()->getNumberOfEmployees());
+        //dump($this->getUser()->getEnterprise()->getNumberOfEmployees());
         if ($this->getUser()->getRoles()[0] === 'ROLE_ADMIN') $user->setEnterprise($this->getUser()->getEnterprise());
         else if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') $isSupAdmin = true;
         $slugify = new Slugify();
