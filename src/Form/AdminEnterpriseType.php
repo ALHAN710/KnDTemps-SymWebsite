@@ -42,7 +42,7 @@ class AdminEnterpriseType extends ApplicationType
             ->add(
                 'address',
                 TextType::class,
-                $this->getConfiguration("Adresse (*)", "Adresse siège sociale (Obligatoire)...")
+                $this->getConfiguration("Adresse (*)", "Adresse siège social (Obligatoire)...")
             )
             ->add(
                 'phoneNumber',

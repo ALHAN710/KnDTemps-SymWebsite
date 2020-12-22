@@ -38,7 +38,7 @@ class EnterpriseType extends ApplicationType
             ->add(
                 'address',
                 TextType::class,
-                $this->getConfiguration("Adresse du Siège Sociale", "Adresse siège sociale...")
+                $this->getConfiguration("Adresse du Siège Social", "Adresse siège sociale...")
             )
             ->add(
                 'phoneNumber',
