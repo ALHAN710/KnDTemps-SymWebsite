@@ -85,7 +85,9 @@ button.toast-close-button {
 #toast-container {
   position: fixed;
   z-index: 999999;
+  
   /*overrides*/ }
+
 
 #toast-container * {
   -webkit-box-sizing: border-box;

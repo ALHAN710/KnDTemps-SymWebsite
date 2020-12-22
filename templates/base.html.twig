@@ -33,7 +33,9 @@
         <link rel="stylesheet" media="screen, print" href="/css/miscellaneous/reactions/reactions.css">
         <link rel="stylesheet" media="screen, print" href="/css/miscellaneous/fullcalendar/fullcalendar.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/miscellaneous/jqvmap/jqvmap.bundle.css">
-        
+        <link rel="stylesheet" media="screen, print" href="/css/default.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" media="screen, print" href="/css/notifications/toastr/toastr.css">
+        <link rel="stylesheet" media="screen, print" href="/css/theme-demo.css">
         {% block stylesheets %}{% endblock %}
     </head>
     <body class="mod-bg-1 ">
@@ -157,7 +159,24 @@
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}           
+                        {% endfor %}    
+
+                        {% if app.user.enterprise.IsActivated == false %}
+                        <div class="alert alert-danger alert-dismissible fade show mb-2" role="alert">
+                            {# <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                            </button> #}
+                            <strong>Nous sommes désolé !</strong> Votre abonnement a expiré et vous ne pouvez plus accéder aux fonctionnalités principales de l'application.
+                            Veuillez vous réabonné pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci ! 
+                        </div>   
+                        {# {% elseif app.user.enterprise.DeadLine <= 10 %}
+                        <div class="alert alert-secondary alert-dismissible fade show mb-2" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
+                            </button>
+                            <div id="simple_timer"></div>
+                        </div> #}
+                        {% endif %}       
                         
                         {% block body %}
                         <div class="subheader">
@@ -1248,6 +1267,242 @@
                 "POST", "");
                 
             })
+
+        </script>
+        {% endif %}
+
+        <script src="/js/notifications/toastr/toastr.js"></script>
+        <script src="/js/jquery.syotimer.min.js"></script>
+        {# <script>
+            $.syotimerLang.freNumeral = function(number) {
+                if ( number <= 1 ) {
+                    return 0;
+                } else {
+                    return 1;
+                } 
+            }; 
+
+            $.syotimerLang.fre = {
+                second: ['seconde', 'secondes'],
+                minute: ['minute', 'minutes'],
+                hour: ['heure', 'heures'],
+                day: ['jour', 'jours'],
+                handler: 'freNumeral'
+            }; 
+
+            $('#simple_timer').syotimer({
+                // time to countdown from
+                year: {{app.user.enterprise.endSubscription|date('Y')}},
+                month: {{app.user.enterprise.endSubscription|date('m')}},
+                day: {{app.user.enterprise.endSubscription|date('d')}},
+                hour: {{app.user.enterprise.endSubscription|date('H')}},
+                minute: {{app.user.enterprise.endSubscription|date('i')}},
+                second: {{app.user.enterprise.endSubscription|date('s')}},
+
+                // time zone
+                timeZone: 'local',
+                ignoreTransferTime: false,
+
+                // for periodic timer
+                periodic: false, 
+                periodInterval: 1, 
+                periodUnit: 'h', 
+
+                // show days
+                dayVisible: true,
+
+                // show hours, minutes and seconds with leading zeros
+                doubleNumbers: true, // показывать часы, минуты и секунды с ведущими нолями ( 2часа 5минут 4секунды = 02:05:04)
+
+                // none or opacity
+                effectType: 'none', 
+
+                // language
+                lang: 'fre',
+
+                // header
+                headTitle: '<h3 class="text-danger">FIN D\'ABONNEMENT DANS :</h3>', 
+
+                // footer
+                footTitle: '',//'<i style="color: brown;">Footer of timer.</i>' 
+
+                // callback
+                afterDeadline: function(timerBlock){
+                    // timerBlock.bodyBlock.html('<p style="font-size: 1.2em;">The countdown is finished!</p>'); 
+                    timerBlock.bodyBlock.html('<strong>Nous sommes désolé !</strong> Votre abonnement a expiré et vous ne pouvez plus accéder aux fonctionnalités principales de l\'application.Veuillez vous réabonné pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci !');
+                }
+            });
+        </script> #}
+        {% if app.user.enterprise.DeadLine <= 10 %}
+        <script>
+            $(document).ready(function()
+            {
+
+                var i = -1;
+                var toastCount = 0;
+                var $toastlast;
+
+                var getMessage = function()
+                {
+                    
+                    return '                                                                    ';
+                    //return msgs[i];
+                };
+
+                {# $('#closeButton').click(function()
+                {
+                    if ($(this).is(':checked'))
+                    {
+                        $('#addBehaviorOnToastCloseClick').prop('disabled', false);
+                    }
+                    else
+                    {
+                        $('#addBehaviorOnToastCloseClick').prop('disabled', true);
+                        $('#addBehaviorOnToastCloseClick').prop('checked', false);
+                    }
+                }); #}
+
+               //$('#showtoast').click(function()
+               // {
+                    
+                    toastr.options = {
+                        closeButton: true,
+                        debug: false,
+                        newestOnTop: false,
+                        progressBar: true,
+                        positionClass: "toast-top-right",
+                        preventDuplicates: true,
+                        showDuration: 300,
+                        hideDuration: 100,
+                        timeOut: 0,//1800000,
+                        extendedTimeOut: 0,//1000,
+                        showEasing: "swing",
+                        hideEasing: "linear",
+                        showMethod: "fadeIn",
+                        hideMethod: "fadeOut"
+                    }
+
+                    {# if ($('#addBehaviorOnToastClick').prop('checked'))
+                    {
+                        toastr.options.onclick = function()
+                        {
+                            alert('You can perform some custom action after a toast goes away');
+                        };
+                    }
+
+                    if ($('#addBehaviorOnToastCloseClick').prop('checked'))
+                    {
+                        toastr.options.onCloseClick = function()
+                        {
+                            alert('You can perform some custom action when the close button is clicked');
+                        };
+                    } #}
+
+                    
+                    msg = getMessage();
+
+                    var $toast = toastr["info"](msg, ''); // Wire up an event handler to a button in the toast, if it exists
+                    $toastlast = $toast;
+
+                    if (typeof $toast === 'undefined')
+                    {
+                        return;
+                    }
+
+                    {# if ($toast.find('#okBtn').length)
+                    {
+                        $toast.delegate('#okBtn', 'click', function()
+                        {
+                            alert('you clicked me. i was toast #' + toastIndex + '. goodbye!');
+                            $toast.remove();
+                        });
+                    }
+                    if ($toast.find('#surpriseBtn').length)
+                    {
+                        $toast.delegate('#surpriseBtn', 'click', function()
+                        {
+                            alert('Surprise! you clicked me. i was toast #' + toastIndex + '. You could perform an action here.');
+                        });
+                    }
+                    if ($toast.find('.clear').length)
+                    {
+                        $toast.delegate('.clear', 'click', function()
+                        {
+                            toastr.clear($toast,
+                            {
+                                force: true
+                            });
+                        });
+                    } #}
+                //});
+
+                $('.toast-message').append('<div id="simple_timer"></div>').ready(() => {
+                    $.syotimerLang.freNumeral = function(number) {
+                        if ( number <= 1 ) {
+                            return 0;
+                        } else {
+                            return 1;
+                        } 
+                    }; 
+
+                    $.syotimerLang.fre = {
+                        second: ['seconde', 'secondes'],
+                        minute: ['minute', 'minutes'],
+                        hour: ['heure', 'heures'],
+                        day: ['jour', 'jours'],
+                        handler: 'freNumeral'
+                    }; 
+
+                    $('#simple_timer').syotimer({
+                        // time to countdown from
+                        year: {{app.user.enterprise.endSubscription|date('Y')}},
+                        month: {{app.user.enterprise.endSubscription|date('m')}},
+                        day: {{app.user.enterprise.endSubscription|date('d')}},
+                        hour: {{app.user.enterprise.endSubscription|date('H')}},
+                        minute: {{app.user.enterprise.endSubscription|date('i')}},
+                        second: {{app.user.enterprise.endSubscription|date('s')}},
+
+                        // time zone
+                        timeZone: 'local',
+                        ignoreTransferTime: false,
+
+                        // for periodic timer
+                        periodic: false, 
+                        periodInterval: 1, 
+                        periodUnit: 'h', 
+
+                        // show days
+                        dayVisible: true,
+
+                        // show hours, minutes and seconds with leading zeros
+                        doubleNumbers: true, // показывать часы, минуты и секунды с ведущими нолями ( 2часа 5минут 4секунды = 02:05:04)
+
+                        // none or opacity
+                        effectType: 'none', 
+
+                        // language
+                        lang: 'fre',
+
+                        // header
+                        headTitle: '<h3 class="text-danger">FIN D\'ABONNEMENT DANS :</h3>', 
+
+                        // footer
+                        footTitle: '',//'<i style="color: brown;">Footer of timer.</i>' 
+
+                        // callback
+                        afterDeadline: function(timerBlock){
+                            // timerBlock.bodyBlock.html('<p style="font-size: 1.2em;">The countdown is finished!</p>'); 
+                            timerBlock.bodyBlock.html('<strong>Nous sommes désolé !</strong> Votre abonnement a expiré et vous ne pouvez plus accéder aux fonctionnalités principales de l\'application.Veuillez vous réabonné pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci !');
+                        }
+                    });
+
+                    {# console.log($('#toast-container').css('width'));
+                    $('div#toast-container').width('370px');
+                
+                    console.log($('#toast-container').css('width')); #}
+                });
+
+            });
 
         </script>
         {% endif %}

@@ -227,6 +227,22 @@ class Enterprise
         return $this->formatDateDiff($nowDate, $periodofvalidity); //
     }
 
+    public function getDeadLine()
+    {
+        $nowDate = new DateTime("now");
+        $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d H:i:s'));
+        $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+        $interval = $nowDate->diff($this->periodofvalidity);
+        //$interval = $this->periodofvalidity->diff($nowDate);
+        if ($interval) {
+            //return gettype($interval->format('d'));
+            //return $interval->format('%R%a days'); // '+29 days'
+            return $interval->days; //Nombre de jour total de différence entre les dates 
+            //return !$interval->invert; // 
+            //return $this->isActivated;
+        }
+    }
+
     /**
      * A sweet interval formatting, will use the two biggest interval parts.
      * On small intervals, you get minutes and seconds.
