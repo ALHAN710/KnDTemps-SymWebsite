@@ -18,7 +18,7 @@
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="subheader-icon fal fa-clock"></i>Fiche de Temps des Employés {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500">{{app.user.enterprise.users|length}}</sup>{% else %} de la team {{team.name}}<sup class="badge badge-info fw-500">{{employees|length}}</sup>{% endif %}
+        <i class="subheader-icon fal fa-clock"></i>Fiche de Temps des Employés {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500 hidden-sm-down">{{app.user.enterprise.users|length}}</sup>{% else %} de la team {{team.name}}<sup class="badge badge-info fw-500 hidden-sm-down">{{employees|length}}</sup>{% endif %}
         
     </h1>
     {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " data-toggle="tooltip" data-placement="top" title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
@@ -29,7 +29,7 @@
         <div id="panel-1" class="panel">
             <div class="panel-hdr">
                 <h2>
-                    Tableau des Temps des <span class="fw-300 mr-1"><i>Employés</i></span>{% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
+                    Tableau des Temps des Employés{% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
                 </h2>
                 {# <div class="panel-toolbar">
                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>

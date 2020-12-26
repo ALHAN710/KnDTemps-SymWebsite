@@ -19,7 +19,6 @@
 <div class="subheader">
     <h1 class="subheader-title">
         <i class="subheader-icon mdi mdi-file-table-outline"></i>{{ emp.grade ~ " " ~ emp.fullName }}{% if emp.office.name is not null %}, Poste : {{emp.office.name}}{% endif %}
-
     </h1>
 
 </div>
@@ -29,7 +28,7 @@
         <div id="panel-1" class="panel">
             <div class="panel-hdr">
                 <h2>
-                    Fiche de Présence du mois de <span class="fw-300 mr-1"><i>{{month}}</i></span>
+                    Fiche de Présence du mois de {{month}}</span>
                 </h2>
                 {# <div class="panel-toolbar">
                     <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
