@@ -9,6 +9,7 @@ use App\Controller\ApplicationController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 //use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -160,38 +161,43 @@ class EmployeeController extends ApplicationController
         //dump($paramJSON);
         //AND p.timeOut LIKE :dat
 
-        if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
-            $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
-            $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
-            if ($emp) {
-                $employeePointings = $manager->createQuery("SELECT p.id, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
-                                                    TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
-                                                    FROM App\Entity\Pointing p
-                                                    WHERE p.employee = :empId
-                                                    AND p.timeIn LIKE :dat 
-                                                    ORDER BY date_ DESC
-                                               
-                ")
-                    ->setParameters([
-                        'empId' => $paramJSON['emp'],
-                        'dat'   => $paramJSON['date'] . '%',
-                        'fus'   => $fuseau,
-                    ])
-                    ->getResult();
-                //dump($employeePointings);
-                $date = new DateTime($paramJSON['date'] . '-01');
-                return $this->render('employee/workTimeSheet.html.twig', [
-                    'emp'               => $emp,
-                    'employeePointings' => $employeePointings,
-                    'month'             => $date->format('M Y'),
-                ]);
+        if (!empty($paramJSON['date'])) {
+            if ((array_key_exists("date", $paramJSON) && !empty($paramJSON['date'])) && (array_key_exists("emp", $paramJSON) && !empty($paramJSON['emp']))) {
+                $emp = $manager->getRepository('App:User')->findOneBy(['id' => $paramJSON['emp']]);
+                $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
+                if ($emp) {
+                    $employeePointings = $manager->createQuery("SELECT p.id, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
+                                                        TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
+                                                        FROM App\Entity\Pointing p
+                                                        WHERE p.employee = :empId
+                                                        AND p.timeIn LIKE :dat 
+                                                        ORDER BY date_ DESC
+                                                   
+                    ")
+                        ->setParameters([
+                            'empId' => $paramJSON['emp'],
+                            'dat'   => $paramJSON['date'] . '%',
+                            'fus'   => $fuseau,
+                        ])
+                        ->getResult();
+                    //dump($employeePointings);
+                    $date = new DateTime($paramJSON['date'] . '-01');
+                    return $this->render('employee/workTimeSheet.html.twig', [
+                        'emp'               => $emp,
+                        'employeePointings' => $employeePointings,
+                        'month'             => $date->format('M Y'),
+                    ]);
+                }
             }
         }
 
-        return $this->json([
+        /*return $this->json([
             'code' => 403,
             'message' => 'Empty Array or Not exists !',
-        ], 403);
+        ], 403);*/
+        // throw $this->createNotFoundException('The product does not exist');
+        // throw $this->createAccessDeniedException('Empty Array or Not exists !');
+        throw new HttpException(500, 'Empty Array or Not exists !');
     }
 
     /**
