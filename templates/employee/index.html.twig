@@ -84,7 +84,7 @@
                             <tr id="{{employee.id}}" data-row="{{loop.index0}}">
                                 <td><a href="#" class="empClass" data-emp={{employee.id}}>{% if (employee.roles[0] is same as('ROLE_LEADER')) %}<i class="fa fa-user-tie mr-1"></i>{% endif %}{{employee.fullName}}</a></td>
                                 <td>{{employee.phoneNumber}}</td>
-                                <td>{{employee.office.name}}</td>
+                                <td>{{employee.office.name ?? ("<span class='badge badge-warning'>Non défini</span>")|raw}}</td>
                                 <td>{{employee.team.name ?? ("<span class='badge badge-warning'>Sans Équipe</span>")|raw}}</td>
                                 <td>{{ employee.age }}</td>
                                 <td>{{ employee.seniority }}</td>
