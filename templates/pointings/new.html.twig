@@ -18,9 +18,10 @@
         <link rel="stylesheet" media="screen, print" href="/css/icons.css">
         <!-- App favicon -->
         <!-- Place favicon.ico in the root directory -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-        <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+        {# <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png"> #}
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/KnDTemps.ico">
+        {# <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5"> #}
+
         <!-- Optional: page related CSS-->
         <link rel="stylesheet" media="screen, print" href="/css/page-login.css">
         <link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
@@ -58,7 +59,7 @@
         <div class="blankpage-form-field width-mobile-auto mt-4 ">{# expand-full-width-on-mobile height-mobile-auto expand-full-height-on-mobile #}
             <div class="page-logo m-0 w-100 align-items-center justify-content-center rounded border-bottom-left-radius-0 border-bottom-right-radius-0 px-4">
                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
-                    <img src="/img/logo.png" alt="KnD Temps WebApp" aria-roledescription="logo">
+                    <img src="/img/KnDTemps.png" alt="KnD Temps WebApp" aria-roledescription="logo">
                     <span class="page-logo-text mr-1">KnD Temps WebApp</span>
                     <i class="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
                 </a>
@@ -81,7 +82,8 @@
                         <i class="ni ni-chevron-down hidden-xs-down"></i> 
                     </a> #}
                     <div class="">
-                        <div class="text-center mb-2"><i><strong>Date Système : </strong> <span class="js-get-date"></span></i></div>
+                        {# <div class="text-center mb-2"><i><strong>Date Système : </strong> <span class="js-get-date"></span></i></div> #}
+                        <div class="text-center mb-2"><i><strong class="text-primary fs-lg text-truncate text-truncate-lg ">{{app.user.enterprise.socialReason}}</strong></i></div>
                         <div class="text-center">BIENVENUE,</div>
                         <div class="d-flex flex-row py-4 rounded-top">
                             <div class="d-flex flex-row align-items-center mt-1 mb-1 color-white">
@@ -90,7 +92,7 @@
                                 </span>
                                 <div class="info-card-text text-dark">
                                     <div class="fs-lg text-truncate text-truncate-lg">{{app.user.grade}} {{app.user.fullName}}</div>
-                                    <span class="text-truncate text-truncate-md opacity-80">{{app.user.office.name|capitalize}}</span>
+                                    {% if app.user.office != null %}<span class="text-truncate text-truncate-md opacity-80">{{app.user.office.name|capitalize}}</span>{% endif %}
                                 </div>
                             </div>
                         </div>
