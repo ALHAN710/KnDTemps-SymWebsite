@@ -271,7 +271,7 @@
                 <a href="javascript:void(0);" class="d-flex flex-row align-items-center">
                     <div class='icon-stack display-3 flex-shrink-0'>
                         <i class="fal fa-circle icon-stack-3x opacity-100 color-warning-400"></i>
-                        <i class="fas fa-handshake icon-stack-1x opacity-100 color-warning-500"></i>
+                        <i class="fal fa-users icon-stack-1x opacity-100 color-warning-500"></i>
                     </div>
                     <div class="ml-3">
                         <strong>
@@ -286,10 +286,10 @@
         
         <!-- rating -->
         <div class="card mb-g">
-            <div class="row row-grid no-gutters">
+            <div class="row text-center row-grid no-gutters">
                 <div class="col-12">
                     <div class="p-3">
-                        <h2 class="mb-0 fs-xl">
+                        <h2 class="text-start mb-0 fs-xl">
                             Détails Abonnement
                         </h2>
                     </div>
@@ -304,11 +304,19 @@
                         <span class="ml-auto">4/5 Stars</span>
                     </div>
                 </div> #}
-                <div class="col-12">
+                {# <div class="col-12">
                     <div class="p-3">
                         <div class="fw-500 fs-xs">Ref Abonnement</div>
                         <div class="text-info text-center mt-2">
                             {{"RF1234"}}
+                        </div>
+                    </div>
+                </div> #}
+                <div class="col-12">
+                    <div class="p-3">
+                        <div class="fw-500 fs-xs">Nombre d'employé max</div>
+                        <div class="text-info  mt-2">
+                            {% if employeeNumber == 7102020 %}Illimités{% else %}{{ employeeNumber }}{% endif %}
                         </div>
                     </div>
                 </div>
@@ -332,15 +340,6 @@
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="p-3">
-                        <div class="fw-500 fs-xs">Nombre d'employé max</div>
-                        <div class="text-info text-center mt-2">
-                            {% if employeeNumber == 7102020 %}Illimités{% else %}{{ employeeNumber }}{% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                </h5>
                     <div class="p-3">
                         <div class="fw-500 fs-xs">Fin d'abonnement dans :</div>
                         <div class="{% if app.user.enterprise.isActivated == true %}text-warning{% else %}text-danger{% endif %} text-center mt-2">
