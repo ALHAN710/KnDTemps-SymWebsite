@@ -3,6 +3,7 @@
 {% block title %} Modification d'une Zone de Pointage {% endblock %}
 
 {% block stylesheets %}
+<link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
 
 {% endblock %}
 
@@ -74,6 +75,10 @@
                         </div>
                     </div>
                                         
+                    <div class="row justify-content-center">
+                        <a href="#" id="getPos" class="btn btn-info waves-effect rounded" data-toggle="tooltip" data-placement="top" title="Récupérer ma position actuelle ?"><i class="fas fa-crosshairs"></i></a>
+                        
+                    </div>       
                     <button type="submit" class="btn btn-primary mt-4 waves-effect" id="saveBtn">
                         <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
                         Save
@@ -90,6 +95,9 @@
 {% endblock %}
 
 {% block javascripts %}
+<!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
+<script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
 <script>
     $('#saveBtn').click(function(){
         //block of code that runs when the click event triggers
@@ -103,6 +111,133 @@
         $('#pointing_location_latitude').attr('type','number').attr("step", "any");
         $('#pointing_location_longitude').attr('type','number').attr("step", "any");
         $('#pointing_location_ray').attr('type','number').attr("step", "any");
+
+        $('#getPos').click(function(){
+            getLocation();
+        })
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(getPosition, showError,{enableHighAccuracy:true, timeout:60000, maximumAge:600000});
+            } else {
+                positionError = true;
+                Swal.fire(
+                {
+                    type: "error",
+                    title: "Oops...",
+                    text: "Désolé votre navigateur ne supporte pas la fonctionnalité de géolocalisation !",
+                    {# footer: "<a href>Why do I have this issue?</a>" #}
+                });
+            }
+        }
+
+        function getPosition(position) {
+            lat = position.coords.latitude;
+            long = position.coords.longitude;
+            positionError = false;
+            {# console.log('Type of latitude coordinates = ' + position.coords.latitude + ' is : ' + typeof position.coords.latitude );
+            console.log('Type of longitude coordinates = ' + position.coords.longitude + ' is : ' + typeof position.coords.longitude );
+            console.log('Position accuracy  = ' + position.coords.accuracy ); #}
+            
+
+            Swal.mixin(
+            {
+                customClass:
+                {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-danger ml-2"
+                },
+                buttonsStyling: false
+            }).queue([{
+                    type: "warning",
+                    title: 'Votre Position Actuelle',
+                    confirmButtonText: 'Confirmez',
+                    text: 'Latitude : ' + position.coords.latitude + ' , Longitude : ' + position.coords.longitude,
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    //confirmButtonClass: 'btn btn-primary',
+                    //cancelButtonClass: 'btn btn-danger ml-2',
+                    preConfirm: function () {
+                        return new Promise(function (resolve) { 
+                            $('#pointing_location_latitude').val(position.coords.latitude);
+                            $('#pointing_location_longitude').val(position.coords.longitude);
+        
+                            Swal.fire("Succès !", "Récupération de position réussie.", "success");
+                            
+                            setTimeout(function () {
+                                resolve()
+                            }, 1500);
+                    })  
+                },
+                //allowOutsideClick: false
+                /*allowOutsideClick: function allowOutsideClick()
+                {
+                    return !Swal.isLoading();
+                }*/
+            }]).then((result) => {
+                if (result.isConfirmed) {
+                    
+                }else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    //$('#' + id).prop("checked",false);
+                    Swal.fire(
+                    'Annulation',
+                    'Récupération de position Annulée',
+                    'error'
+                    )
+                }
+            });
+        }
+
+        function showError(error) {
+            positionError = true;
+            console.log("Handling Position Error");
+            //$('#' + id).prop("checked",false);
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    console.log("User denied the request for Geolocation.");
+                    Swal.fire(
+                    {
+                        type: "error",
+                        title: "Oops...\r\nAccès refusé !",
+                        text: "Veuillez autoriser l'accès de votre position à l'application",
+                        footer: "<a href='#'><i class='fa fa-exclamation-circle mr-1'></i>Why do I have this issue?</a>" 
+                    });
+                break;
+                case error.POSITION_UNAVAILABLE:
+                    console.log("Location information is unavailable.");
+                    Swal.fire(
+                    {
+                        type: "error",
+                        title: "Oops...",
+                        text: "Désolé les informations de localisation sont indisponibles !",
+                        footer: "<a href='#'><i class='fa fa-exclamation-circle mr-1'></i>Why do I have this issue?</a>" 
+                    });
+                break;
+                case error.TIMEOUT:
+                    console.log("The request to get user location timed out.");
+                    Swal.fire(
+                    {
+                        type: "error",
+                        title: "Oops...",
+                        text: "Temps d'attente de localisation expiré !",
+                        footer: "<a href='#'><i class='fa fa-exclamation-circle mr-1'></i>Why do I have this issue?</a>" 
+                    });
+                break;
+                case error.UNKNOWN_ERROR:
+                    console.log("An unknown error occurred.");
+                    Swal.fire(
+                    {
+                        type: "error",
+                        title: "Oops...",
+                        text: "Erreur de localisation inconnu !",
+                        {# footer: "<a href>Why do I have this issue?</a>" #}
+                    });
+                break;
+            }
+        }
 
     });
     
