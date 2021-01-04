@@ -442,7 +442,7 @@
                                     data['employeesWorkTime'].forEach(function (value, index) {
                                         {# console.log('Id = ' + value['Id'] + ' WT = ' + value['WT']);
                                         console.log(employeesTable); #}
-                                        employeesTable.fnUpdate(value['WT'],$('#' + value['Id']).data( "row" ),6);
+                                        employeesTable.fnUpdate(value['WT'],$('#' + value['Id']).data( "row" ),4);
                                     });
 
                                     setTimeout(function () {
@@ -556,7 +556,7 @@
                                         data['employeesWorkTime'].forEach(function (value, index) {
                                             {# console.log('Id = ' + value['Id'] + ' WT = ' + value['WT']);
                                             console.log(employeesTable); #}
-                                            employeesTable.fnUpdate(value['WT'],$('#' + value['Id']).data( "row" ),6);
+                                            employeesTable.fnUpdate(value['WT'],$('#' + value['Id']).data( "row" ),4);
                                         });
 
                                         setTimeout(function () {
