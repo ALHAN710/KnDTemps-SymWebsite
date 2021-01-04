@@ -67,7 +67,7 @@
                                 <td>{{team.responsible.fullName}}</td>
                                 <td>{{team.users|length}}</td>
                                 <td>
-                                    <a href="{{path('team_edit', {'id':team.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier l'Équipe ?"><i class="far fa-edit"></i> </a>
+                                    <a href="{{path('team_edit', {'id':team.id})}}"  class="btn btn-info btn-xs rounded mr-2" data-toggle="tooltip" data-placement="top" title="Modifier l'Équipe ?"><i class="far fa-edit"></i> </a>
                                     <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('team_delete', {'id':team.id})}}" data-name="{{team.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer l'Équipe"><i class="fas fa-trash"></i> </a>
                                                 
                                 </td>

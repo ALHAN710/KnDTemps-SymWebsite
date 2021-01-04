@@ -69,7 +69,7 @@
                                 <td>{{office.monthlySalary}}</td>
                                 <td>{{office.employees|length}}</td>
                                 <td>
-                                    <a href="{{path('office_edit', {'id':office.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier le Poste ?"><i class="far fa-edit"></i> </a>
+                                    <a href="{{path('office_edit', {'id':office.id})}}"  class="btn btn-info btn-xs rounded mr-2" data-toggle="tooltip" data-placement="top" title="Modifier le Poste ?"><i class="far fa-edit"></i> </a>
                                     <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('office_delete', {'id':office.id})}}" data-name="{{office.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer le Poste"><i class="fas fa-trash"></i> </a>
                                                 
                                 </td>

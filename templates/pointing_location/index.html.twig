@@ -72,7 +72,7 @@
                                 <td>{{ pointingLocation.ray }}</td>
                                 {# <td>{{pointingLocation.users|length}}</td> #}
                                 <td>
-                                    <a href="{{path('pointing_location_edit', {'id':pointingLocation.id})}}"  class="btn btn-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
+                                    <a href="{{path('pointing_location_edit', {'id':pointingLocation.id})}}"  class="btn btn-info btn-xs rounded mr-2" data-toggle="tooltip" data-placement="top" title="Modifier la Zone de Pointage ?"><i class="far fa-edit"></i> </a>
                                     <a href="#" class="btn btn-danger btn-xs rounded deleteBtn" data-url="{{path('pointing_location_delete', {'id':pointingLocation.id})}}" data-name="{{pointingLocation.name}}" data-toggle="tooltip" data-placement="top" title="Supprimer la Zone de Pointage"><i class="fas fa-trash"></i> </a>
                                                 
                                 </td>
