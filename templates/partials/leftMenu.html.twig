@@ -45,7 +45,7 @@
             {# <li class="nav-title">Work Time</li> #}
             {% if (app.user.roles[0] is not same as('ROLE_USER')) %}
             <li>
-                <a href="{{ path('employees_home') }}" title="Fiche Temps" data-filter-tags="Fiche Temps">
+                <a href="{{ path('employees_home_work-time') }}" title="Fiche Temps" data-filter-tags="Fiche Temps">
                     <i class="fal fa-clock"></i>
                     <span class="nav-link-text">Fiche des Temps</span>
                 </a>
@@ -97,10 +97,10 @@
             {# {% if app.user.enterprise.teams|length > 0 %} #}
             <li class="nav-title">Ressources Humaines</li>
             <li>
-                {# <a href="#" title="Équipes" data-filter-tags="Équipes">
-                    <i class="fal fa-users"></i>
-                    <span class="nav-link-text">Équipes</span>
-                </a> #}
+                <a href="{{path('employees_list')}}" title="Employés" data-filter-tags="Employés">
+                    <i class="far fa-id-card"></i>
+                    <span class="nav-link-text">Employés</span>
+                </a> 
                 <a href="{{path('teams_index')}}" title="Équipes" data-filter-tags="Équipes">
                     <i class="fal fa-users"></i>
                     <span class="nav-link-text">Équipes</span>

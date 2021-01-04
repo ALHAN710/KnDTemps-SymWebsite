@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil Employés{% endblock %}
+{% block title %}Accueil Fiche Temps Employés{% endblock %}
 
 {% block stylesheets %}
 <link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
@@ -18,10 +18,9 @@
 {% block body %}
 <div class="subheader">
     <h1 class="subheader-title">
-        <i class="subheader-icon fal fa-clock"></i>Fiche de Temps des Employés {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}<sup class="badge badge-info fw-500 hidden-sm-down">{{app.user.enterprise.users|length}}</sup>{% else %} de la team {{team.name}}<sup class="badge badge-info fw-500 hidden-sm-down">{{employees|length}}</sup>{% endif %}
-        
+        <i class="subheader-icon fal fa-clock"></i>Fiche de Temps des Employés {% if (app.user.roles[0] is not same as('ROLE_LEADER')) %}{{app.user.enterprise.socialReason}}{% else %} de la team {{team.name}}{% endif %}
     </h1>
-    {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " data-toggle="tooltip" data-placement="top" title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %}
+    {# {% if (app.user.roles[0] is not same as('ROLE_USER')) and (app.user.roles[0] is not same as('ROLE_LEADER')) %}<a href="{{ path('account_register')}} " data-toggle="tooltip" data-placement="top" title="Ajouter un nouvel employé" class="float-right btn btn-primary"><i class="fal fa-plus-circle mr-2"></i>Employé</a>{% endif %} #}
 </div>
 
 <div class="row">
@@ -72,11 +71,11 @@
                                 <th>Nom</th>
                                 <th>Tél</th>
                                 <th>Poste</th>
-                                <th>Équipe</th>
-                                <th>Age</th>
+                                {# <th>Équipe</th>
+                                <th>Age</th> #}
                                 <th>Ancienneté</th>
                                 <th>Temps de travail</th>
-                                <th>Actions</th>
+                                {# <th>Actions</th> #}
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -86,13 +85,13 @@
                                 <td>{{employee.phoneNumber}}</td>
                                 <td>{{employee.office.name ?? ("<span class='badge badge-warning'>Non défini</span>")|raw}}</td>
                                 <td>{{employee.team.name ?? ("<span class='badge badge-warning'>Sans Équipe</span>")|raw}}</td>
-                                <td>{{ employee.age }}</td>
-                                <td>{{ employee.seniority }}</td>
+                                {# <td>{{ employee.age }}</td>
+                                <td>{{ employee.seniority }}</td> #}
                                 <td>00:00:00</td>
-                                <td>
-                                    <a href="{{path('user_edit', {'id':employee.id})}}"  class="btn btn-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit"></i> </a>
-                                    {# <a href="{{path('user_delete', {'id':employee.id})}}" class="btn btn-soft-danger btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Supprimez l'employé ?"><i class="fas fa-trash"></i> </a>    #}
-                                </td> 
+                                {# <td>
+                                    <a href="{{path('user_edit', {'id':employee.id})}}"  class="btn btn-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit"></i> </a> 
+                                    <a href="{{path('user_delete', {'id':employee.id})}}" class="btn btn-soft-danger btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Supprimez l'employé ?"><i class="fas fa-trash"></i> </a>    
+                                </td>  #}
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -102,10 +101,10 @@
                                 <th>Tél</th>
                                 <th>Poste</th>
                                 <th>Équipe</th>
-                                <th>Age</th>
-                                <th>Ancienneté</th>
+                                {# <th>Age</th>
+                                <th>Ancienneté</th> #}
                                 <th>Temps de travail</th>
-                                <th>Actions</th>
+                                {# <th>Actions</th> #}
                             </tr>
                         </tfoot>
                     </table>
@@ -190,7 +189,7 @@
                     https://datatables.net/reference/option/dom
                     --------------------------------------
                     */
-                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'B>>" +
                 "<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
             buttons: [

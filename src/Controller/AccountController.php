@@ -150,7 +150,7 @@ class AccountController extends ApplicationController
                     'success',
                     "Le Compte de l'employé <strong> {$user->getFirstName()}</strong> a été crée avec succès. !"
                 );
-                return $this->redirectToRoute('employees_home');
+                return $this->redirectToRoute('employees_list');
             }
         }
 
@@ -314,7 +314,7 @@ class AccountController extends ApplicationController
                     'success',
                     "La modification de l'employé <strong> {$user_->getFullName()}</strong> a été effectuée avec succès. !"
                 );
-                return $this->redirectToRoute('employees_home');
+                return $this->redirectToRoute('employees_list');
             }
         }
         if ($this->getUser()->getRoles()[0] === 'ROLE_SUPER_ADMIN') return $this->render('admin/users/edit.html.twig', [
@@ -350,13 +350,13 @@ class AccountController extends ApplicationController
             return $this->json([
                 'code'    => 200,
                 'name'    => $enterprise->getSocialReason(),
-                'message' => "La suppression de {$nomination} <strong> {$_user} </strong> a été effectuée avec succès !"
+                'message' => "La suppression de {$nomination} {$_user} a été effectuée avec succès !"
             ], 200);
         } else {
 
             return $this->json([
                 'code'    => 403,
-                'message' => "La suppression de {$nomination} <strong> {$_user} </strong> n'a pas été effectuée car ce dernier est responsable d'une équipe !"
+                'message' => "\nLa suppression de {$nomination} {$_user} n'a pas été effectuée car ce dernier est responsable d'une équipe !\nVeuillez choisir un autre chef d'équipe pour poursuivre"
             ], 200);
         }
     }

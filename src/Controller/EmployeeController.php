@@ -16,12 +16,60 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class EmployeeController extends ApplicationController
 {
     /**
-     * @Route("/employees/home", name="employees_home")
+     * @Route("/employees/list", name="employees_list")
      * 
      * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
      * 
      */
-    public function index(EntityManagerInterface $manager): Response
+    public function indexEmployees(EntityManagerInterface $manager): Response
+    {
+        $team = null;
+        if ($this->getUser()->getRoles()[0] !== 'ROLE_LEADER') {
+            //AND emp.attribut IN ('Leader','Subordinate')
+            //AND emp.team IS NOT NULL
+            $employees = $manager->createQuery("SELECT emp
+                                               FROM App\Entity\User emp
+                                               WHERE emp.enterprise = :entId
+                                               AND emp.statut = 'In Function'
+                                               
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                ))
+                ->getResult();
+        } else {
+            $employees = $manager->createQuery("SELECT emp
+                                               FROM App\Entity\User emp
+                                               WHERE emp.enterprise = :entId
+                                               AND emp.statut = 'In Function'
+                                               AND emp.team = :teamId
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                    'teamId' => $this->getUser()->getTeam()->getId(),
+                ))
+                ->getResult();
+            $team = $this->getUser()->getTeam();
+        }
+        //dump($employees);
+        //Récupération du temps de travail déjà réalisé pour le mois en cours
+
+        return $this->render('employee/index_employees.html.twig', [
+            'employees'       => $employees,
+            'team'            => $team,
+        ]);
+    }
+
+
+    /**
+     * @Route("/employees/home/work-time", name="employees_home_work-time")
+     * 
+     * @Security( "is_granted('ROLE_LEADER') or is_granted('ROLE_RH_MANAGER') or ( is_granted('ROLE_ADMIN') )" )
+     * 
+     */
+    public function indexEmployeesWorkTime(EntityManagerInterface $manager): Response
     {
         $date = new DateTime('2020-10-07');
         $team = null;
@@ -72,8 +120,7 @@ class EmployeeController extends ApplicationController
             ->getResult();
         dump($currentMonthTotalTime);*/
 
-        return $this->render('employee/index.html.twig', [
-            'controller_name' => 'EmployeeController',
+        return $this->render('employee/indexWorkTime.html.twig', [
             'employees'       => $employees,
             'team'            => $team,
         ]);
