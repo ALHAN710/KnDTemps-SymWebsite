@@ -83,7 +83,7 @@
                     </a> #}
                     <div class="">
                         {# <div class="text-center mb-2"><i><strong>Date Système : </strong> <span class="js-get-date"></span></i></div> #}
-                        <div class="text-center mb-2"><i><strong class="text-primary fs-lg text-truncate text-truncate-lg ">{{app.user.enterprise.socialReason}}</strong></i></div>
+                        <div class="text-center mb-2"><i><strong class="text-primary  ">{{app.user.enterprise.socialReason}}</strong></i></div>
                         <div class="text-center">BIENVENUE,</div>
                         <div class="d-flex flex-row py-4 rounded-top">
                             <div class="d-flex flex-row align-items-center mt-1 mb-1 color-white">
@@ -213,7 +213,7 @@
                     <a href="{% if app.user.roles[0] is not same as('ROLE_USER') %}{{path('employees_attendance_record')}}{% else %}#{% endif %}" id="continueLink"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
                 <span class="h4 float-left">
-                    <a href="{{path('account_logout')}}"><strong>Deconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                    <a href="{{path('account_logout')}}"><strong>Déconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
             </div>
         </div>
