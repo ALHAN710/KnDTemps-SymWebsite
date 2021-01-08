@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>KnD Time | Authentication</title>
+        <title>KnD Temps | Authentification</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="description" content="Login">
@@ -132,7 +132,7 @@
         <div class="blankpage-form-field">
             <div class="page-logo m-0 w-100 align-items-center justify-content-center rounded border-bottom-left-radius-0 border-bottom-right-radius-0 px-4">
                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
-                    <img src="/img/KnDTemps.png" alt="SmartAdmin WebApp" aria-roledescription="logo">
+                    <img src="/img/KnDTemps.png" alt="KnD Temps Logo" aria-roledescription="logo">
                     <span class="page-logo-text mr-1">KnD Temps WebApp</span>
                     <i class="fal fa-angle-down d-inline-block ml-1 fs-lg color-primary-300"></i>
                 </a>
@@ -242,8 +242,27 @@
                     </div>  
                 </form>
             </div>
-            <div class="blankpage-footer text-center">
-                <a href="{{path('account_recoverpw')}}"><strong>Recover Password</strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+            <div class="blankpage-footer ">
+                <div class="text-center mb-5">
+                    <a href="{{path('account_recoverpw')}}" ><strong>Recover Password</strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                
+                </div>
+                <div class="d-flex hidden-sm-down align-items-center flex-1 text-muted">
+                    <span class="fw-700">2020 © KnD Temps Produced by&nbsp;<a href='#' class='text-primary  fw-500' title='kndtechs.com' target='_blank'>KnD Technologies</a></span>
+                    
+                </div>
+                <div class="hidden-sm-down">
+                    <span class="fw-700">Developed By Pascal ALHADOUM</span>
+                    {# <ul class="list-table m-0">
+                        <li><a href="intel_introduction.html" class="text-secondary fw-700">About</a></li>
+                        <li class="pl-3"><a href="info_app_licensing.html" class="text-secondary fw-700">License</a></li>
+                        <li class="pl-3"><a href="info_app_docs.html" class="text-secondary fw-700">Documentation</a></li>
+                        <li class="pl-3 fs-xl"><a href="https://wrapbootstrap.com/user/MyOrange" class="text-secondary" target="_blank"><i class="fal fa-question-circle" aria-hidden="true"></i></a></li>
+                    </ul> #}
+                </div>
+                <div class="d-flex hidden-md-up align-items-center text-center flex-1 text-muted">
+                    <span class="fw-700">2020 © KnD Temps Produced by <a href='#' class='text-primary  fw-500' title='kndtechs.com' target='_blank'>KnD Technologies </a>&nbsp;Developed&nbsp;By&nbsp;Pascal&nbsp;ALHADOUM</span>
+                </div>
             </div>
         </div>
         <div class="login-footer p-2">
@@ -251,12 +270,27 @@
                 {# <div class="col col-sm-12 text-center">
                     <i><strong>System Message:</strong> You were logged out from 198.164.246.1 on Saturday, March, 2017 at 10.56AM</i>
                 </div> #}
+                
             </div>
         </div>
         <video poster="/img/backgrounds/clouds.png" id="bgvid" playsinline autoplay muted loop>
             <source src="/media/video/cc.webm" type="video/webm">
             <source src="/media/video/cc.mp4" type="video/mp4">
         </video>
+        {# <footer class="page-footer" role="contentinfo">
+            <div class="d-flex hidden-sm-down align-items-center flex-1 text-muted">
+                <span class="fw-700">2020 © KnD Temps Produced by&nbsp;<a href='#' class='text-primary  fw-500' title='kndtechs.com' target='_blank'>KnD Technologies</a></span>
+                
+            </div>
+            <div class="hidden-sm-down">
+                <span class="fw-700">Developed By Pascal ALHADOUM</span>
+                
+            </div>
+            <div class="d-flex hidden-md-up align-items-center text-center flex-1 text-muted">
+                <span class="fw-700">2020 © KnD Temps Produced by <a href='#' class='text-primary  fw-500' title='kndtechs.com' target='_blank'>KnD Technologies &nbsp;Developed&nbsp;By&nbsp;Pascal&nbsp;ALHADOUM</a></span>
+            </div>
+            
+        </footer> #}
         <!-- base vendor bundle: 
 			 DOC: if you remove pace.js from core please note on Internet Explorer some CSS animations may execute before a page is fully loaded, resulting 'jump' animations 
 						+ pace.js (recommended)

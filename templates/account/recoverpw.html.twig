@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>KnD Time | Password Recover</title>
+        <title>KnD Temps | Récupération de Mot de Passe</title>
         <meta name="description" content="Login">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -15,10 +15,10 @@
         <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/icons.css">
         <!-- Place favicon.ico in the root directory -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-        <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
-
+        {# <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png"> #}
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/KnDTemps.ico">
+        {# <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5"> #}
+        
     </head>
 
     <body class="account-body">
@@ -30,15 +30,15 @@
                         <div class="d-flex align-items-center container p-0">
                             <div class="page-logo width-mobile-auto m-0 align-items-center justify-content-center p-0 bg-transparent bg-img-none shadow-0 height-9">
                                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
-                                    <img src="/img/logo.png" alt="KnD Time Logo" aria-roledescription="logo">
-                                    <span class="page-logo-text mr-1">KnD Time WebApp</span>
+                                    <img src="/img/KnDTemps.png" alt="KnD Temps Logo" aria-roledescription="logo">
+                                    <span class="page-logo-text mr-1">KnD Temps WebApp</span>
                                 </a>
                             </div>
                             <span class="text-white opacity-50 ml-auto mr-2 hidden-sm-down">
                                 {# Already a member? #}
                             </span>
                             <a href="{{path('account_login')}}" class="btn-link text-white text-left ml-auto ml-sm-0">
-                                Secure Log In
+                                Connexion
                             </a>
                         </div>
                     </div>
@@ -47,9 +47,9 @@
                             <div class="row">
                                 <div class="col-xl-12">
                                     <h2 class="fs-xxl fw-500 mt-4 text-white text-center">
-                                        "Password forgot"
+                                        "Mot de Passe Oublié"
                                         <small class="h3 fw-300 mt-3 mb-5 text-white opacity-60 hidden-sm-down">
-                                            Not a problem, happens to the best of us. Just use the form below to reset it!
+                                            Pas de problème, cela arrive aux meilleurs d'entre nous. Utilisez simplement le formulaire ci-dessous pour le réinitialiser !
                                         </small>
                                     </h2>
                                 </div>
@@ -59,21 +59,21 @@
                                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
                                         </button>
-                                        Sorry, <strong>the Email Address does not match any User or Invalid</strong> Change a few things up and try submitting again.
+                                        Désolé, <strong>l'adresse e-mail ne correspond à aucun utilisateur ou est invalide</strong> Effectuer quelques modifications et soumettez à nouveau.
                                     </div>
                                     <div class="card p-4 rounded-plus bg-faded">
                                         <form id="js-login" novalidate="" action="{{path('account_codeverification')}}">
                                             <div class="form-group">
-                                                <label class="form-label" for="lostaccount">Your username or email</label>
-                                                <input type="email" id="lostaccount" class="form-control" placeholder="Recovery email" required>
-                                                <div class="invalid-feedback">No, you missed this one.</div>
-                                                <div class="help-block">We will email you the instructions</div>
+                                                <label class="form-label" for="lostaccount">Votre adresse e-mail</label>
+                                                <input type="email" id="lostaccount" class="form-control" placeholder="Veuillez entrer votre email svp..." required>
+                                                <div class="invalid-feedback">Non, vous avez oublié celui-ci.</div>
+                                                <div class="help-block">Nous vous enverrons des instructions par e-mail</div>
                                             </div>
                                             <div class="row no-gutters">
                                                 <div class="col-md-4 ml-auto text-right">
-                                                    <button type="submit" class="btn btn-danger waves-effect waves-light" type="button" id="ResetBtn">
+                                                    <button class="btn btn-danger waves-effect waves-light" type="button" id="ResetBtn">
                                                         <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
-                                                        Reset <i class="fas fa-sign-in-alt ml-1"></i>
+                                                        Réinitialiser <i class="fas fa-sign-in-alt ml-1"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="d-block text-center text-white">
-                            2020 © KnD Time by&nbsp;<a href='#' class='text-white opacity-40 fw-500' title='kndtechs.com' target='_blank'>KnD Technologies</a>
+                            2020 © KnD Temps by&nbsp;<a href='#' class='text-white opacity-40 fw-500' title='kndtechs.com' target='_blank'>KnD Technologies </a>&nbsp;Developed&nbsp;By&nbsp;Pascal&nbsp;ALHADOUM
                         </div>
                     </div>
                 </div>
@@ -136,6 +136,7 @@
                             "email": $email,
                             "codeVerif": 0
                         });
+                        console.log($data);       
 
                         $.ajax({
                             type: "POST",//method type

@@ -164,6 +164,166 @@ class AccountController extends ApplicationController
     }
 
     /**
+     * Permet d'envoyer un code réinitialisation de mot de passe d'un utilisateur à son adresse email
+     * 
+     * @Route("/account/recover/password", name="account_recoverpw")
+     *
+     * @return Response
+     */
+    public function recoverPassword()
+    {
+        return $this->render('account/recoverpw.html.twig', [
+            //'inventories' => $inventories,
+        ]);
+    }
+
+    /**
+     * Permet de vérifier le code réinitialisation de mot de passe d'un utilisateur
+     * 
+     * @Route("/account/recover/password/code-verification", name="account_codeverification")
+     *
+     * @return void
+     */
+    public function codeVerification()
+    {
+        //$inventories = $inventoryRepo->findAll();
+        return $this->render('account/codeverification.html.twig', [
+            //'inventories' => $inventories,
+        ]);
+    }
+
+    /**
+     * Permet de vérifier si l'adresse email entrer pour la réinitialisation de mot appartient à un utilisateur du site
+     *
+     * @Route("/account/recover/password/user-verification", name="account_userverification")
+     * 
+     * @param Request $request
+     * @param MailerInterface $mailer
+     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $manager
+     * @return JsonResponse
+     * 
+     */
+    public function userVerification(Request $request, MailerInterface $mailer, UserRepository $userRepo, EntityManagerInterface $manager): JsonResponse
+    {
+        $paramJSON = $this->getJSONRequest($request->getContent());
+
+        $email = $paramJSON['email'];
+        //dump($email);
+        $user = $userRepo->findOneBy(['email' => $email]);
+        if ($user != null) {
+            $status = 200;
+            $mess   = 'User exists';
+            $faker = Faker\Factory::create('fr_FR');
+            $codeVerification = $faker->randomNumber($nbDigits = 5, $strict = false);
+            $user->setVerificationcode($codeVerification)
+                ->setVerified(false);
+            $manager->persist($user);
+            $manager->flush();
+            $code = 'KnD-' . $codeVerification . $user->getId();
+            //dump($code);
+            $object = "PASSWORD RESET";
+            $message = 'Your verification code is ' . $code;
+
+            $message .= ".
+We heard that you lost your LBF password. Sorry about that !
+
+But don’t worry! You can use the following code to reset your password : " . $code . "
+
+Thanks,
+The KnD Temps Team";
+
+            $this->sendEmail($mailer, $email, $object, $message);
+        } else if ($paramJSON['codeVerif'] != null) {
+            $Verificationcode = $paramJSON['codeVerif'];
+            $id = substr($Verificationcode, 5);
+            $Verificationcode = substr($Verificationcode, 0, 5);
+            $user = $userRepo->findOneBy(['id' => $id]);
+            //dump($id);
+            //dump($Verificationcode);
+            //dump($user);
+            if ($user != null && $user->getVerified() == false) {
+                $userCode = $user->getVerificationcode();
+                if ($userCode == $Verificationcode) {
+                    $status = 200;
+                    $mess   = $id;
+                }
+            } else {
+                $status = 403;
+                $mess   = $Verificationcode;
+            }
+        } else if ($paramJSON['codeVerif'] == null) {
+            $status = 403;
+            $mess   = "User don't exists";
+        }
+        //$status = 200;
+        //$mess = 'received email : ' . $email;
+        return $this->json(
+            [
+                'code'    => $status,
+                'message' => $mess,
+            ],
+            200
+        );
+    }
+
+    /**
+     * Permet de vérifier si l'adresse email entrer pour la réinitialisation de mot appartient à un utilisateur du site
+     *
+     * @Route("/account/recover/password/reset", name="account_passwordReset")
+     * 
+     * @param Request $request
+     * @param UserRepository $userRepo
+     * @param EntityManagerInterface $manager
+     * @return Response
+     * 
+     */
+    public function passwordReset(Request $request, UserRepository $userRepo, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    {
+        $passwordUpdate = new PasswordUpdate();
+        $user = $this->getUser();
+        $id = $request->query->get('d');
+        //dump($id);
+        $user = $userRepo->findOneBy(['id' => $id]);
+        //dump($user);
+
+        $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($user->getVerified() == false) {
+                $newPassword = $passwordUpdate->getNewPassword();
+                $hash = $encoder->encodePassword($user, $newPassword);
+
+                $user->setHash($hash)
+                    ->setVerificationcode("")
+                    ->setVerified(true);
+
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash(
+                    'success',
+                    "Votre Mot de Passe a bien été modifié"
+                );
+
+                return $this->redirectToRoute('account_login');
+            } else {
+                $this->addFlash(
+                    'danger',
+                    "Modification Non autorisée"
+                );
+            }
+        }
+
+        return $this->render('account/resetpassword.html.twig', [
+            'form' => $form->createView(),
+            //'inventories' => $inventories,
+        ]);
+    }
+
+    /**
      * Permet d'afficher et de traiter le formulaire de modification de profil
      *
      * @Route("/account/profile", name="account_profile")
@@ -425,162 +585,6 @@ class AccountController extends ApplicationController
         return $this->render('account/password.html.twig', [
             'form' => $form->createView(),
             'user' => $user,
-            //'inventories' => $inventories,
-        ]);
-    }
-
-    /**
-     * Permet d'envoyer un code réinitialisation de mot de passe d'un utilisateur à son adresse email
-     * 
-     * @Route("/account/recover/password", name="account_recoverpw")
-     *
-     * @return Response
-     */
-    public function recoverPassword()
-    {
-        return $this->render('account/recoverpw.html.twig', [
-            //'inventories' => $inventories,
-        ]);
-    }
-
-    /**
-     * Permet de vérifier le code réinitialisation de mot de passe d'un utilisateur
-     * 
-     * @Route("/account/recover/password/code-verification", name="account_codeverification")
-     *
-     * @return void
-     */
-    public function codeVerification()
-    {
-        //$inventories = $inventoryRepo->findAll();
-        return $this->render('account/codeverification.html.twig', [
-            //'inventories' => $inventories,
-        ]);
-    }
-
-    /**
-     * Permet de vérifier si l'adresse email entrer pour la réinitialisation de mot appartient à un utilisateur du site
-     *
-     * @Route("/account/recover/password/user-verification", name="account_userverification")
-     * 
-     * @param Request $request
-     * @param MailerInterface $mailer
-     * @param UserRepository $userRepo
-     * @param EntityManagerInterface $manager
-     * @return JsonResponse
-     * 
-     */
-    public function userVerification(Request $request, MailerInterface $mailer, UserRepository $userRepo, EntityManagerInterface $manager): JsonResponse
-    {
-        $paramJSON = $this->getJSONRequest($request->getContent());
-        $email = $paramJSON['email'];
-        //dump($email);
-        $user = $userRepo->findOneBy(['email' => $email]);
-        if ($user != null) {
-            $status = 200;
-            $mess   = 'User exists';
-            $faker = Faker\Factory::create('fr_FR');
-            $codeVerification = $faker->randomNumber($nbDigits = 5, $strict = false);
-            $user->setVerificationcode($codeVerification)
-                ->setVerified(false);
-            $manager->persist($user);
-            $manager->flush();
-            $code = 'KnD Temps-' . $codeVerification . $user->getId();
-            //dump($code);
-            $object = "PASSWORD RESET";
-            $message = 'Your verification code is ' . $code;
-            $message += "We heard that you lost your LBF password. Sorry about that !
-
-But don’t worry! You can use the following code to reset your password: " . $code . "
-
-Thanks,
-The KnD Temps Team";
-            $this->sendEmail($mailer, $email, $object, $message);
-        } else if ($paramJSON['codeVerif'] != null) {
-            $Verificationcode = $paramJSON['codeVerif'];
-            $id = substr($Verificationcode, 5);
-            $Verificationcode = substr($Verificationcode, 0, 5);
-            $user = $userRepo->findOneBy(['id' => $id]);
-            //dump($id);
-            //dump($Verificationcode);
-            //dump($user);
-            if ($user != null && $user->getVerified() == false) {
-                $userCode = $user->getVerificationcode();
-                if ($userCode == $Verificationcode) {
-                    $status = 200;
-                    $mess   = $id;
-                }
-            } else {
-                $status = 403;
-                $mess   = $Verificationcode;
-            }
-        } else if ($paramJSON['codeVerif'] == null) {
-            $status = 403;
-            $mess   = "User don't exists";
-        }
-        //$status = 200;
-        //$mess = 'received email : ' . $email;
-        return $this->json(
-            [
-                'code'    => $status,
-                'message' => $mess,
-            ],
-            200
-        );
-    }
-
-    /**
-     * Permet de vérifier si l'adresse email entrer pour la réinitialisation de mot appartient à un utilisateur du site
-     *
-     * @Route("/account/recover/password/reset", name="account_passwordReset")
-     * 
-     * @param Request $request
-     * @param UserRepository $userRepo
-     * @param EntityManagerInterface $manager
-     * @return Response
-     * 
-     */
-    public function passwordReset(Request $request, UserRepository $userRepo, UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
-    {
-        $passwordUpdate = new PasswordUpdate();
-        $user = $this->getUser();
-        $id = $request->query->get('d');
-        //dump($id);
-        $user = $userRepo->findOneBy(['id' => $id]);
-        //dump($user);
-
-        $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($user->getVerified() == false) {
-                $newPassword = $passwordUpdate->getNewPassword();
-                $hash = $encoder->encodePassword($user, $newPassword);
-
-                $user->setHash($hash)
-                    ->setVerificationcode("")
-                    ->setVerified(true);
-
-                $manager->persist($user);
-                $manager->flush();
-
-                $this->addFlash(
-                    'success',
-                    "Votre Mot de Passe a bien été modifié"
-                );
-
-                return $this->redirectToRoute('account_login');
-            } else {
-                $this->addFlash(
-                    'danger',
-                    "Modification Non autorisée"
-                );
-            }
-        }
-
-        return $this->render('account/resetpassword.html.twig', [
-            'form' => $form->createView(),
             //'inventories' => $inventories,
         ]);
     }

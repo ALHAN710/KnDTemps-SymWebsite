@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>KnD Time | Code Verification</title>
+        <title>KnD Temps | Vérification de Code</title>
         <meta name="description" content="Login">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
@@ -15,10 +15,10 @@
         <link rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
         <link rel="stylesheet" media="screen, print" href="/css/icons.css">
         <!-- Place favicon.ico in the root directory -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-        <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
-
+        {# <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png"> #}
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/KnDTemps.ico">
+        {# <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5"> #}
+        
     </head>
 
     <body class="account-body">
@@ -29,8 +29,8 @@
                         <div class="d-flex align-items-center container p-0">
                             <div class="page-logo width-mobile-auto m-0 align-items-center justify-content-center p-0 bg-transparent bg-img-none shadow-0 height-9">
                                 <a href="javascript:void(0)" class="page-logo-link press-scale-down d-flex align-items-center">
-                                    <img src="/img/logo.png" alt="KnD Time Logo" aria-roledescription="logo">
-                                    <span class="page-logo-text mr-1">KnD Time WebApp</span>
+                                    <img src="/img/KnDTemps.png" alt="KnD Temps Logo" aria-roledescription="logo">
+                                    <span class="page-logo-text mr-1">KnD Temps WebApp</span>
                                 </a>
                             </div>
                             <span class="text-white opacity-50 ml-auto mr-2 hidden-sm-down">
@@ -38,7 +38,7 @@
                             </span>
                             
                             <a href="{{path('account_login')}}" class="btn-link text-white text-left ml-auto ml-sm-0">
-                                Secure Log In
+                                Connexion
                             </a>
                             
                         </div>
@@ -48,9 +48,9 @@
                             <div class="row">
                                 <div class="col-xl-12">
                                     <h2 class="fs-xxl fw-500 mt-4 text-white text-center">
-                                        "Code Verification"
+                                        "Verification de Code"
                                         <small class="h3 fw-300 mt-3 mb-5 text-white opacity-60 hidden-sm-down">
-                                            check your email inbox and enter the verification code. If you haven't received an email in your inbox, please check spam
+                                            Vérifiez votre boîte de réception et entrez le code de vérification. Si vous n'avez pas reçu d'e-mail dans votre boîte de réception, veuillez vérifier le spam
                                         </small>
                                     </h2>
                                 </div>
@@ -62,26 +62,26 @@
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                                 <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
                                             </button>
-                                            Sorry, <strong>the Verification Code is invalid</strong> Change a few things up and try submitting again.
+                                            Désolé, <strong>le code vérification est incorrect</strong>
                                         </div>
                                         <form id="js-login" novalidate="" action="#">
                                             <div class="form-group">
-                                                <label class="form-label" for="userCode">Your username or email</label>
+                                                <label class="form-label" for="userCode">Code de réinitialisation</label>
                                                 <div class="input-group mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text" id="basic-addon1">KnD -</i></span>
                                                     </div>
                                                     <input type="text" class="form-control" id="userCode" placeholder="Code" required>
                                                 </div>
-                                                <div class="invalid-feedback">No, you missed this one.</div>
-                                                <div class="help-block">We will email you the instructions</div>
+                                                {# <div class="invalid-feedback">No, you missed this one.</div>
+                                                <div class="help-block">We will email you the instructions</div> #}
                                             </div>
                                             
                                             <div class="row no-gutters">
                                                 <div class="col-md-4 ml-auto text-right">
-                                                    <button type="submit" class="btn btn-primary  waves-effect waves-light" type="button" id="validBtn">
+                                                    <button class="btn btn-primary  waves-effect waves-light" type="button" id="validBtn">
                                                         <span class="spinner-border spinner-border-sm mr-1 d-none" role="status" aria-hidden="true"></span>
-                                                        <i class="mdi mdi-check mr-2 font-16"></i> Validate
+                                                        <i class="mdi mdi-check mr-2 font-16"></i> Validez
                                                     </button>
                                                 </div>
                                             </div>
@@ -91,7 +91,7 @@
                             </div>
                         </div>
                         <div class="d-block text-center text-white">
-                            2020 © KnD Time by&nbsp;<a href='#' class='text-white opacity-40 fw-500' title='kndtech.com' target='_blank'>KnD Technologies</a>
+                            2020 © KnD Temps by&nbsp;<a href='#' class='text-white opacity-40 fw-500' title='kndtechs.com' target='_blank'>KnD Technologies </a>&nbsp;Developed&nbsp;By&nbsp;Pascal&nbsp;ALHADOUM
                         </div>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
 
             userCode.on('input', function() { 
                 //console.log($(this).val()); // get the current value of the input field.
-                if( $(this).val().indexOf("KnD -") >= 0  ){
+                if( $(this).val().indexOf("KnD-") >= 0  ){
                     userCode.addClass("is-invalid");
                     //form.addClass("form-control");
                     //form.addClass("is-invalid");
