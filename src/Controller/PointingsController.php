@@ -266,7 +266,7 @@ class PointingsController extends ApplicationController
      * 
      * @Route("/pointing/record", name="record_pointing")
      * 
-     * @Security( "is_granted('ROLE_LEADER')" )
+     * @Security( "is_granted('ROLE_LEADER') and user.getEnterprise().getIsActivated() == true" )
      *
      * @param Request $request
      * @param EntityManagerInterface $manager
