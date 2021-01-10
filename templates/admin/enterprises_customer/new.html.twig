@@ -32,8 +32,8 @@
 
                 <div class="row ">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-body mx-5">        
+                        {# <div class="card">
+                            <div class="card-body mx-5">         #}
                                 <h4 class="mt-2 mb-4 header-title">Détails Abonnement</h4>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -45,6 +45,16 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            {{ form_label(form.subscriptionMaxEmployee, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                        </div>
+                                        {{ form_widget(form.subscriptionMaxEmployee, {'attr': {'class': "form-control"}}) }}
+                                        
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group">
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -73,15 +83,15 @@
                                     </div>
                                 </div> #}
                                 
-                            </div>
-                        </div>
+                            {# </div>
+                        </div> #}
                     </div>
                 </div>
 
                 <div class="row ">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-body mx-5">        
+                        {# <div class="card">
+                            <div class="card-body mx-5">         #}
                                 <h4 class="mt-2 mb-4 header-title">Informations Client</h4>
 
                                 <div class="form-group">
@@ -189,8 +199,8 @@
                                     {{ form_widget(form.description, {'attr': {'class': "form-control"}}) }}
                                     
                                 </div>
-                            </div>
-                        </div>
+                            {# </div>
+                        </div> #}
                     </div>
                 </div>
                 
@@ -216,6 +226,7 @@
     });
 
     var tarifs = JSON.parse('{{ tarifs | json_encode | raw }}');
+    var employeeMax = JSON.parse('{{ employeeMax | json_encode | raw }}');
     //console.log(tarifs);
     $('#admin_enterprise_niu').attr('required', false);
     $('#admin_enterprise_rccm').attr('required', false);
@@ -227,8 +238,10 @@
     var subscriptionId = '#admin_enterprise_subscription';
     var subscriptionDurationId = '#admin_enterprise_subscriptionDuration';
     var subscriptionPriceId = '#admin_enterprise_subscriptionPrice';
+    var subscriptionMaxEmployeeId = '#admin_enterprise_subscriptionMaxEmployee';
         
     $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    $(subscriptionMaxEmployeeId).val( employeeMax[$(subscriptionId).val()] === 7102020 ? 'Illimités' : employeeMax[$(subscriptionId).val()] );
     
     $(subscriptionId).change(() => {
         //var Str = String($(subscriptionId).val());
@@ -236,6 +249,7 @@
         //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
         //var puId_ = String(Name);
         $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+        $(subscriptionMaxEmployeeId).val( employeeMax[$(subscriptionId).val()] === 7102020 ? 'Illimités' : employeeMax[$(subscriptionId).val()] );
     });
 
     $(subscriptionDurationId).change(() => {

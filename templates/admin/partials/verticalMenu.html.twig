@@ -20,16 +20,21 @@
         <li>
             <a href="{{ path('admin_users_index') }}"><i class="mdi mdi-account"></i><span>Utilisateurs</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>    
         </li>
-
+        {% endif %}
         
         <li class="menu-title">Business</li>
 
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
         <li>
             <a href="{{ path('admin_products_index') }}"><i class="mdi mdi-google-pages"></i><span>Produits</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>  
         </li>
 
+        {% endif %}
         <li>
-            <a href="{{ path('admin_invoices', {'type':'all'}) }}"><i class="mdi mdi-file-table-outline"></i><span>Factures</span></a>
+            <a href="{{ path('admin_invoices', {'type':'all'}) }}">
+                <i class="mdi mdi-file-table-outline"></i>
+                <span>{% if is_granted('ROLE_SUPER_ADMIN') %}Factures{% else %}Abonnement en attente de paiement{% endif %}</span>
+            </a>
             {# <a href="javascript: void(0);"><i class="mdi mdi-file-table-outline"></i><span>Factures</span><span class="menu-arrow"><i class="mdi mdi-chevron-right"></i></span></a>
             <ul class="nav-second-level" aria-expanded="false">
                  <li><a href="#">En Attente de Validation</a></li> 
@@ -42,6 +47,7 @@
             <a href="{{ path('admin_invoices', {'type':'ongoing'}) }}"><i class=" mdi mdi-checkbox-marked-circle-outline "></i><span>Abonnement en cours</span>{#<span class="badge badge-danger badge-pill float-right">9+</span>#}</a>    
         </li>
 
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
         <li class="menu-title">More</li>
 
         <li>

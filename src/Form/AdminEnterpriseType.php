@@ -27,12 +27,12 @@ class AdminEnterpriseType extends ApplicationType
             ->add(
                 'socialReason',
                 TextType::class,
-                $this->getConfiguration("Raison Social ou Nom (*)", "Entrer la raison sociale ou nom (Obligatoire))")
+                $this->getConfiguration("Raison Social ou Nom (*)", "Entrer la raison sociale ou nom (Obligatoire)")
             )
             ->add(
                 'niu',
                 TextType::class,
-                $this->getConfiguration("NIU", "Entrer le numéro d'idantification unique(NIU)...", ['required' => false])
+                $this->getConfiguration("NIU", "Entrer le numéro d'identification unique(NIU)...", ['required' => false])
             )
             ->add(
                 'rccm',
@@ -163,7 +163,7 @@ class AdminEnterpriseType extends ApplicationType
                     [
                         'choices' => [
                             '1 Mois'  => '1',
-                            '6 Mois'  => '6',
+                            //'6 Mois'  => '6',
                             '12 Mois' => '12',
 
                         ],
@@ -214,6 +214,16 @@ class AdminEnterpriseType extends ApplicationType
                     'subscriptionPrice',
                     TextType::class,
                     $this->getConfiguration("Prix (XAF)", "", [
+                        'required' => false,
+                        'attr' => [
+                            'readonly' => true,
+                        ]
+                    ])
+                )
+                ->add(
+                    'subscriptionMaxEmployee',
+                    TextType::class,
+                    $this->getConfiguration("Nbre Employé Max", "", [
                         'required' => false,
                         'attr' => [
                             'readonly' => true,

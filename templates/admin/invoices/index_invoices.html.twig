@@ -149,12 +149,15 @@
                                                 <th>Email</th>
                                                 <th>Date de Facturation</th>
                                                 {# <th>Date de Souscription</th> #}
+                                                {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <th>Payé ?</th>
                                                 <th>Actions</th>
+                                                {% endif %}
                                             </tr>
                                         </thead>
 
                                         <tbody>
+                                        {% if is_granted('ROLE_SUPER_ADMIN') %}
                                             {% for invoice in invoices %}
                                             {# {{ invoice.deliverAt|date("d/m/Y") }} #}
                                             {% if invoice.paymentStatus == false %}
@@ -184,6 +187,39 @@
                                             </tr>
                                             {% endif %}
                                             {% endfor %}
+                                        {% elseif is_granted('ROLE_SELLER') %}
+                                            {% for invoice in invoices %}
+                                            {# {{ invoice.deliverAt|date("d/m/Y") }} #}
+                                            {% if invoice.paymentStatus == false %}
+                                            {% if invoice.user == app.user %}
+                                            <tr class="text-center align-items-center">
+                                                {# <td>
+                                                {{prefix}}{{invoice.id}}/{{invoice.createdAt|date("m")}}/{{invoice.createdAt|date("y")}}
+                                                </td> #}
+                                                <td>{{invoice.enterprise.socialReason}}</td>
+                                                <td>{{invoice.enterprise.phoneNumber}}</td>
+                                                <td>{{invoice.enterprise.email}}</td>
+                                                <td>{{invoice.createdAt is empty ? "-" : invoice.createdAt|date("d/m/Y") }}</td>
+                                                {# <td>{{invoice.deliverAt is empty ? "-" : invoice.deliverAt|date("d/m/Y") }}</td> 
+                                                <td>{{invoice.advancePayment}}</td>
+                                                <td>{{invoice.amountRestToPaid}}</td>#}
+                                                {# <td class="align-items-center">
+                                                    <div class="checkbox checkbox-primary">
+                                                        <input id="paidCheckbox{{invoice.id}}" type="checkbox" name="paid" value="{{invoice.id}}">
+                                                        <label for="paidCheckbox{{invoice.id}}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    { <a href="{{path('commercial_sheet_edit', {'id':invoice.id})}}"  class="btn btn-soft-info btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Modifier la Commande"><i class="far fa-edit"></i> </a> }
+                                                    <a href="{{path('admin_invoice_print', {'id':invoice.id})}}" class="btn btn-soft-primary btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>
+                                                    { <a href="{{path('commercial_sheet_delete', {'id':invoice.id})}}" class="btn btn-danger btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer Facture"><i class="fas fa-trash"></i> </a> }
+                                                </td> #}
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
                                         </tbody>
                                     </table>
                                 </div>
@@ -201,11 +237,14 @@
                                                 <th>Date de Paiement</th>
                                                 <th>Seller</th>
                                                 <th>Montant (XAF)</th>
+                                                {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <th>Actions</th>
+                                                {% endif %}
                                             </tr>
                                         </thead>
 
                                         <tbody>
+                                        {% if is_granted('ROLE_SUPER_ADMIN') %}
                                             {% for invoice in invoices %}
                                             {% if invoice.completedStatus == true %}
                                             <tr class="text-center">
@@ -224,6 +263,28 @@
                                             </tr>
                                             {% endif %}
                                             {% endfor %}
+                                        {% elseif is_granted('ROLE_SELLER') %}
+                                            {% for invoice in invoices %}
+                                            {% if invoice.completedStatus == true %}
+                                            {% if invoice.user == app.user %}
+                                            <tr class="text-center">
+                                                {# <td>{{prefix}}{{invoice.id}}/{{invoice.createdAt|date("m")}}/{{invoice.createdAt|date("y")}} #}
+                                                </td>
+                                                <td>{{invoice.enterprise.socialReason}}</td>
+                                                <td>{{ invoice.createdAt is empty ? "-" : invoice.createdAt|date("d/m/Y") }}</td>
+                                                {# <td>{{ invoice.deliverAt is empty ? "-" : invoice.deliverAt|date("d/m/Y") }}</td> #}
+                                                <td>{{ invoice.payAt is empty ? "-" : invoice.payAt|date("d/m/Y") }}</td>
+                                                <td>{{invoice.user.fullName}}</td>
+                                                <td>{{invoice.amountNetToPaid}}</td>
+                                                <td>
+                                                    <a href="{{path('admin_invoice_print', {'id':invoice.id})}}" class="btn btn-soft-info btn-xs rounded waves-effect" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>    
+                                                </td>
+                                                
+                                            </tr>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
                                         </tbody>
                                     </table>
                                 </div>
@@ -250,6 +311,7 @@
                             </thead>
 
                             <tbody>
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
                                 {% for enterprise in enterprises %}
                                 {# {{ invoice.deliverAt|date("d/m/Y") }} #}
                                 {% if enterprise != app.user.enterprise %}
@@ -283,6 +345,41 @@
                                 {% endif %}
                                 {% endif %}
                                 {% endfor %}
+                            {% elseif is_granted('ROLE_SELLER') %}
+                                {% for enterprise in enterprises %}
+                                {# {{ invoice.deliverAt|date("d/m/Y") }} #}
+                                {% if enterprise.registerBy == app.user %}
+                                {% if enterprise.isActivated == true %}
+                                <tr class="text-center align-items-center">
+                                    {# <td>
+                                    {{prefix}}{{enterprise.id}}/{{enterprise.createdAt|date("m")}}/{{enterprise.createdAt|date("y")}}
+                                    </td> #}
+                                    <td>{{enterprise.socialReason}}</td>
+                                    <td>{{enterprise.phoneNumber}}</td>
+                                    <td>{{enterprise.email}}</td>
+                                    <td class="text-info">{{enterprise.subscription.name}}</td>
+                                    <td>{{enterprise.subscribeAt is empty ? "-" : enterprise.subscribeAt|date("d/m/Y") }}</td>
+                                    <td>{{enterprise.endSubscription is empty ? "-" : enterprise.endSubscription|date("d/m/Y") }}</td> 
+                                    {#<td>{{enterprise.advancePayment}}</td>
+                                    <td>{{enterprise.amountRestToPaid}}</td>
+                                    <td class="align-items-center">
+                                        <div class="checkbox checkbox-primary">
+                                            <input id="paidCheckbox{{enterprise.id}}" type="checkbox" name="paid" value="{{enterprise.id}}">
+                                            <label for="paidCheckbox{{enterprise.id}}"></label>
+                                        </div>
+                                    </td>#}
+                                    <td>
+                                        <a href="#" class="btn btn-soft-primary btn-xs rounded waves-effect renew" data-ent={{enterprise.id}} data-sub="{{enterprise.subscription.name}}" data-duration={{enterprise.subscriptionDuration}} data-price={{enterprise.subscription.tarifs[enterprise.subscriptionDuration]}} data-toggle="tooltip" data-placement="top" title="Renouveler l'Abonnement"><i class="ti-reload"></i> </a>
+                                        <a href="#" data-ent={{enterprise.id}} class="btn btn-soft-warning btn-xs rounded waves-effect text-right orderRef" data-toggle="modal" data-target=".bd-example-modal-xl_orderForm" data-placement="top" title="Changer d'abonnement"><i class="fas fa-exchange-alt"></i></a>
+                                        {# <a href="{{path('admin_enterprise_print', {'id':enterprise.id})}}" class="btn btn-soft-primary btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Voir Facture ?"><i class="mdi mdi-file-table-outline"></i> </a>
+                                        <a href="{{path('commercial_sheet_delete', {'id':enterprise.id})}}" class="btn btn-danger btn-xs rounded" data-toggle="tooltip" data-placement="top" title="Supprimer Facture"><i class="fas fa-trash"></i> </a> #}
+                                    </td>
+                                    
+                                </tr>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
                             </tbody>
                         </table>
 
@@ -301,6 +398,16 @@
                                                     {{ form_label(form.subscriptionName, null, {'label_attr': {'class': 'input-group-text'}}) }}
                                                 </div>
                                                 {{ form_widget(form.subscriptionName, {'attr': {'class': "form-control"}}) }}
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    {{ form_label(form.subscriptionMaxEmployee, null, {'label_attr': {'class': 'input-group-text'}}) }}
+                                                </div>
+                                                {{ form_widget(form.subscriptionMaxEmployee, {'attr': {'class': "form-control"}}) }}
                                                 
                                             </div>
                                         </div>
@@ -471,7 +578,7 @@
         swal.queue([{
             title: "Veuillez Confirmer le renouvellement d'abonnement svp !",
             confirmButtonText: 'Confirmez',
-            text: '',
+            text: 'Abonnement : ' + this.dataset.sub + ' , Durée : ' + this.dataset.duration + ' Mois , Prix : ' + this.dataset.price,
             showCancelButton: true,
             showLoaderOnConfirm: true,
             confirmButtonClass: 'btn btn-primary',
@@ -526,7 +633,8 @@
     var _url = "{{path('order_subscription')}}";
     var ent = 0;
     var tarifs = JSON.parse('{{ tarifs | json_encode | raw }}');
-
+    var employeeMax = JSON.parse('{{ employeeMax | json_encode | raw }}');
+    
     $('.orderRef').click(function(){
         ent =  this.dataset.ent;
         //alert('Place order for enterprise : ' + id);
@@ -534,8 +642,10 @@
     var subscriptionId = '#admin_subscription_subscriptionName';
     var subscriptionDurationId = '#admin_subscription_subscriptionDuration';
     var subscriptionPriceId = '#admin_subscription_subscriptionPrice';
+    var subscriptionMaxEmployeeId = '#admin_subscription_subscriptionMaxEmployee';
         
     $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+    $(subscriptionMaxEmployeeId).val( employeeMax[$(subscriptionId).val()] === 7102020 ? 'Illimités' : employeeMax[$(subscriptionId).val()] );
     
     $(subscriptionId).change(() => {
         //var Str = String($(subscriptionId).val());
@@ -543,6 +653,7 @@
         //var Name = $(subscriptionId + ' option[value=\"' + Str + '\"]').text();
         //var puId_ = String(Name);
         $(subscriptionPriceId).val( tarifs[$(subscriptionId).val()][$(subscriptionDurationId).val()] );
+        $(subscriptionMaxEmployeeId).val( employeeMax[$(subscriptionId).val()] === 7102020 ? 'Illimités' : employeeMax[$(subscriptionId).val()] );
     });
 
     $(subscriptionDurationId).change(() => {

@@ -31,9 +31,11 @@ class AdminInvoiceController extends ApplicationController
             $invoices = $manager->getRepository('App:Invoice')->findAll();
         }
         $tarifs = null;
+        $employeeMax = null;
         $subscriptions = $manager->getRepository('App:Subscription')->findAll();
         foreach ($subscriptions as $subscription) {
             $tarifs['' . $subscription->getId()] = $subscription->getTarifs();
+            $employeeMax['' . $subscription->getId()] = $subscription->getEmployeeNumber();
         }
 
         $form = $this->createForm(AdminSubscriptionType::class, $subscription);
@@ -45,6 +47,7 @@ class AdminInvoiceController extends ApplicationController
             'type'        => $type,
             'form'        => $form->createView(),
             'tarifs'      => $tarifs,
+            'employeeMax' => $employeeMax,
         ]);
     }
 
@@ -53,7 +56,7 @@ class AdminInvoiceController extends ApplicationController
      * 
      * @Route("/order/subscription", name="order_subscription")
      *
-     * @Security( "is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ADMIN')" )
+     * @Security( "is_granted('ROLE_SUPER_ADMIN') or is_granted('ROLE_ADMIN') or is_granted('ROLE_SELLER')" )
      * 
      * @param Request $request
      * @param EntityManagerInterface $manager

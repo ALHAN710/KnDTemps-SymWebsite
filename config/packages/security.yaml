@@ -44,6 +44,7 @@ security:
         # - { path: ^/account/recover/password/reset, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         - { path: ^/admin/clients/home, roles: [ROLE_SUPER_ADMIN,ROLE_SELLER], requires_channel: https }
+        - { path: ^/admin/invoices, roles: [ROLE_SUPER_ADMIN,ROLE_SELLER], requires_channel: https }
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN, requires_channel: https }
         #- { path: ^/pointing/change/status, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         # catch all other URLs

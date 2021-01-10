@@ -166,8 +166,8 @@
                             {# <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true"><i class="mdi mdi-close"></i></span>
                             </button> #}
-                            <strong>Nous sommes désolé !</strong> Votre abonnement a expiré et vous ne pouvez plus accéder aux fonctionnalités principales de l'application.
-                            Veuillez vous réabonné pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci ! 
+                            <strong>Nous sommes désolé !</strong> Votre abonnement a expiré ou est en attente de paiement pour validation. Vous ne pouvez plus utiliser les fonctionnalités principales de l'application.
+                            Veuillez vous réabonner pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci ! 
                         </div>   
                         {# {% elseif app.user.enterprise.DeadLine <= 10 %}
                         <div class="alert alert-secondary alert-dismissible fade show mb-2" role="alert">
@@ -1492,7 +1492,7 @@
                         // callback
                         afterDeadline: function(timerBlock){
                             // timerBlock.bodyBlock.html('<p style="font-size: 1.2em;">The countdown is finished!</p>'); 
-                            timerBlock.bodyBlock.html('<strong>Nous sommes désolé !</strong> Votre abonnement a expiré et vous ne pouvez plus accéder aux fonctionnalités principales de l\'application.Veuillez vous réabonné pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci !');
+                            timerBlock.bodyBlock.html('<strong>Nous sommes désolé !</strong> Votre abonnement a expiré ou est en attente de paiement pour validation. Vous ne pouvez plus utiliser les fonctionnalités principales de l\'application.Veuillez vous réabonner pour bénéficier à nouveaux de toutes les fonctionnalités ou contacter notre service client. Merci !');
                         }
                     });
 

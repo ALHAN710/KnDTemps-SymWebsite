@@ -62,7 +62,7 @@ class Enterprise
     private $phoneNumber;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
 
@@ -116,6 +116,8 @@ class Enterprise
 
     private $subscriptionPrice;
 
+    private $subscriptionMaxEmployee;
+
     private $tarifs;
 
     /**
@@ -147,6 +149,11 @@ class Enterprise
      * @ORM\OneToMany(targetEntity=Invoice::class, mappedBy="enterprise")
      */
     private $invoices;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="enterprises")
+     */
+    private $registerBy;
 
     public function __construct()
     {
@@ -202,44 +209,58 @@ class Enterprise
      */
     public function endSubscription()
     {
-        $periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
-        $periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+        if ($this->subscribeAt) {
+            $periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
+            $periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
 
-        return $periodofvalidity;
+            return $periodofvalidity;
+        } else {
+            return $this->createdAt;
+        }
     }
 
     public function subscriptionDeadLine()
     {
         $nowDate = new DateTime("now");
-        $periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
-        $periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+        if ($this->subscribeAt) {
 
-        /*$interval = $nowDate->diff($this->subscribeAt);
-        //$interval = $this->periodofvalidity->diff($nowDate);
-        if ($interval) {
-            //return gettype($interval->format('d'));
-            return $interval->format('%R%a jours'); // '+29 days'
-            //return $interval->days; //Nombre de jour total de différence entre les dates 
-            //return !$interval->invert; // 
+            $periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
+            $periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+
+            /*$interval = $nowDate->diff($this->subscribeAt);
+            //$interval = $this->periodofvalidity->diff($nowDate);
+            if ($interval) {
+                //return gettype($interval->format('d'));
+                return $interval->format('%R%a jours'); // '+29 days'
+                //return $interval->days; //Nombre de jour total de différence entre les dates 
+                //return !$interval->invert; // 
+            }
+            return '';*/
+
+            return $this->formatDateDiff($nowDate, $periodofvalidity); //
+        } else {
+            return 'Pas Encore abonné';
         }
-        return '';*/
-
-        return $this->formatDateDiff($nowDate, $periodofvalidity); //
     }
 
     public function getDeadLine()
     {
-        $nowDate = new DateTime("now");
-        $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d H:i:s'));
-        $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
-        $interval = $nowDate->diff($this->periodofvalidity);
-        //$interval = $this->periodofvalidity->diff($nowDate);
-        if ($interval) {
-            //return gettype($interval->format('d'));
-            //return $interval->format('%R%a days'); // '+29 days'
-            return $interval->days; //Nombre de jour total de différence entre les dates 
-            //return !$interval->invert; // 
-            //return $this->isActivated;
+        if ($this->subscribeAt) {
+
+            $nowDate = new DateTime("now");
+            $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d H:i:s'));
+            $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+            $interval = $nowDate->diff($this->periodofvalidity);
+            //$interval = $this->periodofvalidity->diff($nowDate);
+            if ($interval) {
+                //return gettype($interval->format('d'));
+                //return $interval->format('%R%a days'); // '+29 days'
+                return $interval->days; //Nombre de jour total de différence entre les dates 
+                //return !$interval->invert; // 
+                //return $this->isActivated;
+            }
+        } else {
+            return 0;
         }
     }
 
@@ -533,6 +554,26 @@ class Enterprise
     }
 
     /**
+     * Get the value of subscriptionMaxEmployee
+     */
+    public function getSubscriptionMaxEmployee()
+    {
+        return $this->subscriptionMaxEmployee;
+    }
+
+    /**
+     * Set the value of subscriptionMaxEmployee
+     *
+     * @return  self
+     */
+    public function setSubscriptionMaxEmployee($subscriptionMaxEmployee)
+    {
+        $this->subscriptionMaxEmployee = $subscriptionMaxEmployee;
+
+        return $this;
+    }
+
+    /**
      * Get the value of tarifs
      */
     public function getTarifs()
@@ -555,17 +596,21 @@ class Enterprise
     public function getIsActivated(): ?bool
     {
         $nowDate = new DateTime("now");
-        $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
-        $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
-        $interval = $nowDate->diff($this->periodofvalidity);
-        //$interval = $this->periodofvalidity->diff($nowDate);
-        if ($interval) {
-            //return gettype($interval->format('d'));
-            //return $interval->format('%R%a days');// '+29 days'
-            //return $interval->days; //Nombre de jour total de différence entre les dates 
-            $this->setIsActivated(!$interval->invert);
-            //return !$interval->invert; // 
-            return $this->isActivated;
+        if ($this->subscribeAt) {
+            $this->periodofvalidity = new DateTime($this->subscribeAt->format('Y/m/d'));
+            $this->periodofvalidity->add(new DateInterval('P' . $this->subscriptionDuration . 'M'));
+            $interval = $nowDate->diff($this->periodofvalidity);
+            //$interval = $this->periodofvalidity->diff($nowDate);
+            if ($interval) {
+                //return gettype($interval->format('d'));
+                //return $interval->format('%R%a days');// '+29 days'
+                //return $interval->days; //Nombre de jour total de différence entre les dates 
+                $this->setIsActivated(!$interval->invert);
+                //return !$interval->invert; // 
+                return $this->isActivated;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -705,6 +750,18 @@ class Enterprise
                 $invoice->setEnterprise(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRegisterBy(): ?User
+    {
+        return $this->registerBy;
+    }
+
+    public function setRegisterBy(?User $registerBy): self
+    {
+        $this->registerBy = $registerBy;
 
         return $this;
     }

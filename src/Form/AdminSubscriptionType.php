@@ -47,7 +47,7 @@ class AdminSubscriptionType extends ApplicationType
                 [
                     'choices' => [
                         '1 Mois'  => '1',
-                        '6 Mois'  => '6',
+                        //'6 Mois'  => '6',
                         '12 Mois' => '12',
 
                     ],
@@ -58,6 +58,16 @@ class AdminSubscriptionType extends ApplicationType
                 'subscriptionPrice',
                 TextType::class,
                 $this->getConfiguration("Prix (XAF)", "", [
+                    'required' => false,
+                    'attr' => [
+                        'readonly' => true,
+                    ]
+                ])
+            )
+            ->add(
+                'subscriptionMaxEmployee',
+                TextType::class,
+                $this->getConfiguration("Nbre Employé Max", "", [
                     'required' => false,
                     'attr' => [
                         'readonly' => true,

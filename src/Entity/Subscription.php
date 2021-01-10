@@ -41,6 +41,8 @@ class Subscription
 
     private $subscriptionPrice;
 
+    private $subscriptionMaxEmployee;
+
     private $subscriptionName;
 
     private $subscriptionDuration;
@@ -150,6 +152,26 @@ class Subscription
     public function setSubscriptionPrice($subscriptionPrice)
     {
         $this->subscriptionPrice = $subscriptionPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of subscriptionMaxEmployee
+     */
+    public function getSubscriptionMaxEmployee()
+    {
+        return $this->subscriptionMaxEmployee;
+    }
+
+    /**
+     * Set the value of subscriptionMaxEmployee
+     *
+     * @return  self
+     */
+    public function setSubscriptionMaxEmployee($subscriptionMaxEmployee)
+    {
+        $this->subscriptionMaxEmployee = $subscriptionMaxEmployee;
 
         return $this;
     }

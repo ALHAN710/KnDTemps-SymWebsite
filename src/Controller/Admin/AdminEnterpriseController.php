@@ -4,16 +4,19 @@ namespace App\Controller\Admin;
 
 use App\Entity\Invoice;
 use App\Entity\Enterprise;
+use Cocur\Slugify\Slugify;
 use App\Entity\InvoiceItem;
 use App\Form\EnterpriseType;
 use App\Form\AdminEnterpriseType;
 use App\Form\AdminSubscriptionType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class AdminEnterpriseController extends AbstractController
 {
@@ -23,10 +26,12 @@ class AdminEnterpriseController extends AbstractController
     public function index(EntityManagerInterface $manager)
     {
         $tarifs = null;
+        $employeeMax = null;
         $subscription = null;
         $subscriptions = $manager->getRepository('App:Subscription')->findAll();
         foreach ($subscriptions as $subscription_) {
             $tarifs['' . $subscription_->getId()] = $subscription_->getTarifs();
+            $employeeMax['' . $subscription_->getId()] = $subscription_->getEmployeeNumber();
             $subscription = $subscription_;
         }
         //dump($tarifs);
@@ -39,6 +44,7 @@ class AdminEnterpriseController extends AbstractController
             'enterprises' => $enterprises,
             'form'        => $form->createView(),
             'tarifs'      => $tarifs,
+            'employeeMax' => $employeeMax,
         ]);
     }
 
@@ -54,13 +60,20 @@ class AdminEnterpriseController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager)
     { // @IsGranted("ROLE_SUPER_ADMIN")
         $enterprise = new Enterprise();
+        $enterprise->setRegisterBy($this->getUser());
+
+        //$lastLogo = $enterprise->getLogo();
+        $filesystem = new Filesystem();
+        $slugify = new Slugify();
 
         $tarifs = null;
+        $employeeMax = null;
         $subscriptions = $manager->getRepository('App:Subscription')->findAll();
         foreach ($subscriptions as $subscription) {
             $tarifs['' . $subscription->getId()] = $subscription->getTarifs();
+            $employeeMax['' . $subscription->getId()] = $subscription->getEmployeeNumber();
         }
-        //dump($tarifs);
+        //dump($employeeMax);
         //  instancier un form externe
         $form = $this->createForm(AdminEnterpriseType::class, $enterprise);
         $form->handleRequest($request);
@@ -107,6 +120,30 @@ class AdminEnterpriseController extends AbstractController
             $manager->persist($invoiceItem);
             $manager->persist($invoice);
 
+            // @var UploadedFile $logoFile 
+            $logoFile = $form->get('logo')->getData();
+
+            // this condition is needed because the 'logo' field is not required
+            // so the Image file must be processed only when a file is uploaded
+            if ($logoFile) {
+                $originalFilename = pathinfo($logoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugify->slugify($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $logoFile->guessExtension();
+
+                // Move the file to the directory where logos are stored
+                try {
+                    $logoFile->move(
+                        $this->getParameter('logo_directory'),
+                        $newFilename
+                    );
+                    //$path = $this->getParameter('logo_directory') . '/' . $lastLogo;
+                    //if ($lastLogo != NULL) $filesystem->remove($path);
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+                $enterprise->setLogo($newFilename);
+            }
 
             //$manager = $this->getDoctrine()->getManager();
             $manager->persist($enterprise);
@@ -122,8 +159,9 @@ class AdminEnterpriseController extends AbstractController
 
 
         return $this->render('admin/enterprises_customer/new.html.twig', [
-            'form'   => $form->createView(),
-            'tarifs' => $tarifs,
+            'form'        => $form->createView(),
+            'tarifs'      => $tarifs,
+            'employeeMax' => $employeeMax,
         ]);
     }
 
