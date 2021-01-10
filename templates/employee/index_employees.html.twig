@@ -55,8 +55,8 @@
                         </a>
                         <div class="dropdown-menu">
                             {% if is_granted('ROLE_RH_MANAGER') %}
-                            <a class="dropdown-item text-info" href="{{path('user_edit', {'id':employee.id})}}" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit mr-2"></i>Editer</a>
-                            <a href="#" class="delUser dropdown-item text-danger" data-emp={{employee.id}} data-toggle="tooltip" data-placement="top" title="Supprimez l'employé ?"><i class="fas fa-trash mr-2"></i>Supprimer</a>
+                            <a class="dropdown-item text-info" href="{% if app.user.enterprise.isActivated %}{{path('user_edit', {'id':employee.id})}}{% else %}#{% endif %}" data-toggle="tooltip" data-placement="top" title="Modifiez l'employé ?"><i class="far fa-edit mr-2"></i>Editer</a>
+                            <a href="#" class="{% if app.user.enterprise.isActivated %}delUser{% endif %} dropdown-item text-danger" data-emp={{employee.id}} data-toggle="tooltip" data-placement="top" title="Supprimez l'employé ?"><i class="fas fa-trash mr-2"></i>Supprimer</a>
                             {% endif %}
                             {# <a class="dropdown-item" href="#">Create Appointment</a>
                             <a class="dropdown-item" href="#">Block User</a> #}
