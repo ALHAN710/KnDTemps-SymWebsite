@@ -229,11 +229,11 @@ Cordialement,
 
 Votre Service client KnD Temps"; //Pour nous contacter : https://www.ovh.com/fr/support/
 
-                                    foreach ($enterprise->getUsers() as $user) {
+                                    /*foreach ($enterprise->getUsers() as $user) {
                                         if ($user->getRoles()[0] === 'ROLE_ADMIN') {
                                             $this->sendEmail($mailer, $user->getEmail(), $object, $message);
                                         }
-                                    }
+                                    }*/
                                 }
                             }
                         }
