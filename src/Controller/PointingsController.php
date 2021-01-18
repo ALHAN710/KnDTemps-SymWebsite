@@ -219,7 +219,7 @@ class PointingsController extends ApplicationController
         if ($this->getUser()->getRoles()[0] !== 'ROLE_LEADER') {
             //AND emp.attribut IN ('Leader','Subordinate')
             //AND emp.team IS NOT NULL
-            $pointings = $manager->createQuery("SELECT p.id, p.employee AS Employee, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
+            $pointings = $manager->createQuery("SELECT p.id, p, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
                                             TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
                                             FROM App\Entity\Pointing p
                                             WHERE p.employee IN (SELECT u.id FROM App\Entity\User u WHERE u.enterprise = :entId)
@@ -249,7 +249,7 @@ class PointingsController extends ApplicationController
                 ))
                 ->getResult();
         }
-        dump($pointings);
+        //dump($pointings);
         return $this->render('pointings/onpendingPointing.html.twig', [
             'pointings' => $pointings,
         ]);
