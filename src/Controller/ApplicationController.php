@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTimeInterface;
 use Symfony\Component\Mime\Email;
 use phpDocumentor\Reflection\Types\Boolean;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -136,6 +137,60 @@ class ApplicationController extends AbstractController
     function toRad($value)
     {
         return $value * pi() / 180;
+    }
+
+    public function getHasApproved($role, $enterpriseId, $userId)
+    {
+        /*$points = $this->manager->createQuery("SELECT p
+                                                FROM App\Entity\Pointing p
+                                                WHERE p.employee IN (SELECT u.id FROM App\Entity\User u WHERE u.enterprise = :entId)
+                                                AND p.statut = 'on pending' 
+                                                ORDER BY p.timeIn ASC                                                                               
+                                            ")
+            ->setParameters(array(
+                'entId'     => $this->getEnterprise()->getId(),
+
+            ))
+            ->getResult();*/
+
+        $this->manager = $this->getDoctrine()->getManager();
+        //$this->manager = $this->$this->get('doctrine.orm.default_entity_manager');
+
+        if ($role !== 'ROLE_LEADER') {
+            //AND emp.attribut IN ('Leader','Subordinate')
+            //AND emp.team IS NOT NULL
+            $points = $this->manager->createQuery("SELECT p
+                                            FROM App\Entity\Pointing p
+                                            WHERE p.employee IN (SELECT u.id FROM App\Entity\User u WHERE u.enterprise = :entId)
+                                            AND p.statut = 'on pending' 
+                                            ORDER BY p.timeIn ASC 
+                                               
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $enterpriseId,
+                ))
+                ->getResult();
+        } else {
+            $points = $this->manager->createQuery("SELECT p
+                                            FROM App\Entity\Pointing p
+                                            JOIN p.employee emp
+                                            WHERE emp.team IN (SELECT t.id FROM App\Entity\Team t WHERE t.responsible = :user AND t.enterprise = :entId)
+                                            AND p.statut = 'on pending' 
+                                            ORDER BY p.timeIn ASC
+            ")
+                ->setParameters(array(
+                    'entId' => $enterpriseId,
+                    'user' => $userId,
+                ))
+                ->getResult();
+        }
+
+        //return $points;
+        //$rad = $value * pi() / 180;
+        return new Response(
+            '<sup class="ml-1 badge badge-secondary fw-500">' . count($points) . '</sup></span>'
+        );
     }
 
     /**

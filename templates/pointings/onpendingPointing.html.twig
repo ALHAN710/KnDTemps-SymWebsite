@@ -1,0 +1,649 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation Pointage{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" media="screen, print" href="/css/datagrid/datatables/datatables.bundle.css">
+<link rel="stylesheet" media="screen, print" href="/css/formplugins/bootstrap-datepicker/bootstrap-datepicker.css">
+<link rel="stylesheet" media="screen, print" href="/css/notifications/sweetalert2/sweetalert2.bundle.css">
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" integrity="sha512-GDey37RZAxFkpFeJorEUwNoIbkTwsyC736KNSYucu1WJWFK9qTdzYub8ATxktr6Dwke7nbFaioypzbDOQykoRg==" crossorigin="anonymous"></script> #}
+
+{% endblock %}
+
+{% block breadcrumbItem %}
+<li class=""><a href="javascript:void(0);">Validation</a></li>
+<li class="active"><a href="#">Pointage</a></li>
+{% endblock %}
+
+{% set onpendingNb = 0 %}
+
+{% block body %}
+<div class="subheader">
+    <h1 class="subheader-title">
+        {# <i class="subheader-icon mdi mdi-file-table-outline"></i>{{ emp.grade ~ " " ~ emp.fullName }}{% if emp.office.name is not null %}, Poste : {{emp.office.name}}{% endif %} #}
+        <i class="subheader-icon fas fa-check"></i>Approbation des pointages
+
+    </h1>
+
+</div>
+
+<div class="row">
+    <div class="col-xl-12">
+        <div id="panel-1" class="panel">
+            <div class="panel-hdr">
+                <h2>
+                    Tableau des pointages en attente de validation</span>
+                </h2>
+                {# <div class="panel-toolbar">
+                    <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                    <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                    <button class="btn btn-panel" data-action="panel-close" data-toggle="tooltip" data-offset="0,10" data-original-title="Close"></button>
+                </div> #}
+            </div>
+            <div class="panel-container show">
+                <div class="panel-content">
+                    {# <div class="panel-tag">
+                        <p>Exporting data from a table can often be a key part of a complex application. The Buttons extension for DataTables provides three plug-ins that provide overlapping functionality for data export:</p>
+                        <ul>
+                            <li>
+                                HTML5 export buttons - makes use of HTML5 APIs to create files client-side
+                            </li>
+                            <li class="font-italic">
+                                <del>Flash export buttons - uses Adobe Flash for legacy browsers</del>
+                            </li>
+                            <li>
+                                Print button
+                            </li>
+                        </ul>
+                        <p>
+                            Since SmartAdmin WebApp is built for the "next generation" browsers, we removed the flash (.swf) alternative plugin due to security reasons and ActionScript's memory leakage
+                        </p>
+                    </div> #}
+                    <div class="input-group mb-2 d-flex justify-content-end" id="SaveBtn">
+                        <div class="ml-2">
+                            <button type="button" id="saveBtn" class="btn btn-info btn-sm rounded mr-1 mb-2 waves-effect"  data-toggle="tooltip" data-placement="top" title="Approuver les enregistrements cochés ?">Approuver</button>
+                            <button type="button" id="delBtn" class="btn btn-danger btn-sm rounded mr-1 mb-2 waves-effect" data-toggle="tooltip" data-placement="top" title="Supprimer les enregistrements cochés ?">Supprimer</button>
+                        </div>    
+
+                    </div>
+                    <!-- datatable start -->
+                    <table id="dt-employee" class="table table-fixed nowrap table-bordered table-hover table-striped w-100">
+                        {# {% for pointing in employeePointings %}
+                            {% if pointing["Status_"] == 'on pending' %}
+                                {% set onpendingNb = onpendingNb + 1 %}
+                            {% endif %}
+                        {% endfor %} #}
+                        <thead class="bg-primary-600">
+                            <tr class="text-center">
+                                {# {% if onpendingNb > 0 %} #}
+                                <th>Action</th>
+                                {# {% endif %} #}
+                                <th>Employé</th>
+                                <th>Date</th>
+                                <th>Heure d'entrée</th>
+                                <th>Heure de sortie</th>
+                                <th>Durée Totale</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            {% for pointing in pointings %}
+                            <tr class="">
+                                {% set status = pointing["Status_"] %}
+                                {# {% if onpendingNb > 0 %} #}
+                                <td>
+                                    {# {% if status == 'on pending' %} #}
+                                        {# {{dump(pointing["TimeOut_"])}} #}
+                                    <div class="row align-items-center">
+                                        <div class="col text-right checkbox checkbox-primary mt-1">
+                                            <input id="checkbox{{pointing["id"]}}" type="checkbox" {% if pointing["TimeOut_"] %}name="approved"{% else %}name="disapproved" disabled{% endif %} data-date={{pointing["date_"] ~ " "}} data-timein={{pointing["TimeIn"] }} data-timeout={{pointing["TimeOut_"] }} data-row={{loop.index0}} value="{{pointing["id"]}}" data-toggle="tooltip" data-placement="top" title="cochez pour Approbation ou Suppression">
+                                            <label for="checkbox{{pointing["id"]}}"></label>
+                                        </div>
+                                        <div class="col text-left">
+                                            <a href="javascript:void(0)" data-row={{loop.index0}} id="{{pointing["id"]}}" class="editWT btn btn-xs btn-danger" data-toggle="modal" data-target="#edit-workTime-modal" data-placement="top" title="Désapprouvé ?">X</a>
+
+                                        </div>
+
+                                    </div>
+                                    {# {% else %}
+                                    -
+                                    {% endif %} #}
+                                </td>
+                                {# {% endif %} #}
+                                <td>{{pointing[0].employee.fullName}}</td>
+                                <td>{{date(pointing["date_"])|date('d M Y')}}</td>
+                                <td>{{pointing["TimeIn"]}}</td>
+                                <td>{{pointing["TimeOut_"] ?? '-'}}</td>
+                                <td>{{pointing["Duration"]}}</td>
+                                {# <td><span class="badge badge-{% if status == 'approved' %}success{% elseif status == 'on pending' %}warning{% else %}danger{% endif %}">{% if status == 'approved' %}approuvé{% elseif status == 'on pending' %}en attente{% else %}désapprouvé{% endif %}</span></td> #}
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="text-center">
+                                {# {% if onpendingNb > 0 %} #}
+                                <th>    
+                                    <div class="row align-items-center">
+                                        <div class="col text-right checkbox checkbox-primary ">
+                                            <input id="checkboxAll" type="checkbox" name="allApproved">
+                                            <label for="checkboxAll"></span></label>
+                                        </div>
+                                        <div class="col text-left">
+                                            Tout <span id="checkAll">coché
+                                        </div>    
+                                    </div>
+                                </th>
+                                {# {% endif %} #}
+                                <th>Employé</th>
+                                <th>Date</th>
+                                <th>Heure d'entrée</th>
+                                <th>Heure de sortie</th>
+                                <th>Durée Totale</th>
+                                
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <!-- datatable end -->
+                    <!-- modal -->
+                    <div class="modal fade" id="edit-workTime-modal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">
+                                        Modification de Pointage
+                                    </h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label class="form-label" for="modal-timeIn">Heure d'Entrée</label>
+                                        <div class="input-group">
+                                            <input type="time" step="1" id="modal-timeIn" data-row="" data-col=3 class="form-control" placeholder="In Time" aria-label="date" aria-describedby="modal-timeIn">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text fs-xl"><i class="fal fa-clock"></i></span>
+                                            </div>
+                                        </div>
+                                        <span class="help-block">Spécifier l'heure d'entrée</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="modal-timeOut">Heure de sortie</label>
+                                        <div class="input-group">
+                                            <input type="time" step="1" id="modal-timeOut" data-row="" data-col=4 class="form-control" placeholder="Exit Time" aria-label="date" aria-describedby="modal-timeOut">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text fs-xl"><i class="fal fa-clock"></i></span>
+                                            </div>
+                                        </div>
+                                        <span class="help-block">Spécifier l'heure de sortie</span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="modal-saveBtn" class="btn btn-primary">Enregistrer modifications</button>
+                                    <button type="button" class="btn btn-danger" id="modal-delBtn" data-record=0 {#data-dismiss="modal"#}>Supprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- modal end -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<!-- datatble responsive bundle contains:
+    + jquery.dataTables.js
+    + dataTables.bootstrap4.js
+    + dataTables.autofill.js
+    + dataTables.buttons.js
+    + buttons.bootstrap4.js
+    + buttons.html5.js
+    + buttons.print.js
+    + buttons.colVis.js
+    + dataTables.colreorder.js
+    + dataTables.fixedcolumns.js
+    + dataTables.fixedheader.js
+    + dataTables.keytable.js
+    + dataTables.responsive.js
+    + dataTables.rowgroup.js
+    + dataTables.rowreorder.js
+    + dataTables.scroller.js
+    + dataTables.select.js
+    + datatables.styles.app.js
+    + datatables.styles.buttons.app.js -->
+<script src="/js/datagrid/datatables/datatables.bundle.js"></script>
+<!-- datatbles buttons bundle contains:
+    + "jszip.js",
+    + "pdfmake.js",
+    + "vfs_fonts.js"
+    NOTE: 	The file size is pretty big, but you can always use the
+            build.json file to deselect any components you do not need under "export" -->
+<script src="/js/datagrid/datatables/datatables.export.js"></script>
+<script src="/js/formplugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
+{# <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js" integrity="sha512-GDey37RZAxFkpFeJorEUwNoIbkTwsyC736KNSYucu1WJWFK9qTdzYub8ATxktr6Dwke7nbFaioypzbDOQykoRg==" crossorigin="anonymous"></script> #}
+
+<!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support -->
+<script src="/js/notifications/sweetalert2/sweetalert2.bundle.js"></script>
+
+<script>
+    $(document).ready(function()
+    {
+        var $urlDel = "{{ path('delete_pointings') }}";
+        console.log('urlDel = ' + $urlDel);
+        var now = new Date();
+        {# var jsDate = "{{month}}";
+        var FileName = "{{emp.fullName}}_Fiche_Temps_de_Travail_" + jsDate; #}
+        // initialize datatable
+        var employeeTable = $('#dt-employee').dataTable(
+        {
+            responsive: true,
+            lengthChange: false,
+            order: [[ 0, "desc" ]],
+            dom:
+                /*	--- Layout Structure
+                    --- Options
+                    l	-	length changing input control
+                    f	-	filtering input
+                    t	-	The table!
+                    i	-	Table information summary
+                    p	-	pagination control
+                    r	-	processing display element
+                    B	-	buttons
+                    R	-	ColReorder
+                    S	-	Select
+
+                    --- Markup
+                    < and >				- div element
+                    <"class" and >		- div with a class
+                    <"#id" and >		- div with an ID
+                    <"#id.class" and >	- div with an ID and a class
+
+                    --- Further reading
+                    https://datatables.net/reference/option/dom
+                    --------------------------------------
+                    */
+                "<'row mb-3'<'col-sm-12 col-md-6 d-flex align-items-center justify-content-start'f><'col-sm-12 col-md-6 d-flex align-items-center justify-content-end'lB>>" +
+                "<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+            buttons: [
+                /*{
+                    extend:    'colvis',
+                    text:      'Colonne Visible',
+                    titleAttr: 'Choisir les colonnes visibles',
+                    className: 'btn-outline-info btn-sm mr-sm-3'
+                },
+                */
+                /*{
+                    extend: 'csvHtml5',
+                    text: 'CSV',
+                    titleAttr: 'Generate CSV',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'copyHtml5',
+                    text: 'Copy',
+                    titleAttr: 'Copy to clipboard',
+                    className: 'btn-outline-primary btn-sm mr-1'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    titleAttr: 'Print Table',
+                    className: 'btn-outline-primary btn-sm'
+                }*/
+            ]
+        });
+
+        //$('.buttons-pdf').children('span').prepend('<i class="mdi mdi-download mr-2"></i>')
+        {# $('.buttons-html5').children('span').prepend('<i class="mdi mdi-download mr-2"></i>');
+        $('.buttons-html5').addClass('mb-2');
+        $('.buttons-colvis').addClass('mb-2');
+        $('.dataTables_length').addClass('mr-2'); #}
+
+        $('#saveBtn').click(function(){
+            var tabApproved = [];
+
+            var _url = "{{path('pointings_change_status')}}";
+            //block of code that runs when the click event triggers
+            $("input:checkbox[name=approved]:checked").each(function(){
+                var obj = {
+                    id:$(this).val(),
+                    timeIn:$(this).data('date') + " "+ $(this).data('timein'),
+                    timeOut:$(this).data('date') + " "+ $(this).data('timeout'),
+                };
+                tabApproved.push(obj);
+            });
+            {# console.log(tabApproved); #}
+            
+            if (tabApproved.length > 0){
+                var $data = JSON.stringify({
+                    "pointingsApprovedIds": tabApproved,
+                });
+                            
+                Swal.mixin(
+                {
+                    customClass:
+                    {
+                        confirmButton: "btn btn-primary",
+                        cancelButton: "btn btn-danger ml-2"
+                    },
+                    buttonsStyling: false
+                }).queue([{
+                    type: "warning",
+                    title: 'Confirmation ',
+                    confirmButtonText: 'Confirmez',
+                    text: 'Êtes-vous sûre ?',
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    //confirmButtonClass: 'btn btn-primary',
+                    //cancelButtonClass: 'btn btn-danger ml-2',
+                    preConfirm: function () {
+                        return new Promise(function (resolve) {
+                            console.log($data);
+                            $.ajax({
+                                type: "POST", // method type
+                                contentType: "application/json; charset=utf-8",
+                                url: _url, // /Target function that will be return result
+                                data: $data, // parameter pass data is parameter name param is value
+                                dataType: "json",
+                                timeout: 120000, // 64241
+                                success: function (data) {
+                                    // $('.fa-sync').removeClass('fa-spin');
+                                    //console.log(data);
+                                    if(data.code === 200){
+
+                                        Swal.fire("Succès !", "Les modifications ont été bien pris en compte avec succès !\nLa page sera actualisée dans quelques secondes", "success");
+                                        function reload_() {
+                                            //window.location.replace("https://waytolearnx.com");
+                                            location.reload(true);
+                                        }
+                                        setTimeout(function () {
+                                            resolve();
+                                            reload_();
+                                        }, 5000);
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            type: "error",
+                                            title: "Oops...",
+                                            text: "Une erreur est survenue !",
+                                            //footer: "<a href>Why do I have this issue?</a>"
+                                        });
+
+                                    }
+
+
+                                },
+                                error: function (result) {
+                                    //console.log("Error");
+                                    console.log(result);
+                                    /*Swal.fire('Oops...', 'Something went wrong!', 'error'
+                                    // footer: '<a href>Why do I have this issue?</a>'
+                                    );*/
+                                    Swal.fire({
+                                        type: "error",
+                                        title: "Oops... 500",
+                                        text: "Une erreur est survenue !",
+                                        //footer: "<a href>Why do I have this issue?</a>"
+                                    });
+                                }
+                            });
+
+                        })
+
+                    },
+                    //allowOutsideClick: false
+                    /*allowOutsideClick: function allowOutsideClick()
+                    {
+                        return !Swal.isLoading();
+                    }*/
+                }]).then((result) => {
+                    if (result.isConfirmed) {
+
+                    }else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        Swal.fire(
+                        'Annulation',
+                        'Choix Annulé',
+                        'error'
+                        )
+                    }
+                });
+
+
+            }
+            else{
+                $('#SaveBtn').
+                prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><div class="alert-text"><strong>Aucun enregistrement n\'est coché !</strong></div><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="mdi mdi-close"></i></span></button></div>');
+                //'<div class="alert alert-danger alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="fal fa-trash-alt"></i></span></button><strong>Oh snap!</strong> Change a few things up and try submitting again.</div>'
+            }
+
+        });
+
+        $('#delBtn').click(function(){
+            var tabDeleted = [];
+            
+            $("input:checkbox[name=approved]:checked").each(function(){
+                tabDeleted.push($(this).val());
+            });
+            {# console.log(tabDeleted); #}
+            
+            if (tabDeleted.length > 0){
+                deleteRecord(tabDeleted);
+            }
+            else{
+                $('#SaveBtn').
+                prepend('<div class="alert alert-danger alert-dismissible fade show" role="alert"><div class="alert-text"><strong>Aucun enregistrement n\'est coché !</strong></div><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="mdi mdi-close"></i></span></button></div>');
+                //'<div class="alert alert-danger alert-dismissible fade show" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="fal fa-trash-alt"></i></span></button><strong>Oh snap!</strong> Change a few things up and try submitting again.</div>'
+            }
+
+        });
+
+        var checkboxId = "";
+
+        $('.editWT').click(function(){
+           checkboxId = "#checkbox" + $(this).attr('id');
+           console.log($(this).data('row'));
+           $('#modal-timeIn').val( $(checkboxId).data('timein'));//Initialisation da la valeur de l'input
+           $('#modal-timeIn').data('row',$(this).data('row'));//Initialisation de la valeur de la ligne
+
+           $('#modal-timeOut').val($(checkboxId).data('timeout'));//Initialisation da la valeur de l'input
+           $('#modal-timeOut').data('row',$(this).data('row'));//Initialisation de la valeur de la ligne
+
+           $('#modal-delBtn').data('record', $(this).attr('id'));
+        });
+
+        var rowEditedId = -1;
+        var colEditedId = [-1,-1];
+        var val = [-1,-1];
+        var hasChanged = [false,false];
+        $("input[type=time]").change(function(){
+            //console.log($(this).val());
+            rowEditedId = $(this).data( "row" );
+            //employeeTable.fnUpdate($(this).val(),$(this).data( "row" ),$(this).data( "col" ));
+            if( $(this).data( "col" ) == 3 ){//Si c'est l'input d'entrée qui a changé de valeur
+                colEditedId[0] = $(this).data( "col" );
+                val[0] = $(this).val();
+                hasChanged[0] = true;
+                //Modification de la valeur d'entrée
+                $(checkboxId).data('timein', $(this).val());
+                //console.log($(checkboxId).data('timein'));
+
+            }
+            else if($(this).data( "col" ) == 4){//Si c'est l'input de sortie qui a changé de valeur
+                colEditedId[1] = $(this).data( "col" );
+                val[1] = $(this).val();
+                hasChanged[1] = true;
+                //Modification de la valeur de sortie
+                $(checkboxId).data('timeout', $(this).val());
+               //console.log($(checkboxId).data('timeout'));
+
+            }
+        });
+
+        $('#modal-saveBtn').click(function(){
+            if(hasChanged[0] === true) employeeTable.fnUpdate(val[0],rowEditedId,colEditedId[0]);
+            if(hasChanged[1] === true) employeeTable.fnUpdate(val[1],rowEditedId,colEditedId[1]);
+            
+            if(hasChanged[0] || hasChanged[1]){
+                
+                var timeStart = new Date("07/10/2020 " + $('#modal-timeIn').val());
+                var timeEnd = new Date("07/10/2020 " + $('#modal-timeOut').val());
+
+                var difference = timeEnd - timeStart;            
+                var diff_result = new Date(difference); 
+                var str = diff_result.getUTCHours() >= 10 ? diff_result.getUTCHours() : "0" + diff_result.getUTCHours();
+                str += ":" ;
+                {# console.log(str) #}
+                str += diff_result.getUTCMinutes() >= 10 ? "" + diff_result.getUTCMinutes() : "0" + diff_result.getUTCMinutes();
+                str += ":" ;
+                {# console.log(str) #}
+                str += diff_result.getUTCSeconds() >= 10 ? diff_result.getUTCSeconds() : "0" + diff_result.getUTCSeconds();
+                {# console.log(str)
+                console.log(diff_result.toTimeString())
+                console.log(diff_result.toLocaleTimeString()) #}
+                employeeTable.fnUpdate(str,rowEditedId,5);
+
+            }
+
+            if($('#modal-timeOut').val() && $('#modal-timeIn').val()){
+                $(checkboxId).attr('name','approved');
+                $(checkboxId).attr('disabled',false);
+
+            }else{
+                $(checkboxId).attr('name','disapproved');
+                $(checkboxId).attr('disabled',true);
+
+            }
+            
+            //Fermer le modal d'édition
+            $('#edit-workTime-modal').modal('toggle');
+        });
+
+        $('#modal-delBtn').click(function(){
+            var tabDelRecord = [];
+            tabDelRecord.push($(this).data('record'));
+            $('#edit-workTime-modal').modal('toggle');
+            deleteRecord(tabDelRecord);
+            
+        });
+        
+        $('#checkboxAll').change(function(){
+            var isChecked = $(this).is(':checked');
+            if(isChecked) $('#checkAll').html('décoché');
+            else $('#checkAll').html('coché');
+            $("input:checkbox[name=approved]").each(function(){
+                $(this).prop( "checked", isChecked );
+            });
+        });
+        
+        function deleteRecord(tabRecords){
+            
+            var $data = JSON.stringify({
+                "tabRecords": tabRecords,
+            }); 
+            console.log($data);
+            Swal.mixin(
+            {
+                customClass:
+                {
+                    confirmButton: "btn btn-primary",
+                    cancelButton: "btn btn-danger ml-2"
+                },
+                buttonsStyling: false
+            }).queue([{
+                    type: "warning",
+                    title: 'Êtes-vous sûre ?',
+                    confirmButtonText: 'Confirmez',
+                    text: 'Cette action est irréversible vous ne pourrez plus revenir !',
+                    showCancelButton: true,
+                    showLoaderOnConfirm: true,
+                    //confirmButtonClass: 'btn btn-primary',
+                    //cancelButtonClass: 'btn btn-danger ml-2',
+                    preConfirm: function () {
+                        return new Promise(function (resolve) { 
+                            //console.log(resolve);
+                            $.ajax({
+                                type: "POST", // method type
+                                contentType: "application/json; charset=utf-8",
+                                url: $urlDel, // /Target function that will be return result
+                                data: $data, // parameter pass data is parameter name param is value
+                                dataType: "json",
+                                timeout: 120000, // 64241
+                                success: function (data) {
+                                    // $('.fa-sync').removeClass('fa-spin');
+                                    console.log(data);
+                                    if(data.code === 200){
+                                                                                        
+                                        Swal.fire("Succès !", data.message + "\nLa page sera actualisée", "success");
+                                        function reload_() {
+                                            //window.location.replace("https://waytolearnx.com");
+                                            location.reload(true);
+                                        }
+                                        
+                                        setTimeout(function () {
+                                            resolve();
+                                            reload_();
+                                        }, 2000);
+
+                                    }
+                                    else{
+                                        Swal.fire({
+                                            type: "error",
+                                            title: "Oops...",
+                                            text: "Une erreur est survenue !\n" + data.message,
+                                            {# footer: "<a href>Why do I have this issue?</a>" #}
+                                        });
+                                        
+                                    }
+
+                                    
+                                },
+                                error: function (result) {
+                                    //console.log("Error");
+                                    console.log(result);
+                                    /*Swal.fire('Oops...', 'Something went wrong!', 'error'
+                                    // footer: '<a href>Why do I have this issue?</a>'
+                                    );*/
+                                    Swal.fire({
+                                        type: "error",
+                                        title: "Oops...500",
+                                        text: "Une erreur est survenue !",
+                                        {# footer: "<a href>Why do I have this issue?</a>" #}
+                                    });
+
+                                    return false;
+                                }
+                            });
+                    })  
+                },
+                //allowOutsideClick: false
+                /*allowOutsideClick: function allowOutsideClick()
+                {
+                    return !Swal.isLoading();
+                }*/
+            }]).then((result) => {
+                if (result.isConfirmed) {
+                    
+                }else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    Swal.fire(
+                    'Annulation',
+                    'Choix Annulé',
+                    'error'
+                    )
+                    return false;
+                }
+            });
+        }
+    });
+
+</script>
+{% endblock %}

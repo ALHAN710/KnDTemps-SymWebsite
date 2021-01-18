@@ -61,6 +61,13 @@
             {% if is_granted('ROLE_LEADER') %}
             <li class="nav-title">Pointage</li>
             <li>
+                <a href="{{path('pointings_onpending')}}" title="Pointage En Attente de validation" data-filter-tags="Pointage à valider">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="nav-link-text">Pointage à valider {{ render(controller(
+                        'App\\Controller\\ApplicationController::getHasApproved',
+                        { 'role': app.user.roles()[0], 'enterpriseId': app.user.enterprise.id, 'userId': app.user.id }
+                    )) }}{#<sup class="ml-1 badge badge-secondary fw-500">{{app.user.enterprise.users|length}}</sup></span>#}
+                </a>
                 <a href="{{path('record_pointing')}}" title="Enregistrer Pointage" data-filter-tags="Enregistrer Pointage">
                     <i class="fas fa-hand-point-up"></i>
                     <span class="nav-link-text">Enregistrer Pointage</span>
@@ -1007,6 +1014,7 @@
             <i class="ni ni-chevron-right"></i>
             <i class="ni ni-chevron-right"></i>
         </a>
+        
         <ul class="list-table m-auto nav-footer-buttons">
             {# <li>
                 <a href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="Chat logs">

@@ -204,6 +204,58 @@ class PointingsController extends ApplicationController
     }
 
     /**
+     * Permet d'afficher les pointages en attente de validation
+     *
+     * @Route("/pointing/on-pending", name="pointings_onpending")
+     * 
+     * @Security( "is_granted('ROLE_LEADER')" )
+     * 
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function onPendingPointings(EntityManagerInterface $manager)
+    {
+        $fuseau = $this->getUser()->getEnterprise()->getTimeZone() * 60 * 60;
+        if ($this->getUser()->getRoles()[0] !== 'ROLE_LEADER') {
+            //AND emp.attribut IN ('Leader','Subordinate')
+            //AND emp.team IS NOT NULL
+            $pointings = $manager->createQuery("SELECT p.id, p.employee AS Employee, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
+                                            TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
+                                            FROM App\Entity\Pointing p
+                                            WHERE p.employee IN (SELECT u.id FROM App\Entity\User u WHERE u.enterprise = :entId)
+                                            AND p.statut = 'on pending' 
+                                            ORDER BY p.timeIn ASC 
+                                               
+                                               
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                    'fus'   => $fuseau,
+                ))
+                ->getResult();
+        } else {
+            $pointings = $manager->createQuery("SELECT p.id, p, SUBSTRING(p.timeIn,1,10) AS date_, AddTime(SUBSTRING(p.timeIn,12),SecToTime(:fus)) AS TimeIn, AddTime(SUBSTRING(p.timeOut,12),SecToTime(:fus)) AS TimeOut_, p.statut AS Status_,
+                                            TIMEDIFF(COALESCE(p.timeOut,p.timeIn),p.timeIn) AS Duration
+                                            FROM App\Entity\Pointing p
+                                            JOIN p.employee emp
+                                            WHERE emp.team IN (SELECT t.id FROM App\Entity\Team t WHERE t.responsible = :user AND t.enterprise = :entId)
+                                            AND p.statut = 'on pending' 
+                                            ORDER BY p.timeIn ASC
+            ")
+                ->setParameters(array(
+                    'entId' => $this->getUser()->getEnterprise(),
+                    'user' => $this->getUser()->getId(),
+                    'fus'   => $fuseau,
+                ))
+                ->getResult();
+        }
+        dump($pointings);
+        return $this->render('pointings/onpendingPointing.html.twig', [
+            'pointings' => $pointings,
+        ]);
+    }
+
+    /**
      * Permet de modifier le statut des pointages
      * 
      * @Route("/pointing/change/status", name="pointings_change_status")
@@ -253,7 +305,7 @@ class PointingsController extends ApplicationController
 
                 return $this->json([
                     'code'    => 200,
-                    'message' => 'Sauvegarde de changement réussi !',
+                    'message' => 'Approbation de pointage réussie !',
                 ], 200);
             }
 
@@ -362,5 +414,55 @@ class PointingsController extends ApplicationController
                 'timeZone' => $this->getUser()->getEnterprise()->getTimeZone(),
             ]
         );
+    }
+
+    /**
+     * Permet de supprimer un Utilisateur
+     * 
+     * @Route("/pointings/delete", name="delete_pointings")
+     * 
+     * @Security( "(is_granted('ROLE_LEADER')  )" )
+     * 
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return void
+     */
+    public function delete(Request $request, EntityManagerInterface $manager)
+    {
+        $paramJSON = $this->getJSONRequest($request->getContent());
+
+        if (array_key_exists("tabRecords", $paramJSON) && !empty($paramJSON['tabRecords'])) {
+            $flag = 0;
+            foreach ($paramJSON['tabRecords'] as $key => $id) {
+
+                $pointing = $manager->getRepository('App:Pointing')->findOneBy(['id' => intval($id)]);
+
+                //Si le pointage existe et appartient à un employé de la même entreprise
+                if ($pointing && ($pointing->getEmployee()->getEnterprise() === $this->getUser()->getEnterprise())) {
+
+                    $manager->remove($pointing);
+                    $flag++;
+                }
+            }
+
+            if ($flag) {
+                $manager->flush();
+
+                return $this->json([
+                    'code'    => 200,
+                    'message' => 'Suppression réussie !',
+                ], 200);
+            }
+
+            return $this->json([
+                'code'    => 403,
+                'message' => 'Aucune suppression effectuée !',
+            ], 200);
+        }
+
+        return $this->json([
+            'code' => 403,
+            'message' => 'Empty Array or Not exists !',
+        ], 403);
     }
 }
