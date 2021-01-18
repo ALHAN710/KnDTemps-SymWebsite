@@ -212,7 +212,7 @@
                         </span>
                     </div> #}
                     <div class="form-group">
-                        <label for="userpassword">Password</label>
+                        <label for="userpassword">Mot de Passe</label>
                         <div class="input-group mb-3 ">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon2">
@@ -224,7 +224,7 @@
                     </div>
                     <div class="form-group text-left">
                         <div class="col-sm-12 mb-2" >
-                            <a href="#" toggle="#password-field" class="toggle-password"><span class="fa fa-fw fa-eye-slash mr-2"></span><span id="showPwd">Show</span> password</a> 
+                            <a href="#" toggle="#password-field" class="toggle-password"><span id="eye" class="fa fa-fw fa-eye-slash mr-2"></span><span id="showPwd">Afficher</span> le mot de passe</a> 
                         </div>
                         {# <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="rememberme">
@@ -244,7 +244,7 @@
             </div>
             <div class="blankpage-footer ">
                 <div class="text-center mb-5">
-                    <a href="{{path('account_recoverpw')}}" ><strong>Recover Password</strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                    <a href="{{path('account_recoverpw')}}" ><strong>Réinitialiser Mot de Passe</strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 
                 </div>
                 <div class="d-flex hidden-sm-down align-items-center flex-1 text-muted">
@@ -311,14 +311,14 @@
         <script>
             $(".toggle-password").click(function() {
 
-                $(this).toggleClass("fa-eye-slash fa-eye");
+                $('#eye').toggleClass("fa-eye-slash fa-eye");
                 var input = $($(this).attr("toggle"));
                 if (input.attr("type") == "password") {
                     input.attr("type", "text");
-                    $('#showPwd').html('Hide');
+                    $('#showPwd').html('Masquer');
                 } else {
                     input.attr("type", "password");
-                    $('#showPwd').html('Show');
+                    $('#showPwd').html('Afficher');
                 }
             });
 
