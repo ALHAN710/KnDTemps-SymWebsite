@@ -101,15 +101,19 @@
                             <div class="row text-primary mb-2">Pointage de Travail</div>
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <div class="custom-control custom-switch">
+                                    <div class="custom-control custom-switch align-items-center">
                                         <input type="checkbox" class="custom-control-input" name="pointingInput" value="In" id="pointingIn" {% if nbPointing >= 1 %}disabled checked{% endif %}>
                                         <label class="custom-control-label" for="pointingIn">Entrée</label>
+                                        <div class="spinner-grow spinner-grow-sm d-none text-success ml-auto" id="spinnerpointingIn" role="status" aria-hidden="true"></div>
+                                        {# <div class="spinner-border spinner-border-sm text-success ml-auto" role="status" aria-hidden="true"></div> #}
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="custom-control custom-switch float-right">
                                         <input type="checkbox" class="custom-control-input" name="pointingInput" value="Out" id="pointingOut" {% if nbPointing <= 0 %}disabled{% elseif nbPointing >= 2  %}disabled checked{% endif %}>
                                         <label class="custom-control-label" for="pointingOut">Sortie</label>
+                                        <div class="spinner-grow spinner-grow-sm d-none text-danger ml-auto" id="spinnerpointingOut" role="status" aria-hidden="true"></div>
+                                        {# <div class="spinner-border spinner-border-sm text-danger ml-auto" role="status" aria-hidden="true"></div> #}
                                     </div>
                                 </div>
                             </div>
@@ -210,10 +214,10 @@
             </div>
             <div class="blankpage-footer">
                 <span class="h4 float-right">
-                    <a href="{% if app.user.roles[0] is not same as('ROLE_USER') %}{{path('employees_attendance_record')}}{% else %}#{% endif %}" id="continueLink"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                    <a href="{% if app.user.roles[0] is not same as('ROLE_USER') %}{{path('employees_attendance_record')}}{% else %}#{% endif %}" class="link" id="continueLink"><strong>Continuez<i class="mdi mdi-arrow-right"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
                 <span class="h4 float-left">
-                    <a href="{{path('account_logout')}}"><strong>Déconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
+                    <a href="{{path('account_logout')}}" class="link"><strong>Déconnexion<i class="fal fa-sign-out ml-2"></i></strong></a> {#| <a href="#"><strong>Register Account</strong></a>#}
                 </span>
             </div>
         </div>
@@ -403,6 +407,8 @@
                                     success: function (data) {
                                         // $('.fa-sync').removeClass('fa-spin');
                                         console.log(data);
+                                        $('#spinner' + id).addClass('d-none');
+                                        $('.link').removeClass('d-none');
                                         if(data.code === 200){
                                             {% if nbPointing <= 0 %}
                                             if($('#pointingIn').prop('disabled') == false){
@@ -410,6 +416,7 @@
 
                                             }
                                             {% endif %}
+                                            $('#' + id).prop('checked', true);
                                             $('#' + id).attr("disabled",true);
                                                 
                                             Swal.fire("Succès !", "Votre Pointage " + pointingType + " a été bien pris en compte .", "success");
@@ -450,6 +457,8 @@
                                             text: "Désolé votre Pointage " + pointingType + "  n'a pas été pris en compte !",
                                             footer: "<a href>Why do I have this issue?</a>"
                                         });
+                                        $('.link').removeClass('d-none');
+                                        $('#spinner' + id).addClass('d-none');
                                         $('#' + id).prop("checked",false);
                                         
                                     }
@@ -469,6 +478,8 @@
                         result.dismiss === Swal.DismissReason.cancel
                     ) {
                         $('#' + id).prop("checked",false);
+                        $('#spinner' + id).addClass('d-none');
+                        $('.link').removeClass('d-none');
                         Swal.fire(
                         'Annulation',
                         'Pointage Annulé',
@@ -482,6 +493,8 @@
                 positionError = true;
                 console.log("Handling Position Error");
                 $('#' + id).prop("checked",false);
+                $('#spinner' + id).addClass('d-none');
+                $('.link').removeClass('d-none');
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
                         console.log("User denied the request for Geolocation.");
@@ -535,6 +548,9 @@
                     console.log('attr : ' + $('#pointingOut').prop('disabled') );
                     console.log('Pointing ' + $(this).val() + ' Input Checked'); #}
 
+                    $(this).prop('checked', false);
+                    $('#spinner' + id).removeClass('d-none');
+                    $('.link').addClass('d-none');
                     //positionError = true;
 
                     //Récupération de la position de l'utilisateur
